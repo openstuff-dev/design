@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CSS foundation</title>
+    <link rel="stylesheet" href="./demo.css" />
+    <script type="module" src="./demo.ts"></script>
+  </head>
+  <body>
+    <main>
+      <h1>CSS foundation</h1>
+      <p>Native overlays with the base styles. Add <code>?fallbacks</code> to the URL to run the
+        closedby and interestfor fallbacks in a browser that has them natively.</p>
+      <p id="loaded">Polyfills: …</p>
+
+      <section>
+        <h2>Dialog</h2>
+        <button commandfor="dialog" command="show-modal">Open dialog</button>
+        <dialog id="dialog" closedby="any" aria-labelledby="dialog-title">
+          <div class="dialog-body">
+            <h3 id="dialog-title">Delete draft?</h3>
+            <p>Click outside or press Escape to close.</p>
+            <button commandfor="dialog" command="close">Cancel</button>
+          </div>
+        </dialog>
+      </section>
+
+      <section>
+        <h2>Menu</h2>
+        <button id="menu-button" popovertarget="menu" class="anchor">Actions</button>
+        <div id="menu" popover class="anchored">
+          <button>Rename</button>
+          <button>Duplicate</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Tooltip</h2>
+        <button interestfor="tip" aria-describedby="tip">Save</button>
+        <div id="tip" popover="hint" class="tooltip">Saves a draft</div>
+      </section>
+
+      <section>
+        <h2>Disclosure</h2>
+        <details name="faq"><summary>First</summary><p>Only one opens at a time.</p></details>
+        <details name="faq"><summary>Second</summary><p>Opening this closes the first.</p></details>
+      </section>
+
+      <section>
+        <h2>Native controls</h2>
+        <label><input type="checkbox" checked /> Accent colour</label>
+        <input type="range" aria-label="Range" />
+      </section>
+    </main>
+  </body>
+</html>

@@ -12,9 +12,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
-    }
+    },
+    "./polyfills": {
+      "@openstuff-dev/source": "./src/polyfills.ts",
+      "types": "./dist/polyfills.d.ts",
+      "import": "./dist/polyfills.js",
+      "default": "./dist/polyfills.js"
+    },
+    "./ui.css": "./css/ui.css",
+    "./*.css": "./css/*.css"
   },
   "files": [
+    "css",
     "dist",
     "!**/*.tsbuildinfo"
   ],
@@ -22,10 +31,41 @@
     "name": "ui",
     "tags": [
       "type:package"
-    ]
+    ],
+    "targets": {
+      "stylelint": {
+        "command": "stylelint \"css/**/*.css\"",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "cache": true,
+        "inputs": [
+          "{projectRoot}/css/**/*.css",
+          "{workspaceRoot}/stylelint.config.mjs",
+          "{workspaceRoot}/packages/lint/src/stylelint/**/*",
+          {
+            "externalDependencies": [
+              "stylelint"
+            ]
+          }
+        ],
+        "dependsOn": [
+          {
+            "projects": [
+              "lint"
+            ],
+            "target": "build"
+          }
+        ]
+      }
+    }
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "@oddbird/css-anchor-positioning": "^0.10.2",
+    "@oddbird/popover-polyfill": "^0.7.3",
+    "invokers-polyfill": "^1.0.4",
+    "tslib": "^2.3.0",
+    "@openstuff-dev/tokens": "0.0.1"
   },
   "publishConfig": {
     "access": "public"
@@ -35,5 +75,9 @@
     "url": "git+https://github.com/openstuff-dev/design.git",
     "directory": "packages/ui"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "description": "Framework-neutral CSS and native overlay helpers for OpenStuff projects",
+  "sideEffects": [
+    "*.css"
+  ]
 }

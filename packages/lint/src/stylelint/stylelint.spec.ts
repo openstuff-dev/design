@@ -21,6 +21,11 @@ describe('@openstuff-dev/lint/stylelint', () => {
     expect(await rules(css)).toEqual([]);
   });
 
+  it('wants @import with a string, so package paths read plainly', async () => {
+    expect(await rules('@import \'@openstuff-dev/ui/ui.css\';\n')).toEqual([]);
+    expect(await rules('@import url(\'./reset.css\');\n')).toEqual(['import-notation']);
+  });
+
   it('flags raw colours outside token files', async () => {
     const css = '.a {\n  color: #fff;\n  background: oklch(0.5 0.1 160);\n  border-color: red;\n}\n';
     expect((await rules(css)).sort()).toEqual([
