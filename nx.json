@@ -55,6 +55,12 @@
     },
     "releaseTag": {
       "pattern": "{projectName}@{version}"
+    },
+    "git": {
+      "commit": true,
+      "tag": true,
+      "push": true,
+      "commitMessage": "Released new versions of the OpenStuff packages"
     }
   },
   "targetDefaults": {

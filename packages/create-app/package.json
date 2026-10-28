@@ -35,6 +35,15 @@
     "tslib": "^2.3.0"
   },
   "bin": {
-    "create-app": "./dist/bin/index.js"
-  }
+    "create-app": "dist/bin/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openstuff-dev/design.git",
+    "directory": "packages/create-app"
+  },
+  "license": "MIT"
 }

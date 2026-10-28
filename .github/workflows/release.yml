@@ -1,6 +1,7 @@
 name: Release
 
 # Run by hand once the version plans for a release are merged into main.
+# Packages are staged on npm; approve each one with 2FA before it goes public.
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +12,7 @@ on:
 
 permissions:
   contents: write
-  id-token: write # npm provenance
+  id-token: write # npm provenance, once the repository is public
 
 jobs:
   release:
@@ -28,12 +29,19 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
+      # npm stage arrived in npm 12
+      - run: npm install --global npm@12
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - run: npx nx release --yes ${{ inputs.dry-run && '--dry-run' || '' }}
+      # Versions, changelogs, tags and GitHub releases; publishing happens below
+      - run: npx nx release --yes --skip-publish ${{ inputs.dry-run && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: npx nx run-many -t build
+      - run: tools/stage-publish.sh ${{ inputs.dry-run && '--dry-run' || '' }}
+        env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          PROVENANCE: ${{ !github.event.repository.private }}
