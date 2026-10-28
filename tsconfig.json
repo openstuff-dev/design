@@ -2,6 +2,22 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": [],
+  "references": [
+    {
+      "path": "./packages/tokens"
+    },
+    {
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./packages/lint"
+    },
+    {
+      "path": "./packages/nx"
+    },
+    {
+      "path": "./packages/create-app"
+    }
+  ],
   "compilerOptions": {}
 }

@@ -1,0 +1,40 @@
+{
+  "name": "@openstuff-dev/create-app",
+  "version": "0.0.1",
+  "type": "module",
+  "module": "./dist/index.js",
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/create-app/dist",
+          "main": "packages/create-app/bin/index.ts",
+          "tsConfig": "packages/create-app/tsconfig.lib.json",
+          "generatePackageJson": false
+        }
+      }
+    },
+    "tags": [
+      "type:package"
+    ],
+    "sourceRoot": "packages/create-app/bin",
+    "implicitDependencies": [
+      "nx"
+    ]
+  },
+  "dependencies": {
+    "create-nx-workspace": "24.0.0",
+    "tslib": "^2.3.0"
+  },
+  "bin": {
+    "create-app": "./dist/bin/index.js"
+  }
+}
