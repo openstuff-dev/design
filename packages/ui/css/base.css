@@ -1,0 +1,105 @@
+/*
+ * Page defaults from the tokens, focus, and the native overlays (<dialog>, [popover]) that
+ * components build on.
+ */
+@layer os.base {
+  :root {
+    background: var(--os-bg-default);
+    color: var(--os-fg-default);
+    font-family: var(--os-font-sans);
+    font-size: var(--os-text-base);
+    line-height: var(--os-leading-normal);
+    accent-color: var(--os-brand-default);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Components read this with @container style(--os-density: compact). */
+  [data-density='compact'] {
+    --os-density: compact;
+  }
+
+  :where(code, kbd, samp, pre) {
+    font-family: var(--os-font-mono);
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    font-weight: var(--os-font-weight-semibold);
+    line-height: var(--os-leading-tight);
+  }
+
+  :where(a) {
+    color: var(--os-brand-text);
+    text-underline-offset: 0.2em;
+  }
+
+  ::selection {
+    background: var(--os-bg-selection);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--os-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Overlays: the UA centres modal dialogs with margin: auto, so keep that. */
+  :where(dialog, [popover]) {
+    padding: 0;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-lg);
+    background: var(--os-bg-overlay);
+    color: inherit;
+    box-shadow: var(--os-shadow-pop);
+
+    /* Enter and exit. Without @starting-style (older browsers) they appear without animating. */
+    opacity: 0;
+    transition:
+      opacity var(--os-duration-normal) var(--os-ease-exit),
+      overlay var(--os-duration-normal) allow-discrete,
+      display var(--os-duration-normal) allow-discrete;
+  }
+
+  /* .\:popover-open is how the popover polyfill marks an open popover. */
+  /* stylelint-disable-next-line selector-class-pattern */
+  :where(dialog[open], [popover]:popover-open, [popover].\:popover-open) {
+    opacity: 1;
+    transition-timing-function: var(--os-ease-enter);
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  :where(dialog)::backdrop {
+    background: var(--os-backdrop);
+    opacity: 0;
+    transition:
+      opacity var(--os-duration-normal) var(--os-ease-exit),
+      overlay var(--os-duration-normal) allow-discrete,
+      display var(--os-duration-normal) allow-discrete;
+  }
+
+  :where(dialog[open])::backdrop {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --os-border-default: var(--os-border-strong);
+    }
+  }
+}

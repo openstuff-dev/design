@@ -30,4 +30,4 @@ jobs:
       # Every change to a package needs a version plan (npx nx release plan)
       - run: npx nx release plan:check
         if: github.event_name == 'pull_request'
-      - run: npx nx affected -t lint test build typecheck
+      - run: npx nx affected -t lint stylelint test build typecheck

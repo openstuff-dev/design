@@ -6,10 +6,22 @@
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": false,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "es2022",
+      "dom"
+    ]
   },
-  "include": ["src/**/*.ts"],
-  "references": [],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../tokens/tsconfig.lib.json"
+    }
+  ],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",

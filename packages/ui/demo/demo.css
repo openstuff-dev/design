@@ -1,0 +1,35 @@
+@import '../css/ui.css';
+@import '@openstuff-dev/tokens/tokens.css' layer(os.tokens);
+
+main {
+  display: grid;
+  gap: var(--os-space-6);
+  max-inline-size: 40rem;
+  margin-inline: auto;
+  padding: var(--os-space-8) var(--os-space-4);
+}
+
+.dialog-body {
+  display: grid;
+  gap: var(--os-space-3);
+  padding: var(--os-space-6);
+}
+
+.anchor {
+  anchor-name: --menu;
+}
+
+.anchored {
+  position-anchor: --menu;
+  position-area: block-end span-inline-end;
+  position-try-fallbacks: flip-block;
+  margin-block-start: var(--os-space-1);
+  padding: var(--os-space-1);
+}
+
+.tooltip {
+  position-area: block-start;
+  margin-block-end: var(--os-space-1);
+  padding: var(--os-space-1) var(--os-space-2);
+  font-size: var(--os-text-xs);
+}

@@ -9,7 +9,11 @@
       "node",
       "vitest"
     ],
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "es2022",
+      "dom"
+    ]
   },
   "include": [
     "vite.config.ts",
@@ -24,7 +28,8 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "demo/**/*.ts"
   ],
   "references": [
     {

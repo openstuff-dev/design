@@ -39,6 +39,8 @@ const config: Config = {
   rules: {
     '@stylistic/string-quotes': 'single',
     '@stylistic/max-line-length': 100,
+    // Reads better for packages: @import '@openstuff-dev/ui/ui.css'.
+    'import-notation': 'string',
     // How the token generator writes colours: oklch(0.99 0.004 160).
     'lightness-notation': 'number',
     'hue-degree-notation': 'number',

@@ -9,6 +9,7 @@ One lint and format setup for every OpenStuff project.
   - no raw colours (`#fff`, `rgb()`, `oklch()`, `red`) outside token files. Use `var(--os-…)`.
   - no `@media (prefers-color-scheme)`. Themes come from `light-dark()` in the tokens.
   - viewport width queries only in layout files. Components use `@container`.
+  - `@import` with a plain string: `@import '@openstuff-dev/ui/ui.css';`.
 - **Prettier** for Angular templates only. Inline templates are formatted by an ESLint rule, so `eslint --fix` formats everything.
 
 ## Use it

@@ -1,0 +1,5 @@
+/*
+ * The order of the OpenStuff cascade layers. A later layer wins over an earlier one, and styles
+ * outside every layer (an app's own) win over all of them, without specificity fights.
+ */
+@layer os.reset, os.tokens, os.base, os.components, os.utilities;
