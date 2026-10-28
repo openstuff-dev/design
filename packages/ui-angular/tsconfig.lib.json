@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "declaration": true,
+    "declarationMap": true,
+    "types": [],
+    "rootDir": "src"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/test-setup.ts",
+    "src/lib/testing.ts"
+  ],
+  "references": [
+    {
+      "path": "../ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../lint/tsconfig.lib.json"
+    }
+  ]
+}

@@ -1,8 +1,9 @@
 # @openstuff-dev/ui
 
-The framework-neutral layer every OpenStuff component and app builds on: cascade layers, a reset,
-base styles from the `--os-*` tokens, and native overlays (`<dialog>`, `popover`) with polyfills
-for browsers that lack the newer parts.
+The framework-neutral layer every OpenStuff app builds on: cascade layers, a reset, base styles
+from the `--os-*` tokens, every component as CSS classes, and native overlays (`<dialog>`,
+`popover`) with polyfills for browsers that lack the newer parts. Angular apps use
+[`@openstuff-dev/ui-angular`](../ui-angular), which renders this markup and adds the behaviour.
 
 ## Use it
 
@@ -42,7 +43,43 @@ win over all of them without specificity fights or `!important`.
 | `layers.css` | | The order above. Import it first if you import the files one by one |
 | `reset.css` | `os.reset` | `box-sizing`, no default margins, media that fits, form controls that inherit the font, `[hidden]` that always hides |
 | `base.css` | `os.base` | Page colours and font from the tokens, `:focus-visible` ring (`--os-focus-ring`), `accent-color` for checkboxes, radios and ranges, dialog and popover surfaces with enter and exit transitions, reduced motion, `prefers-contrast: more` |
+| `components/*.css` | `os.components` | One file per component family (see below) |
+| `utilities.css` | `os.utilities` | `.os-visually-hidden` |
 | `ui.css` | | All of the above |
+
+## Components
+
+Each CSS file starts with a markup example. Variants are data attributes, so they work the same
+from HTML and from a framework: `data-variant`, `data-size`, `data-tone` (neutral, brand, danger,
+warning, success, info).
+
+| File | Classes |
+|---|---|
+| `button.css` | `.os-button` with `data-variant` (primary, default, ghost, danger, link), `data-size="sm"`, `data-icon-only`, and `aria-busy="true"` for a spinner |
+| `icon.css` | `.os-icon` (build one with `createIcon(node)` from a Lucide icon) |
+| `badge.css` | `.os-badge`, `.os-chip` (with `.os-chip-remove`), `.os-status-dot` |
+| `field.css` | `.os-field`, `.os-label`, `.os-hint`, `.os-error`, `.os-input`, `.os-textarea`, `.os-select`, `.os-check`, `.os-checkbox`, `.os-radio`, `.os-switch`, `.os-fieldset` |
+| `segmented.css` | `.os-segmented`: native radios in a row |
+| `feedback.css` | `.os-callout`, `.os-empty-state`, `.os-kbd`, `.os-skeleton` |
+| `dialog.css` | `.os-dialog` and `.os-drawer` on `<dialog>`, with `.os-dialog-header`, `-body`, `-footer` |
+| `popover.css` | `.os-popover`, `.os-menu` (`.os-menu-item`, `-label`, `-separator`), `.os-tooltip`, placed with `data-placement` |
+| `command-palette.css` | `.os-command-palette`: a dialog with a combobox and a listbox |
+| `toast.css` | `.os-toast-region` (a manual popover) and `.os-toast` |
+| `page.css` | `.os-page`, `.os-page-header`, `.os-breadcrumbs`, `.os-panel`, `.os-card`, `.os-card-grid`, `.os-tabs` |
+| `settings.css` | `.os-setting-card`, `.os-setting-row`, `.os-form-actions` |
+| `data.css` | `.os-data-table` (stacked rows below 36rem), `.os-stat-tile`, `.os-stat-grid` |
+
+Plain HTML gets the look and the native behaviour (dialogs, popovers, radios). Keyboard handling
+that HTML doesn't have (arrow keys in menus and tabs, the command palette) comes from the Angular
+components.
+
+Helpers in the main entry point:
+
+- `createIcon(node, { size })` builds a decorative `<svg class="os-icon">` from a Lucide icon
+  node. The few icons the components use themselves are exported as `iconX`, `iconCheck`,
+  `iconSearch`, `iconInfo`, `iconCircleAlert`, `iconCircleCheck` and `iconTriangleAlert`.
+- `anchor(trigger, popover)` anchors a popover, menu or tooltip to the element that opens it,
+  with a unique anchor name (and the polyfill where needed).
 
 ## Browser support
 
@@ -68,8 +105,8 @@ Native `<dialog>` and `popover` move focus in and back out themselves. Don't add
 A component adapts to the space it's given, not to the window. The same table, card or form
 looks right in a sidebar, a drawer or a full page.
 
-- Layout wrappers (page, panel, card, drawer body, table wrapper, form) set
-  `container-type: inline-size` and a name such as `container-name: os-panel`.
+- Layout wrappers (page, panel, setting card, dialog, drawer, table) set
+  `container-type: inline-size`; components inside query the nearest one.
 - Components query the nearest container and size with `cqi`:
 
   ```css
@@ -96,5 +133,5 @@ looks right in a sidebar, a drawer or a full page.
 ```sh
 npx nx test ui
 npx nx stylelint ui
-npx vite packages/ui/demo   # the overlays in a browser; add ?fallbacks to force the fallbacks on
+npx vite packages/ui/demo   # every component in plain HTML, with theme, colour and width switches
 ```

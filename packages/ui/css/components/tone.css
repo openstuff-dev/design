@@ -1,0 +1,47 @@
+/*
+ * data-tone on a badge, chip, status dot, callout, toast or stat tile picks one role from the
+ * tokens: neutral (the default), brand, danger, warning, success or info.
+ */
+@layer os.components {
+  :where(.os-badge, .os-chip, .os-status-dot, .os-callout, .os-toast, .os-stat-tile) {
+    --os-tone-default: var(--os-fg-lighter);
+    --os-tone-soft: var(--os-bg-surface-200);
+    --os-tone-border: var(--os-border-default);
+    --os-tone-text: var(--os-fg-light);
+  }
+
+  :where([data-tone='brand']) {
+    --os-tone-default: var(--os-brand-default);
+    --os-tone-soft: var(--os-brand-soft);
+    --os-tone-border: var(--os-brand-border);
+    --os-tone-text: var(--os-brand-text);
+  }
+
+  :where([data-tone='danger']) {
+    --os-tone-default: var(--os-danger-default);
+    --os-tone-soft: var(--os-danger-soft);
+    --os-tone-border: var(--os-danger-border);
+    --os-tone-text: var(--os-danger-text);
+  }
+
+  :where([data-tone='warning']) {
+    --os-tone-default: var(--os-warning-default);
+    --os-tone-soft: var(--os-warning-soft);
+    --os-tone-border: var(--os-warning-border);
+    --os-tone-text: var(--os-warning-text);
+  }
+
+  :where([data-tone='success']) {
+    --os-tone-default: var(--os-success-default);
+    --os-tone-soft: var(--os-success-soft);
+    --os-tone-border: var(--os-success-border);
+    --os-tone-text: var(--os-success-text);
+  }
+
+  :where([data-tone='info']) {
+    --os-tone-default: var(--os-info-default);
+    --os-tone-soft: var(--os-info-soft);
+    --os-tone-border: var(--os-info-border);
+    --os-tone-text: var(--os-info-text);
+  }
+}

@@ -1,0 +1,161 @@
+/*
+ * Dialog and Drawer, on a native <dialog> (base.css gives the surface and the fade).
+ *
+ *   <dialog class="os-dialog" closedby="any" aria-labelledby="t">
+ *     <header class="os-dialog-header"><h2 id="t">Delete draft?</h2> …close button…</header>
+ *     <div class="os-dialog-body">…</div>
+ *     <footer class="os-dialog-footer">…buttons…</footer>
+ *   </dialog>
+ *
+ * data-size: sm, md (the default), lg. A drawer is <dialog class="os-drawer"> with the same
+ * parts; data-side="start" opens it from the start edge instead of the end.
+ */
+@layer os.components {
+  .os-dialog,
+  .os-drawer {
+    flex-direction: column;
+    max-block-size: calc(100dvh - 2 * var(--os-space-4));
+    container-type: inline-size;
+
+    &[open] {
+      display: flex;
+    }
+  }
+
+  .os-dialog {
+    --os-dialog-width: 32rem;
+
+    inline-size: min(var(--os-dialog-width), 100% - 2 * var(--os-space-4));
+
+    /* A small rise on top of the base fade. */
+    translate: 0 var(--os-space-2);
+    transition:
+      opacity var(--os-duration-normal) var(--os-ease-exit),
+      translate var(--os-duration-normal) var(--os-ease-exit),
+      overlay var(--os-duration-normal) allow-discrete,
+      display var(--os-duration-normal) allow-discrete;
+
+    &[open] {
+      translate: 0;
+
+      @starting-style {
+        translate: 0 var(--os-space-2);
+      }
+    }
+  }
+
+  .os-dialog[data-size='sm'] {
+    --os-dialog-width: 24rem;
+  }
+
+  .os-dialog[data-size='lg'] {
+    --os-dialog-width: 44rem;
+  }
+
+  .os-drawer {
+    --os-drawer-width: 28rem;
+    --os-drawer-from: 100%;
+
+    inline-size: min(var(--os-drawer-width), 100%);
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+    margin-block: 0;
+    margin-inline: auto 0;
+    border-block: 0;
+    border-inline-end: 0;
+    border-radius: 0;
+    translate: var(--os-drawer-from) 0;
+    transition:
+      opacity var(--os-duration-normal) var(--os-ease-exit),
+      translate var(--os-duration-normal) var(--os-ease-exit),
+      overlay var(--os-duration-normal) allow-discrete,
+      display var(--os-duration-normal) allow-discrete;
+
+    &[open] {
+      translate: 0;
+
+      @starting-style {
+        translate: var(--os-drawer-from) 0;
+      }
+    }
+
+    &:dir(rtl) {
+      --os-drawer-from: -100%;
+    }
+  }
+
+  .os-drawer[data-side='start'] {
+    --os-drawer-from: -100%;
+
+    margin-inline: 0 auto;
+    border-inline: 0 1px var(--os-border-style) var(--os-border-default);
+
+    &:dir(rtl) {
+      --os-drawer-from: 100%;
+    }
+  }
+
+  .os-drawer[data-size='lg'] {
+    --os-drawer-width: 40rem;
+  }
+
+  .os-dialog-header {
+    display: flex;
+    gap: var(--os-space-3);
+    align-items: start;
+    justify-content: space-between;
+    padding: var(--os-space-4) var(--os-space-5);
+    border-block-end: 1px var(--os-border-style) var(--os-border-default);
+
+    & :where(h1, h2, h3) {
+      font-size: var(--os-text-md);
+    }
+
+    & :where(p) {
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
+    }
+
+    /* The close button lines up with the title's first line. */
+    & > .os-button:last-child {
+      margin-block: -0.25rem;
+      margin-inline-end: calc(-1 * var(--os-space-2));
+    }
+  }
+
+  .os-dialog-body {
+    display: grid;
+    flex: 1;
+    gap: var(--os-space-4);
+    align-content: start;
+    padding: var(--os-space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .os-dialog-header:has(+ .os-dialog-body > :only-child:is(p)) {
+    border-block-end: 0;
+    padding-block-end: 0;
+  }
+
+  .os-dialog-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    justify-content: flex-end;
+    padding: var(--os-space-3) var(--os-space-5);
+    border-block-start: 1px var(--os-border-style) var(--os-border-default);
+    background: var(--os-bg-surface-100);
+  }
+
+  /* On a narrow screen the buttons stack, with the main action on top. */
+  @container (inline-size < 20rem) {
+    .os-dialog-footer {
+      flex-direction: column-reverse;
+
+      & > .os-button {
+        inline-size: 100%;
+      }
+    }
+  }
+}

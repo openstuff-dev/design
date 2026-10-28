@@ -6,11 +6,11 @@ The shared toolkit for every [OpenStuff](https://github.com/openstuff-dev) proje
 |---|---|
 | [`@openstuff-dev/tokens`](packages/tokens) | Design tokens. One `primaryColor` in, a full light and dark theme out (`light-dark()` CSS, TypeScript, DTCG JSON). |
 | [`@openstuff-dev/ui`](packages/ui) | The framework-neutral CSS core: base styles, components, native `<dialog>` and popover patterns, container queries. Angular and React wrappers build on it. |
+| [`@openstuff-dev/ui-angular`](packages/ui-angular) | Angular components on top of the CSS core. |
 | [`@openstuff-dev/lint`](packages/lint) | Shared ESLint (with ESLint Stylistic) and Stylelint configs. |
 | [`@openstuff-dev/nx`](packages/nx) | Nx preset and generators for OpenStuff workspaces. |
 | [`@openstuff-dev/create-app`](packages/create-app) | `npm create @openstuff-dev/app my-app`: a new project with all of the above set up. |
 
-The packages are empty skeletons for now; see the phases in `OPENSTUFF_HANDOFF.md` in the open-purpose repository.
 
 ## Work on it
 

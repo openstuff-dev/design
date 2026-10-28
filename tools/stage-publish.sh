@@ -19,6 +19,9 @@ for dir in packages/*/; do
     echo "${name}@${version} is already on npm"
     continue
   fi
-  echo "Staging ${name}@${version}"
-  npm stage publish "./${dir}" "${flags[@]}"
+  # Angular libraries are published from their ng-packagr output in dist/.
+  root="./${dir}"
+  [[ -f "dist/${dir}package.json" ]] && root="./dist/${dir}"
+  echo "Staging ${name}@${version} from ${root}"
+  npm stage publish "${root}" "${flags[@]}"
 done

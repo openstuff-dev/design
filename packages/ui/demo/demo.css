@@ -1,35 +1,46 @@
 @import '../css/ui.css';
 @import '@openstuff-dev/tokens/tokens.css' layer(os.tokens);
 
-main {
-  display: grid;
-  gap: var(--os-space-6);
-  max-inline-size: 40rem;
-  margin-inline: auto;
-  padding: var(--os-space-8) var(--os-space-4);
+body {
+  background: var(--os-bg-alternative);
 }
 
-.dialog-body {
+.toolbar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--os-space-2) var(--os-space-4);
+  align-items: center;
+  padding: var(--os-space-2) var(--os-space-4);
+  border-block-end: 1px solid var(--os-border-default);
+  background: var(--os-bg-default);
+}
+
+.stage {
+  margin-inline: auto;
+  background: var(--os-bg-default);
+  transition: max-inline-size var(--os-duration-normal) var(--os-ease-standard);
+}
+
+.stage[data-width='narrow'] {
+  max-inline-size: 22rem;
+  border-inline: 1px dashed var(--os-border-strong);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--os-space-2);
+  align-items: center;
+}
+
+.stack {
   display: grid;
   gap: var(--os-space-3);
-  padding: var(--os-space-6);
 }
 
-.anchor {
-  anchor-name: --menu;
-}
-
-.anchored {
-  position-anchor: --menu;
-  position-area: block-end span-inline-end;
-  position-try-fallbacks: flip-block;
-  margin-block-start: var(--os-space-1);
-  padding: var(--os-space-1);
-}
-
-.tooltip {
-  position-area: block-start;
-  margin-block-end: var(--os-space-1);
-  padding: var(--os-space-1) var(--os-space-2);
-  font-size: var(--os-text-xs);
+.grow {
+  flex: 1;
 }

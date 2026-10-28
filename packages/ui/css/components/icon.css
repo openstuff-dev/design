@@ -1,0 +1,34 @@
+/*
+ * A Lucide icon (or any 24×24 stroke icon) that follows the text colour:
+ *
+ *   <svg class="os-icon" viewBox="0 0 24 24" aria-hidden="true">…</svg>
+ *
+ * createIcon() in @openstuff-dev/ui builds one from a Lucide icon node.
+ */
+@layer os.components {
+  .os-icon {
+    display: inline-block;
+    flex-shrink: 0;
+    inline-size: var(--os-icon-size, 1rem);
+    block-size: var(--os-icon-size, 1rem);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -0.125em;
+  }
+
+  .os-icon[data-size='sm'] {
+    --os-icon-size: 0.875rem;
+  }
+
+  .os-icon[data-size='lg'] {
+    --os-icon-size: 1.25rem;
+  }
+
+  /* Arrows and chevrons that point "forward" turn around in right-to-left text. */
+  .os-icon[data-flip-rtl]:dir(rtl) {
+    scale: -1 1;
+  }
+}

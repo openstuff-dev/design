@@ -1,0 +1,249 @@
+/*
+ * Field with a label, hint and error, and the controls that go in it.
+ *
+ *   <div class="os-field">
+ *     <label class="os-label" for="name">Name</label>
+ *     <input class="os-input" id="name" aria-describedby="name-hint" />
+ *     <p class="os-hint" id="name-hint">Shown on your profile.</p>
+ *   </div>
+ *
+ * An error is a <p class="os-error"> listed in aria-describedby, with aria-invalid="true" on the
+ * control. Checkboxes, radios and switches sit in a <label class="os-check">.
+ */
+@layer os.components {
+  .os-field {
+    display: grid;
+    gap: var(--os-space-1);
+    align-content: start;
+    min-inline-size: 0;
+  }
+
+  .os-label {
+    color: var(--os-fg-default);
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-medium);
+    line-height: var(--os-leading-snug);
+  }
+
+  .os-hint,
+  .os-error {
+    font-size: var(--os-text-sm);
+    line-height: var(--os-leading-snug);
+  }
+
+  .os-hint {
+    color: var(--os-fg-light);
+  }
+
+  .os-error {
+    display: flex;
+    gap: var(--os-space-1);
+    align-items: start;
+    color: var(--os-danger-text);
+  }
+
+  /* Text controls. */
+  .os-input,
+  .os-textarea,
+  .os-select {
+    --os-control-height: 2.125rem;
+
+    inline-size: 100%;
+    min-block-size: var(--os-control-height);
+    padding: var(--os-space-1) var(--os-space-3);
+    border: 1px var(--os-border-style) var(--os-border-control);
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-control);
+    color: var(--os-fg-default);
+    font-size: var(--os-text-base);
+    line-height: var(--os-leading-snug);
+    transition: border-color var(--os-duration-fast) var(--os-ease-standard);
+
+    &::placeholder {
+      color: var(--os-fg-lighter);
+      opacity: 1;
+    }
+
+    &:hover {
+      border-color: var(--os-border-strong);
+    }
+
+    &:focus-visible {
+      border-color: var(--os-focus-ring);
+      outline-offset: 0;
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--os-danger-text);
+    }
+
+    &:is(:disabled, [readonly]) {
+      background: var(--os-bg-surface-200);
+      color: var(--os-fg-light);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  :is(.os-input, .os-select)[data-size='sm'] {
+    --os-control-height: 1.75rem;
+
+    padding-inline: var(--os-space-2);
+    border-radius: var(--os-radius-sm);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-textarea {
+    min-block-size: 5rem;
+    padding-block: var(--os-space-2);
+    resize: vertical;
+    field-sizing: content;
+  }
+
+  /* A chevron drawn with two gradients, so it follows the theme without an image. */
+  .os-select {
+    --os-chevron: var(--os-fg-lighter);
+
+    padding-inline-end: var(--os-space-8);
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--os-chevron) 50%),
+      linear-gradient(135deg, var(--os-chevron) 50%, transparent 50%);
+    background-repeat: no-repeat;
+    background-position:
+      right 0.9rem top 55%,
+      right 0.6rem top 55%;
+    background-size: 0.3rem 0.3rem;
+    appearance: none;
+    cursor: pointer;
+
+    &:dir(rtl) {
+      background-position:
+        left 0.6rem top 55%,
+        left 0.9rem top 55%;
+    }
+  }
+
+  /* Where <select> can be styled fully, its list uses the overlay surface too. */
+  @supports (appearance: base-select) {
+    .os-select,
+    .os-select::picker(select) {
+      appearance: base-select;
+    }
+
+    .os-select {
+      background-image: none;
+      padding-inline-end: var(--os-space-3);
+    }
+
+    .os-select::picker-icon {
+      color: var(--os-fg-lighter);
+    }
+
+    .os-select::picker(select) {
+      margin-block: var(--os-space-1);
+      padding: var(--os-space-1);
+      border: 1px var(--os-border-style) var(--os-border-default);
+      border-radius: var(--os-radius-md);
+      background: var(--os-bg-overlay);
+      box-shadow: var(--os-shadow-pop);
+    }
+
+    .os-select option {
+      padding: var(--os-space-1) var(--os-space-2);
+      border-radius: var(--os-radius-sm);
+    }
+
+    .os-select option:is(:hover, :focus-visible) {
+      background: var(--os-bg-hover);
+    }
+
+    .os-select option::checkmark {
+      color: var(--os-brand-text);
+    }
+  }
+
+  /* Checkbox, radio and switch with their label. */
+  .os-check {
+    display: inline-flex;
+    gap: var(--os-space-2);
+    align-items: start;
+    color: var(--os-fg-default);
+    font-size: var(--os-text-base);
+    line-height: var(--os-leading-snug);
+    cursor: pointer;
+
+    &:has(:disabled) {
+      color: var(--os-fg-light);
+      cursor: not-allowed;
+    }
+  }
+
+  /* Native checkboxes and radios, coloured by accent-color from the base layer. */
+  .os-checkbox,
+  .os-radio {
+    flex-shrink: 0;
+    inline-size: 1rem;
+    block-size: 1rem;
+    margin: 0.125rem 0 0;
+    cursor: inherit;
+  }
+
+  /* A checkbox with role="switch". The thumb is a gradient, since inputs have no ::before. */
+  .os-switch {
+    --os-switch-thumb: var(--os-fg-default);
+    --os-switch-track: var(--os-bg-surface-300);
+
+    flex-shrink: 0;
+    inline-size: 1.875rem;
+    block-size: 1.125rem;
+    margin: 0;
+    border: 1px var(--os-border-style) var(--os-border-control);
+    border-radius: var(--os-radius-full);
+    background:
+      radial-gradient(circle closest-side, var(--os-switch-thumb) 82%, transparent 90%)
+      left 0 center / 1rem 1rem no-repeat
+      var(--os-switch-track);
+    appearance: none;
+    cursor: inherit;
+    transition:
+      background-position var(--os-duration-fast) var(--os-ease-standard),
+      background-color var(--os-duration-fast) var(--os-ease-standard);
+
+    &:checked {
+      --os-switch-thumb: var(--os-brand-ink);
+      --os-switch-track: var(--os-brand-default);
+
+      border-color: var(--os-brand-border);
+      background-position-x: right 0;
+    }
+
+    &:disabled {
+      opacity: 0.55;
+    }
+
+    &:dir(rtl) {
+      background-position-x: right 0;
+    }
+
+    &:checked:dir(rtl) {
+      background-position-x: left 0;
+    }
+  }
+
+  /* Groups of checkboxes or radios. */
+  .os-fieldset {
+    display: grid;
+    gap: var(--os-space-2);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    & > legend {
+      margin-block-end: var(--os-space-1);
+      padding: 0;
+    }
+  }
+}

@@ -1,0 +1,159 @@
+/*
+ * Callout, EmptyState, Kbd and Skeleton.
+ *
+ *   <div class="os-callout" data-tone="warning" role="note">
+ *     <svg class="os-icon">…</svg>
+ *     <div><p class="os-callout-title">Read-only</p><p>You can't edit this project.</p></div>
+ *   </div>
+ *   <kbd class="os-kbd">⌘</kbd><kbd class="os-kbd">K</kbd>
+ *   <div class="os-skeleton" style="--os-skeleton-lines: 3" aria-hidden="true"></div>
+ */
+@layer os.components {
+  .os-callout {
+    display: flex;
+    gap: var(--os-space-3);
+    align-items: start;
+    padding: var(--os-space-3) var(--os-space-4);
+    border: 1px var(--os-border-style) var(--os-tone-border);
+    border-radius: var(--os-radius-md);
+    background: var(--os-tone-soft);
+    color: var(--os-fg-default);
+    font-size: var(--os-text-base);
+
+    & > .os-icon {
+      margin-block-start: 0.125rem;
+      color: var(--os-tone-text);
+    }
+
+    & > :not(.os-icon) {
+      display: grid;
+      flex: 1;
+      gap: var(--os-space-1);
+      min-inline-size: 0;
+    }
+  }
+
+  .os-callout-title {
+    font-weight: var(--os-font-weight-semibold);
+  }
+
+  :where(.os-callout-actions, .os-empty-state-actions):empty {
+    display: none;
+  }
+
+  .os-callout-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    margin-block-start: var(--os-space-1);
+  }
+
+  .os-empty-state {
+    display: grid;
+    gap: var(--os-space-2);
+    justify-items: center;
+    padding: var(--os-space-10) var(--os-space-4);
+    color: var(--os-fg-light);
+    text-align: center;
+
+    & > .os-icon {
+      --os-icon-size: 1.25rem;
+
+      box-sizing: content-box;
+      margin-block-end: var(--os-space-1);
+      padding: var(--os-space-3);
+      border-radius: var(--os-radius-full);
+      background: var(--os-bg-surface-200);
+      color: var(--os-fg-light);
+    }
+
+    & > p {
+      max-inline-size: 36ch;
+    }
+  }
+
+  .os-empty-state[data-bordered] {
+    border: 1px dashed var(--os-border-strong);
+    border-radius: var(--os-radius-lg);
+  }
+
+  .os-empty-state-title {
+    color: var(--os-fg-default);
+    font-size: var(--os-text-md);
+    font-weight: var(--os-font-weight-semibold);
+  }
+
+  .os-empty-state-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    justify-content: center;
+    margin-block-start: var(--os-space-2);
+  }
+
+  .os-kbd {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 1.25rem;
+    block-size: 1.25rem;
+    padding-inline: var(--os-space-1);
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-block-end-width: 2px;
+    border-radius: var(--os-radius-sm);
+    background: var(--os-bg-surface-100);
+    color: var(--os-fg-light);
+    font-family: var(--os-font-mono);
+    font-size: var(--os-text-xs);
+    line-height: 1;
+  }
+
+  /* One bar, or --os-skeleton-lines bars of text. The last line is shorter. */
+  .os-skeleton {
+    --os-skeleton-lines: 1;
+    --os-skeleton-line: 0.75rem;
+    --os-skeleton-gap: 0.625rem;
+
+    display: block;
+    block-size:
+      calc(
+        var(--os-skeleton-lines) * var(--os-skeleton-line) +
+        (var(--os-skeleton-lines) - 1) * var(--os-skeleton-gap)
+      );
+    border-radius: var(--os-radius-sm);
+    background:
+      linear-gradient(
+        90deg,
+        transparent 30%,
+        var(--os-bg-surface-100) 50%,
+        transparent 70%
+      )
+      0 0 / 300% 100%,
+      repeating-linear-gradient(
+        var(--os-bg-surface-300) 0 var(--os-skeleton-line),
+        transparent 0 calc(var(--os-skeleton-line) + var(--os-skeleton-gap))
+      );
+    mask:
+      linear-gradient(currentcolor 0 0) top / 100% calc(100% - var(--os-skeleton-line)) no-repeat,
+      linear-gradient(currentcolor 0 0) bottom left / 60% var(--os-skeleton-line) no-repeat;
+    animation: os-shimmer 1.6s linear infinite;
+  }
+
+  .os-skeleton[data-shape='circle'] {
+    --os-skeleton-line: 2rem;
+
+    flex-shrink: 0;
+    inline-size: var(--os-skeleton-line);
+    border-radius: var(--os-radius-full);
+    mask: none;
+  }
+
+  @keyframes os-shimmer {
+    from {
+      background-position: 100% 0, 0 0;
+    }
+
+    to {
+      background-position: 0 0, 0 0;
+    }
+  }
+}
