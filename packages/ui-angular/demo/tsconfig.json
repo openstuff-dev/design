@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../dist/out-tsc/ui-angular-demo",
+    "rootDir": "..",
+    "types": []
+  },
+  "files": ["main.ts"],
+  "include": ["*.ts"]
+}

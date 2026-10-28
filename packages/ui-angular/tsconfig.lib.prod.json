@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "declarationMap": false,
+    // Build against the published shape of @openstuff-dev/ui (its dist), not its sources.
+    "customConditions": []
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "partial"
+  }
+}

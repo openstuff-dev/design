@@ -3,55 +3,306 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CSS foundation</title>
+    <title>OpenStuff UI</title>
     <link rel="stylesheet" href="./demo.css" />
     <script type="module" src="./demo.ts"></script>
   </head>
   <body>
-    <main>
-      <h1>CSS foundation</h1>
-      <p>Native overlays with the base styles. Add <code>?fallbacks</code> to the URL to run the
-        closedby and interestfor fallbacks in a browser that has them natively.</p>
-      <p id="loaded">Polyfills: …</p>
+    <form class="toolbar" aria-label="Preview settings">
+      <div class="os-segmented" data-size="sm" role="radiogroup" aria-label="Theme">
+        <label><input type="radio" name="theme" value="" checked /> System</label>
+        <label><input type="radio" name="theme" value="light" /> Light</label>
+        <label><input type="radio" name="theme" value="dark" /> Dark</label>
+      </div>
+      <div class="os-segmented" data-size="sm" role="radiogroup" aria-label="Primary colour">
+        <label><input type="radio" name="primary" value="#2d5bff" checked /> Blue</label>
+        <label><input type="radio" name="primary" value="#3ecf8e" /> Green</label>
+        <label><input type="radio" name="primary" value="#facc15" /> Yellow</label>
+      </div>
+      <div class="os-segmented" data-size="sm" role="radiogroup" aria-label="Container width">
+        <label><input type="radio" name="width" value="wide" checked /> Wide</label>
+        <label><input type="radio" name="width" value="narrow" /> Narrow</label>
+      </div>
+      <span id="loaded" class="os-hint"></span>
+    </form>
 
-      <section>
-        <h2>Dialog</h2>
-        <button commandfor="dialog" command="show-modal">Open dialog</button>
-        <dialog id="dialog" closedby="any" aria-labelledby="dialog-title">
-          <div class="dialog-body">
-            <h3 id="dialog-title">Delete draft?</h3>
-            <p>Click outside or press Escape to close.</p>
-            <button commandfor="dialog" command="close">Cancel</button>
+    <div class="stage">
+      <main class="os-page">
+        <nav class="os-breadcrumbs" aria-label="Breadcrumbs">
+          <ol>
+            <li><a href="#">OpenStuff</a></li>
+            <li><a href="#">Design</a></li>
+            <li><span aria-current="page">Components</span></li>
+          </ol>
+        </nav>
+        <header class="os-page-header">
+          <div>
+            <h1 class="os-page-title">Components</h1>
+            <p class="os-page-description">Every @openstuff-dev/ui component, in plain HTML. Change
+              the theme, colour and width above.</p>
           </div>
-        </dialog>
-      </section>
+          <div class="os-page-actions">
+            <button class="os-button" commandfor="palette" command="show-modal">
+              <i data-icon="search"></i> Search <kbd class="os-kbd">⌘K</kbd>
+            </button>
+            <button class="os-button" data-variant="primary"><i data-icon="plus"></i> New project</button>
+          </div>
+        </header>
 
-      <section>
-        <h2>Menu</h2>
-        <button id="menu-button" popovertarget="menu" class="anchor">Actions</button>
-        <div id="menu" popover class="anchored">
-          <button>Rename</button>
-          <button>Duplicate</button>
+        <section class="os-panel" aria-labelledby="buttons">
+          <header class="os-panel-header"><h2 id="buttons">Button</h2></header>
+          <div class="os-panel-body row">
+            <button class="os-button" data-variant="primary">Primary</button>
+            <button class="os-button">Default</button>
+            <button class="os-button" data-variant="ghost">Ghost</button>
+            <button class="os-button" data-variant="danger">Delete</button>
+            <a class="os-button" data-variant="link" href="#">Link</a>
+            <button class="os-button" data-variant="primary" aria-busy="true" aria-disabled="true">Saving</button>
+            <button class="os-button" disabled>Disabled</button>
+            <button class="os-button" data-size="sm"><i data-icon="copy"></i> Small</button>
+            <button class="os-button" data-icon-only aria-label="Settings"><i data-icon="settings"></i></button>
+            <button class="os-button" data-icon-only data-size="sm" data-variant="ghost" aria-label="Close"><i data-icon="x"></i></button>
+          </div>
+        </section>
+
+        <section class="os-panel" aria-labelledby="badges">
+          <header class="os-panel-header"><h2 id="badges">Badge, Chip, StatusDot, Kbd</h2></header>
+          <div class="os-panel-body stack">
+            <div class="row">
+              <span class="os-badge">Draft</span>
+              <span class="os-badge" data-tone="brand">New</span>
+              <span class="os-badge" data-tone="success">Live</span>
+              <span class="os-badge" data-tone="warning">Review</span>
+              <span class="os-badge" data-tone="danger">Failed</span>
+              <span class="os-badge" data-tone="info">Beta</span>
+            </div>
+            <div class="row">
+              <span class="os-chip">web/**</span>
+              <span class="os-chip">server/** <button class="os-chip-remove" aria-label="Remove server/**"><i data-icon="x"></i></button></span>
+              <span class="os-chip" data-tone="brand">Angular</span>
+            </div>
+            <div class="row">
+              <span class="os-status-dot" data-tone="success">Running</span>
+              <span class="os-status-dot" data-tone="warning" data-pulse>Deploying</span>
+              <span class="os-status-dot" data-tone="danger">Stopped</span>
+              <span class="os-status-dot">Unknown</span>
+              <span><kbd class="os-kbd">Ctrl</kbd> <kbd class="os-kbd">K</kbd></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="os-setting-card" aria-labelledby="fields">
+          <header class="os-setting-card-header">
+            <h2 id="fields">Field, Input, Select, Checkbox, Radio, Switch</h2>
+            <p>A setting card with rows. Narrow the container to stack them.</p>
+          </header>
+          <div class="os-setting-row">
+            <div class="os-setting-text"><label for="name">Name</label><p>Shown to your team.</p></div>
+            <div class="os-setting-control">
+              <div class="os-field">
+                <input class="os-input" id="name" placeholder="Design" aria-describedby="name-hint" />
+                <p class="os-hint" id="name-hint">Up to 40 characters.</p>
+              </div>
+            </div>
+          </div>
+          <div class="os-setting-row">
+            <div class="os-setting-text"><label for="slug">Slug</label><p>Used in links.</p></div>
+            <div class="os-setting-control">
+              <div class="os-field">
+                <input class="os-input" id="slug" value="Design!" aria-invalid="true" aria-describedby="slug-error" />
+                <p class="os-error" id="slug-error"><i data-icon="circle-alert"></i> Use lowercase letters, numbers and dashes.</p>
+              </div>
+            </div>
+          </div>
+          <div class="os-setting-row">
+            <div class="os-setting-text"><label for="region">Region</label></div>
+            <div class="os-setting-control">
+              <select class="os-select" id="region">
+                <option>Europe (Frankfurt)</option>
+                <option>United States (Virginia)</option>
+              </select>
+            </div>
+          </div>
+          <div class="os-setting-row">
+            <div class="os-setting-text"><label for="about">About</label></div>
+            <div class="os-setting-control"><textarea class="os-textarea" id="about">Grows with its content.</textarea></div>
+          </div>
+          <div class="os-setting-row">
+            <div class="os-setting-text"><p id="notify">Notifications</p></div>
+            <fieldset class="os-setting-control os-fieldset" aria-labelledby="notify">
+              <label class="os-check"><input class="os-checkbox" type="checkbox" checked /> Reviews</label>
+              <label class="os-check"><input class="os-checkbox" type="checkbox" /> Findings</label>
+              <label class="os-check"><input class="os-checkbox" type="checkbox" disabled /> Billing (admins only)</label>
+            </fieldset>
+          </div>
+          <div class="os-setting-row">
+            <div class="os-setting-text"><p id="visibility">Visibility</p></div>
+            <div class="os-setting-control os-fieldset" role="radiogroup" aria-labelledby="visibility">
+              <label class="os-check"><input class="os-radio" type="radio" name="vis" checked /> Private</label>
+              <label class="os-check"><input class="os-radio" type="radio" name="vis" /> Public</label>
+            </div>
+          </div>
+          <div class="os-setting-row" data-inline>
+            <div class="os-setting-text"><label for="agent">Agent mode</label><p>Shows what agents read.</p></div>
+            <input class="os-switch" id="agent" type="checkbox" role="switch" checked />
+          </div>
+          <div class="os-setting-row" data-inline>
+            <div class="os-setting-text"><p id="view">View</p></div>
+            <div class="os-segmented" role="radiogroup" aria-labelledby="view">
+              <label><input type="radio" name="view" checked /> <i data-icon="list"></i> List</label>
+              <label><input type="radio" name="view" /> <i data-icon="layout-grid"></i> Grid</label>
+              <label><input type="radio" name="view" disabled /> Map</label>
+            </div>
+          </div>
+          <footer class="os-setting-card-footer">
+            <div class="os-form-actions">
+              <span class="os-form-actions-note">Saved 2 minutes ago</span>
+              <button class="os-button">Cancel</button>
+              <button class="os-button" data-variant="primary">Save</button>
+            </div>
+          </footer>
+        </section>
+
+        <section class="os-panel" aria-labelledby="feedback">
+          <header class="os-panel-header"><h2 id="feedback">Callout, EmptyState, Skeleton</h2></header>
+          <div class="os-panel-body stack">
+            <div class="os-callout" data-tone="info" role="note">
+              <i data-icon="info"></i>
+              <div><p class="os-callout-title">Read-only</p><p>You can view this project but not change it.</p></div>
+            </div>
+            <div class="os-callout" data-tone="danger" role="alert">
+              <i data-icon="circle-alert"></i>
+              <div>
+                <p>The server didn't answer.</p>
+                <div class="os-callout-actions"><button class="os-button" data-size="sm">Try again</button></div>
+              </div>
+            </div>
+            <div class="os-callout" data-tone="success"><i data-icon="check"></i><div><p>Saved.</p></div></div>
+            <div class="os-empty-state" data-bordered>
+              <i data-icon="inbox"></i>
+              <h3 class="os-empty-state-title">No proposals yet</h3>
+              <p>When an agent suggests a rule, it shows up here for you to review.</p>
+              <div class="os-empty-state-actions"><button class="os-button" data-variant="primary">Write one</button></div>
+            </div>
+            <div class="row" aria-busy="true" aria-label="Loading">
+              <div class="os-skeleton" data-shape="circle" aria-hidden="true"></div>
+              <div class="os-skeleton grow" style="--os-skeleton-lines: 3" aria-hidden="true"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="os-panel" aria-labelledby="overlays">
+          <header class="os-panel-header"><h2 id="overlays">Dialog, Drawer, Popover, Menu, Tooltip, Toast</h2></header>
+          <div class="os-panel-body row">
+            <button class="os-button" commandfor="confirm" command="show-modal">Confirm dialog</button>
+            <button class="os-button" commandfor="drawer" command="show-modal">Drawer</button>
+            <button class="os-button" popovertarget="popover" data-anchor="popover">Popover</button>
+            <button class="os-button" popovertarget="menu" aria-haspopup="menu" data-anchor="menu">
+              Actions <i data-icon="chevron-down"></i>
+            </button>
+            <button class="os-button" data-icon-only aria-label="Copy link" interestfor="tip" aria-describedby="tip" data-anchor="tip"><i data-icon="link"></i></button>
+            <button class="os-button" id="toast-button">Show a toast</button>
+          </div>
+        </section>
+
+        <section class="os-panel" aria-labelledby="tabs-title">
+          <header class="os-panel-header"><h2 id="tabs-title">Tabs</h2></header>
+          <div class="os-panel-body os-tabs">
+            <div class="os-tab-list" role="tablist" aria-label="Project">
+              <button class="os-tab" role="tab" aria-selected="true" aria-controls="tab-1" id="t1">Overview</button>
+              <button class="os-tab" role="tab" aria-selected="false" aria-controls="tab-2" id="t2" tabindex="-1">Rules <span class="os-badge">12</span></button>
+              <button class="os-tab" role="tab" aria-selected="false" id="t3" tabindex="-1" aria-disabled="true">Billing</button>
+            </div>
+            <div class="os-tab-panel" role="tabpanel" id="tab-1" aria-labelledby="t1">
+              <div class="os-stat-grid">
+                <div class="os-stat-tile"><span class="os-stat-label">Requests today</span><span class="os-stat-value">1,284</span><span class="os-stat-hint" data-tone="success">+12% on yesterday</span></div>
+                <div class="os-stat-tile"><span class="os-stat-label">Open findings</span><span class="os-stat-value">6</span><span class="os-stat-hint" data-tone="warning">2 need a decision</span></div>
+                <div class="os-stat-tile"><span class="os-stat-label">Rules</span><span class="os-stat-value">48</span><span class="os-stat-hint">Across 3 repositories</span></div>
+              </div>
+            </div>
+            <div class="os-tab-panel" role="tabpanel" id="tab-2" aria-labelledby="t2" hidden>Rules</div>
+          </div>
+        </section>
+
+        <section class="os-panel" aria-labelledby="table-title">
+          <header class="os-panel-header">
+            <div><h2 id="table-title">DataTable</h2><p>Stacks into rows in a narrow container.</p></div>
+            <button class="os-button" data-size="sm">Export</button>
+          </header>
+          <div class="os-panel-body" data-flush>
+            <div class="os-data-table">
+              <table role="table" aria-labelledby="table-title">
+                <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Project</th><th role="columnheader" scope="col">Status</th><th role="columnheader" scope="col">Owner</th><th role="columnheader" scope="col" data-align="end">Rules</th></tr></thead>
+                <tbody role="rowgroup">
+                  <tr role="row"><td role="cell" data-label="Project"><a href="#">Design</a><span class="os-cell-sub">openstuff/design</span></td><td role="cell" data-label="Status"><span class="os-status-dot" data-tone="success">Active</span></td><td role="cell" data-label="Owner">Kim</td><td role="cell" data-label="Rules" data-align="end">12</td></tr>
+                  <tr role="row"><td role="cell" data-label="Project"><a href="#">OpenPurpose</a><span class="os-cell-sub">openstuff/open-purpose</span></td><td role="cell" data-label="Status"><span class="os-status-dot" data-tone="warning">Review</span></td><td role="cell" data-label="Owner">Alex</td><td role="cell" data-label="Rules" data-align="end">36</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <div class="os-card-grid">
+          <a class="os-card" href="#"><h3>Card link</h3><p>The whole card is one link.</p></a>
+          <div class="os-card"><h3>Card</h3><p>A plain card for grouped content.</p></div>
         </div>
-      </section>
+      </main>
+    </div>
 
-      <section>
-        <h2>Tooltip</h2>
-        <button interestfor="tip" aria-describedby="tip">Save</button>
-        <div id="tip" popover="hint" class="tooltip">Saves a draft</div>
-      </section>
+    <dialog class="os-dialog" id="confirm" data-size="sm" closedby="any" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <header class="os-dialog-header"><h2 id="confirm-title">Delete draft?</h2></header>
+      <div class="os-dialog-body"><p id="confirm-text">The draft and its comments are deleted. You can't undo this.</p></div>
+      <footer class="os-dialog-footer">
+        <button class="os-button" commandfor="confirm" command="close" autofocus>Cancel</button>
+        <button class="os-button" data-variant="danger" commandfor="confirm" command="close">Delete</button>
+      </footer>
+    </dialog>
 
-      <section>
-        <h2>Disclosure</h2>
-        <details name="faq"><summary>First</summary><p>Only one opens at a time.</p></details>
-        <details name="faq"><summary>Second</summary><p>Opening this closes the first.</p></details>
-      </section>
+    <dialog class="os-drawer" id="drawer" closedby="any" aria-labelledby="drawer-title">
+      <header class="os-dialog-header">
+        <div><h2 id="drawer-title">Finding</h2><p>Reported by an agent</p></div>
+        <button class="os-button" data-icon-only data-variant="ghost" aria-label="Close" commandfor="drawer" command="close"><i data-icon="x"></i></button>
+      </header>
+      <div class="os-dialog-body">
+        <p>Buttons are 118 hand-written class combinations.</p>
+        <div class="os-field"><label class="os-label" for="note">Note</label><textarea class="os-textarea" id="note"></textarea></div>
+      </div>
+      <footer class="os-dialog-footer"><button class="os-button" data-variant="primary" commandfor="drawer" command="close">Done</button></footer>
+    </dialog>
 
-      <section>
-        <h2>Native controls</h2>
-        <label><input type="checkbox" checked /> Accent colour</label>
-        <input type="range" aria-label="Range" />
-      </section>
-    </main>
+    <div class="os-popover" id="popover" popover aria-label="Share">
+      <div class="stack"><p>Anyone with the link can view.</p><input class="os-input" aria-label="Link" value="https://openstuff.dev/p/1" readonly /></div>
+    </div>
+
+    <div class="os-menu" id="menu" popover role="menu" aria-label="Actions">
+      <div class="os-menu-label">Project</div>
+      <button class="os-menu-item" role="menuitem"><i data-icon="pencil"></i> Rename <kbd class="os-kbd">R</kbd></button>
+      <button class="os-menu-item" role="menuitem"><i data-icon="copy"></i> Duplicate</button>
+      <hr class="os-menu-separator" />
+      <button class="os-menu-item" role="menuitem" data-tone="danger"><i data-icon="trash-2"></i> Delete</button>
+    </div>
+
+    <div class="os-tooltip" id="tip" popover="hint">Copy link</div>
+
+    <dialog class="os-command-palette" id="palette" closedby="any" aria-label="Commands">
+      <div class="os-command-search">
+        <i data-icon="search"></i>
+        <input role="combobox" aria-expanded="true" aria-controls="commands" aria-activedescendant="c1" aria-label="Search commands" placeholder="Search pages and actions" />
+        <kbd class="os-kbd">Esc</kbd>
+      </div>
+      <div class="os-command-list" role="listbox" id="commands" aria-label="Commands">
+        <div class="os-command-group" role="group" aria-labelledby="g1">
+          <div class="os-command-group-label" id="g1">Pages</div>
+          <div class="os-command-item" role="option" id="c1" aria-selected="true"><i data-icon="inbox"></i> Inbox <span class="os-command-hint">G I</span></div>
+          <div class="os-command-item" role="option" id="c2"><i data-icon="bug"></i> Findings</div>
+        </div>
+        <div class="os-command-group" role="group" aria-labelledby="g2">
+          <div class="os-command-group-label" id="g2">Actions</div>
+          <div class="os-command-item" role="option" id="c3"><i data-icon="plus"></i> New project</div>
+        </div>
+      </div>
+    </dialog>
+
+    <div class="os-toast-region" id="toasts" popover="manual"></div>
   </body>
 </html>

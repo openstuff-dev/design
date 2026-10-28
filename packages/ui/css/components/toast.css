@@ -1,0 +1,66 @@
+/*
+ * Toast: short messages in a corner, in a manual popover so they sit above dialogs too.
+ *
+ *   <div class="os-toast-region" popover="manual">
+ *     <div class="os-toast" data-tone="success" role="status">
+ *       <p class="os-toast-message">Saved</p>
+ *       <button class="os-button" data-size="sm" data-variant="ghost">Undo</button>
+ *     </div>
+ *   </div>
+ *
+ * Use role="alert" only for errors that need attention now.
+ */
+@layer os.components {
+  .os-toast-region {
+    position: fixed;
+    inset: auto var(--os-space-4) var(--os-space-4) auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--os-space-2);
+    inline-size: min(24rem, 100% - 2 * var(--os-space-8));
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    opacity: 1;
+    pointer-events: none;
+
+    &:dir(rtl) {
+      inset-inline: var(--os-space-4) auto;
+    }
+  }
+
+  .os-toast {
+    display: flex;
+    gap: var(--os-space-3);
+    align-items: center;
+    padding: var(--os-space-3) var(--os-space-3) var(--os-space-3) var(--os-space-4);
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-inline-start: 3px solid var(--os-tone-default);
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-overlay);
+    color: var(--os-fg-default);
+    box-shadow: var(--os-shadow-pop);
+    pointer-events: auto;
+    transition:
+      opacity var(--os-duration-normal) var(--os-ease-enter),
+      translate var(--os-duration-normal) var(--os-ease-enter);
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 var(--os-space-2);
+    }
+
+    & > .os-icon {
+      color: var(--os-tone-text);
+    }
+  }
+
+  .os-toast-message {
+    flex: 1;
+    min-inline-size: 0;
+    font-size: var(--os-text-base);
+  }
+}

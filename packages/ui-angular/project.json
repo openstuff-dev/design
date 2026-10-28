@@ -1,0 +1,88 @@
+{
+  "name": "ui-angular",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ui-angular/src",
+  "prefix": "os",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": [
+        "{projectRoot}",
+        "dist/{projectRoot}"
+      ]
+    }
+  },
+  "tags": [
+    "type:package"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "project": "packages/ui-angular/ng-package.json",
+        "tsConfig": "packages/ui-angular/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/ui-angular/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "watch": false,
+        "setupFiles": [
+          "packages/ui-angular/src/test-setup.ts"
+        ]
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "ngc -p tsconfig.lib.json --noEmit && ngc -p tsconfig.spec.json --noEmit"
+      },
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^production"
+      ]
+    },
+    "build-demo": {
+      "executor": "@angular/build:application",
+      "options": {
+        "outputPath": "dist/packages/ui-angular-demo",
+        "browser": "packages/ui-angular/demo/main.ts",
+        "index": "packages/ui-angular/demo/index.html",
+        "tsConfig": "packages/ui-angular/demo/tsconfig.json",
+        "styles": [
+          "packages/ui-angular/demo/styles.css"
+        ],
+        "optimization": false,
+        "sourceMap": true
+      }
+    },
+    "demo": {
+      "executor": "@angular/build:dev-server",
+      "options": {
+        "buildTarget": "ui-angular:build-demo",
+        "port": 5200
+      },
+      "continuous": true
+    }
+  }
+}

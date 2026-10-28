@@ -1,0 +1,129 @@
+/*
+ * SettingCard, SettingRow and FormActions: the settings-page layout. A row puts its label on
+ * the left and its control on the right, and stacks them when the card is narrow.
+ *
+ *   <section class="os-setting-card" aria-labelledby="h">
+ *     <header class="os-setting-card-header"><h2 id="h">Profile</h2><p>…</p></header>
+ *     <div class="os-setting-row">
+ *       <div class="os-setting-text"><label for="n">Name</label><p id="n-hint">…</p></div>
+ *       <div class="os-setting-control"><input class="os-input" id="n" …></div>
+ *     </div>
+ *     <footer class="os-setting-card-footer"><div class="os-form-actions">…</div></footer>
+ *   </section>
+ */
+@layer os.components {
+  .os-setting-card {
+    min-inline-size: 0;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-lg);
+    background: var(--os-bg-surface-100);
+    container-type: inline-size;
+  }
+
+  .os-setting-card[data-tone='danger'] {
+    border-color: var(--os-danger-border);
+  }
+
+  .os-setting-card-header {
+    display: grid;
+    gap: var(--os-space-1);
+    padding: var(--os-space-4) var(--os-space-5);
+    border-block-end: 1px var(--os-border-style) var(--os-border-default);
+
+    & :where(h2, h3) {
+      font-size: var(--os-text-md);
+    }
+
+    & :where(p) {
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
+    }
+  }
+
+  .os-setting-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--os-space-2) var(--os-space-6);
+    align-items: start;
+    padding: var(--os-space-4) var(--os-space-5);
+
+    & + & {
+      border-block-start: 1px var(--os-border-style) var(--os-border-default);
+    }
+  }
+
+  /* A switch or a single button sits at the end of the row instead of filling it. */
+  .os-setting-row[data-inline] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .os-setting-text {
+    display: grid;
+    gap: var(--os-space-1);
+
+    & > :where(label, h3, p:first-child) {
+      color: var(--os-fg-default);
+      font-size: var(--os-text-base);
+      font-weight: var(--os-font-weight-medium);
+    }
+
+    & > :where(p:not(:first-child)) {
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
+    }
+  }
+
+  .os-setting-control {
+    display: grid;
+    gap: var(--os-space-2);
+    min-inline-size: 0;
+  }
+
+  .os-setting-card-footer {
+    padding: var(--os-space-3) var(--os-space-5);
+    border-block-start: 1px var(--os-border-style) var(--os-border-default);
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+    background: var(--os-bg-surface-200);
+  }
+
+  @container (inline-size < 36rem) {
+    .os-setting-card-header,
+    .os-setting-row,
+    .os-setting-card-footer {
+      padding-inline: var(--os-space-4);
+    }
+
+    .os-setting-row:not([data-inline]) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .os-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  /* Text next to the buttons, such as "Saved 2 minutes ago", goes at the start. */
+  .os-form-actions-note {
+    margin-inline-end: auto;
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+  }
+
+  @container (inline-size < 24rem) {
+    .os-form-actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+
+      & > .os-form-actions-note {
+        margin-inline-end: 0;
+        text-align: center;
+      }
+    }
+  }
+}

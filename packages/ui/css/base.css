@@ -7,10 +7,14 @@
     background: var(--os-bg-default);
     color: var(--os-fg-default);
     font-family: var(--os-font-sans);
-    font-size: var(--os-text-base);
     line-height: var(--os-leading-normal);
     accent-color: var(--os-brand-default);
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* On body, not :root, so 1rem stays the browser's 16px and rem tokens keep their size. */
+  body {
+    font-size: var(--os-text-base);
   }
 
   /* Components read this with @container style(--os-density: compact). */

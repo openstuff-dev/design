@@ -1,0 +1,101 @@
+/*
+ * CommandPalette: a modal <dialog> with a search box (role="combobox") and a listbox of
+ * commands. The active option has aria-selected="true" or data-active="true".
+ *
+ *   <dialog class="os-command-palette" closedby="any" aria-label="Commands">
+ *     <div class="os-command-search"><svg class="os-icon">…</svg><input role="combobox" …></div>
+ *     <div class="os-command-list" role="listbox" id="list">
+ *       <div class="os-command-group" role="group" aria-labelledby="g1">
+ *         <div class="os-command-group-label" id="g1">Pages</div>
+ *         <div class="os-command-item" role="option" id="o1">Inbox</div>
+ *       </div>
+ *     </div>
+ *   </dialog>
+ */
+@layer os.components {
+  .os-command-palette {
+    inline-size: min(36rem, 100% - 2 * var(--os-space-4));
+    max-block-size: min(28rem, 100dvh - 2 * var(--os-space-8));
+    margin-block-start: min(15dvh, 8rem);
+    overflow: hidden;
+
+    &[open] {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .os-command-search {
+    display: flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    padding-inline: var(--os-space-4);
+    border-block-end: 1px var(--os-border-style) var(--os-border-default);
+    color: var(--os-fg-lighter);
+
+    & > input {
+      flex: 1;
+      min-inline-size: 0;
+      block-size: 3rem;
+      border: 0;
+      background: transparent;
+      color: var(--os-fg-default);
+      font-size: var(--os-text-md);
+      outline: none;
+    }
+
+    & > input::placeholder {
+      color: var(--os-fg-lighter);
+    }
+  }
+
+  .os-command-list {
+    flex: 1;
+    padding: var(--os-space-2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: var(--os-space-2);
+  }
+
+  .os-command-group + .os-command-group {
+    margin-block-start: var(--os-space-2);
+  }
+
+  .os-command-group-label {
+    padding: var(--os-space-1) var(--os-space-2);
+    color: var(--os-fg-lighter);
+    font-size: var(--os-text-xs);
+    font-weight: var(--os-font-weight-medium);
+  }
+
+  .os-command-item {
+    display: flex;
+    gap: var(--os-space-3);
+    align-items: center;
+    min-block-size: 2.25rem;
+    padding: var(--os-space-1) var(--os-space-2);
+    border-radius: var(--os-radius-sm);
+    color: var(--os-fg-default);
+    cursor: pointer;
+
+    &:is([aria-selected='true'], [data-active='true']) {
+      background: var(--os-bg-hover);
+    }
+
+    & > .os-icon {
+      color: var(--os-fg-light);
+    }
+  }
+
+  .os-command-hint {
+    margin-inline-start: auto;
+    color: var(--os-fg-lighter);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-command-empty {
+    padding: var(--os-space-8) var(--os-space-4);
+    color: var(--os-fg-light);
+    text-align: center;
+  }
+}

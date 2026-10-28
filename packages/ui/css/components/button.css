@@ -1,0 +1,144 @@
+/*
+ * Button, IconButton and LinkButton. Works on <button> and <a>:
+ *
+ *   <button class="os-button" data-variant="primary">Save</button>
+ *   <button class="os-button" data-icon-only aria-label="Close">…svg…</button>
+ *   <a class="os-button" data-variant="link" href="/docs">Docs</a>
+ *
+ * data-variant: primary, default (the default), ghost, danger, link. data-size: sm, md.
+ * aria-busy="true" shows a spinner and keeps the width.
+ */
+@layer os.components {
+  .os-button {
+    --os-button-height: 2.125rem;
+    --os-button-bg: var(--os-bg-control);
+    --os-button-bg-hover: var(--os-bg-hover);
+    --os-button-fg: var(--os-fg-default);
+    --os-button-border: var(--os-border-control);
+
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: var(--os-space-2);
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--os-button-height);
+    padding-inline: var(--os-space-3);
+    border: 1px var(--os-border-style) var(--os-button-border);
+    border-radius: var(--os-radius-md);
+    background: var(--os-button-bg);
+    color: var(--os-button-fg);
+    font-size: var(--os-text-base);
+    font-weight: var(--os-font-weight-medium);
+    line-height: var(--os-leading-tight);
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--os-duration-fast) var(--os-ease-standard),
+      border-color var(--os-duration-fast) var(--os-ease-standard),
+      color var(--os-duration-fast) var(--os-ease-standard);
+
+    &:hover {
+      background: var(--os-button-bg-hover);
+    }
+
+    &:active {
+      translate: 0 0.5px;
+    }
+
+    &:is(:disabled, [aria-disabled='true']) {
+      opacity: 0.55;
+      cursor: not-allowed;
+      translate: none;
+    }
+
+    &:is(:disabled, [aria-disabled='true']):hover {
+      background: var(--os-button-bg);
+    }
+
+    & :where(svg) {
+      flex-shrink: 0;
+      inline-size: 1rem;
+      block-size: 1rem;
+    }
+  }
+
+  .os-button[data-size='sm'] {
+    --os-button-height: 1.75rem;
+
+    gap: var(--os-space-1);
+    padding-inline: var(--os-space-2);
+    border-radius: var(--os-radius-sm);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-button[data-variant='primary'] {
+    --os-button-bg: var(--os-brand-default);
+    --os-button-bg-hover: var(--os-brand-hover);
+    --os-button-fg: var(--os-brand-ink);
+    --os-button-border: var(--os-brand-border);
+  }
+
+  .os-button[data-variant='danger'] {
+    --os-button-bg: var(--os-danger-default);
+    --os-button-bg-hover: var(--os-danger-hover);
+    --os-button-fg: var(--os-danger-ink);
+    --os-button-border: var(--os-danger-border);
+  }
+
+  .os-button[data-variant='ghost'] {
+    --os-button-bg: transparent;
+    --os-button-border: transparent;
+  }
+
+  .os-button[data-variant='link'] {
+    --os-button-bg: transparent;
+    --os-button-bg-hover: transparent;
+    --os-button-fg: var(--os-brand-text);
+    --os-button-border: transparent;
+
+    min-block-size: auto;
+    padding-inline: 0;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.2em;
+
+    &:hover {
+      text-decoration-color: currentcolor;
+    }
+  }
+
+  /* IconButton: square, and the label lives in aria-label. */
+  .os-button[data-icon-only] {
+    inline-size: var(--os-button-height);
+    padding-inline: 0;
+  }
+
+  /* Loading: the label goes transparent, so the width stays, and a spinner sits on top. */
+  .os-button[aria-busy='true'] {
+    position: relative;
+    color: transparent;
+    cursor: progress;
+
+    &::after {
+      position: absolute;
+      inset: 0;
+      inline-size: 1rem;
+      block-size: 1rem;
+      margin: auto;
+      border: 2px solid var(--os-button-fg);
+      border-inline-end-color: transparent;
+      border-radius: var(--os-radius-full);
+      content: '';
+      animation: os-spin 0.7s linear infinite;
+    }
+  }
+
+  @keyframes os-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+}

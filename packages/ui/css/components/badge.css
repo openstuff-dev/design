@@ -1,0 +1,98 @@
+/*
+ * Badge, Chip and StatusDot.
+ *
+ *   <span class="os-badge" data-tone="success">Live</span>
+ *   <span class="os-chip">
+ *     web/** <button class="os-chip-remove" aria-label="Remove web/**">×</button>
+ *   </span>
+ *   <span class="os-status-dot" data-tone="danger">Failed</span>
+ *
+ * A status dot always has text next to it: the colour alone doesn't say anything.
+ */
+@layer os.components {
+  .os-badge {
+    display: inline-flex;
+    gap: var(--os-space-1);
+    align-items: center;
+    padding: 0.0625rem var(--os-space-2);
+    border: 1px var(--os-border-style) var(--os-tone-border);
+    border-radius: var(--os-radius-full);
+    background: var(--os-tone-soft);
+    color: var(--os-tone-text);
+    font-size: var(--os-text-xs);
+    font-weight: var(--os-font-weight-medium);
+    line-height: var(--os-leading-snug);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .os-chip {
+    display: inline-flex;
+    gap: var(--os-space-1);
+    align-items: center;
+    min-block-size: 1.625rem;
+    padding-inline: var(--os-space-2);
+    border: 1px var(--os-border-style) var(--os-tone-border);
+    border-radius: var(--os-radius-full);
+    background: var(--os-tone-soft);
+    color: var(--os-fg-default);
+    font-size: var(--os-text-sm);
+    line-height: var(--os-leading-tight);
+    max-inline-size: 100%;
+    vertical-align: middle;
+
+    &:has(.os-chip-remove) {
+      padding-inline-end: var(--os-space-1);
+    }
+  }
+
+  .os-chip-remove {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--os-radius-full);
+    background: transparent;
+    color: var(--os-fg-light);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--os-bg-hover);
+      color: var(--os-fg-default);
+    }
+
+    & :where(svg) {
+      inline-size: 0.75rem;
+      block-size: 0.75rem;
+    }
+  }
+
+  .os-status-dot {
+    display: inline-flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+
+    &::before {
+      flex-shrink: 0;
+      inline-size: 0.5rem;
+      block-size: 0.5rem;
+      border-radius: var(--os-radius-full);
+      background: var(--os-tone-default);
+      content: '';
+    }
+  }
+
+  .os-status-dot[data-pulse]::before {
+    animation: os-pulse 1.6s var(--os-ease-standard) infinite;
+  }
+
+  @keyframes os-pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+}

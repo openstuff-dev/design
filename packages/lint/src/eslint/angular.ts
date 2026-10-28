@@ -31,6 +31,8 @@ const config: Linter.Config[] = [
       '@angular-eslint/no-uncalled-signals': 'error',
       '@angular-eslint/use-component-view-encapsulation': 'error',
       '@openstuff-dev/format-inline-templates': 'error',
+      // A directive that only adds host attributes is an empty class with a decorator.
+      '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       'no-restricted-syntax': [
         'error',
         {

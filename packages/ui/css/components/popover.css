@@ -1,0 +1,133 @@
+/*
+ * Popover, Menu and Tooltip, on the Popover API. Each is anchored to the element that opens it
+ * with CSS anchor positioning (polyfilled where missing); anchor() in @openstuff-dev/ui links
+ * the two.
+ *
+ *   <button popovertarget="m" aria-haspopup="menu">Actions</button>
+ *   <div id="m" class="os-menu" popover role="menu">
+ *     <button class="os-menu-item" role="menuitem">Rename</button>
+ *   </div>
+ *
+ *   <button interestfor="tip" aria-describedby="tip">Save</button>
+ *   <div id="tip" class="os-tooltip" popover="hint">Saves a draft</div>
+ *
+ * data-placement: bottom (the default), top, start, end. It flips when there's no room.
+ */
+@layer os.components {
+  .os-popover,
+  .os-menu,
+  .os-tooltip {
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    margin: var(--os-space-1) 0 0;
+  }
+
+  :is(.os-popover, .os-menu, .os-tooltip)[data-placement='top'] {
+    position-area: block-start span-inline-end;
+    margin: 0 0 var(--os-space-1);
+  }
+
+  :is(.os-popover, .os-menu, .os-tooltip)[data-placement='start'] {
+    position-area: inline-start span-block-end;
+    margin: 0 var(--os-space-1) 0 0;
+  }
+
+  :is(.os-popover, .os-menu, .os-tooltip)[data-placement='end'] {
+    position-area: inline-end span-block-end;
+    margin: 0 0 0 var(--os-space-1);
+  }
+
+  .os-popover {
+    inline-size: max-content;
+    max-inline-size: min(22rem, 100vw - 2 * var(--os-space-4));
+    padding: var(--os-space-4);
+  }
+
+  .os-menu {
+    display: none;
+    flex-direction: column;
+    min-inline-size: 11rem;
+    max-inline-size: min(20rem, 100vw - 2 * var(--os-space-4));
+    max-block-size: min(24rem, 100dvh - 2 * var(--os-space-4));
+    padding: var(--os-space-1);
+    overflow-y: auto;
+    border-radius: var(--os-radius-md);
+
+    /* stylelint-disable-next-line selector-class-pattern -- the popover polyfill's class */
+    &:is(:popover-open, .\:popover-open) {
+      display: flex;
+    }
+  }
+
+  .os-menu-item {
+    display: flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    inline-size: 100%;
+    min-block-size: 2rem;
+    padding: var(--os-space-1) var(--os-space-2);
+    border: 0;
+    border-radius: var(--os-radius-sm);
+    background: transparent;
+    color: var(--os-fg-default);
+    font-size: var(--os-text-base);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:is(:hover, :focus-visible, [data-active='true']) {
+      background: var(--os-bg-hover);
+      outline: none;
+    }
+
+    &:is(:disabled, [aria-disabled='true']) {
+      color: var(--os-fg-muted);
+      cursor: not-allowed;
+    }
+
+    & > .os-icon {
+      color: var(--os-fg-light);
+    }
+
+    & > .os-kbd {
+      margin-inline-start: auto;
+    }
+  }
+
+  .os-menu-item[data-tone='danger'] {
+    color: var(--os-danger-text);
+
+    & > .os-icon {
+      color: inherit;
+    }
+  }
+
+  .os-menu-label {
+    padding: var(--os-space-2) var(--os-space-2) var(--os-space-1);
+    color: var(--os-fg-lighter);
+    font-size: var(--os-text-xs);
+    font-weight: var(--os-font-weight-medium);
+  }
+
+  .os-menu-separator {
+    block-size: 1px;
+    margin: var(--os-space-1) calc(-1 * var(--os-space-1));
+    border: 0;
+    background: var(--os-border-default);
+  }
+
+  .os-tooltip {
+    max-inline-size: min(18rem, 100vw - 2 * var(--os-space-4));
+    padding: var(--os-space-1) var(--os-space-2);
+    border-radius: var(--os-radius-sm);
+    box-shadow: var(--os-shadow-md);
+    font-size: var(--os-text-xs);
+    line-height: var(--os-leading-snug);
+    pointer-events: none;
+  }
+
+  .os-tooltip:not([data-placement]) {
+    position-area: block-start;
+    margin: 0 0 var(--os-space-1);
+  }
+}

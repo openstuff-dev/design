@@ -1,0 +1,75 @@
+/*
+ * SegmentedControl: native radios in a row, so arrow keys and forms work without script.
+ *
+ *   <div class="os-segmented" role="radiogroup" aria-label="View">
+ *     <label><input type="radio" name="view" value="list" checked /> List</label>
+ *     <label><input type="radio" name="view" value="grid" /> Grid</label>
+ *   </div>
+ */
+@layer os.components {
+  .os-segmented {
+    display: inline-flex;
+    gap: 0.125rem;
+    max-inline-size: 100%;
+    padding: 0.125rem;
+    overflow-x: auto;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-surface-200);
+
+    & > label {
+      position: relative;
+      display: inline-flex;
+      flex: 1 0 auto;
+      gap: var(--os-space-1);
+      align-items: center;
+      justify-content: center;
+      min-block-size: 1.75rem;
+      padding-inline: var(--os-space-3);
+      border-radius: var(--os-radius-sm);
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
+      font-weight: var(--os-font-weight-medium);
+      white-space: nowrap;
+      cursor: pointer;
+      transition:
+        background-color var(--os-duration-fast) var(--os-ease-standard),
+        color var(--os-duration-fast) var(--os-ease-standard);
+    }
+
+    & > label:hover {
+      color: var(--os-fg-default);
+    }
+
+    & > label:has(:checked) {
+      background: var(--os-bg-default);
+      color: var(--os-fg-default);
+      box-shadow: var(--os-shadow-xs);
+    }
+
+    & > label:has(:focus-visible) {
+      outline: 2px solid var(--os-focus-ring);
+      outline-offset: 1px;
+    }
+
+    & > label:has(:disabled) {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* The radio stays focusable and in the form; only its circle is hidden. */
+    & input {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .os-segmented[data-size='sm'] > label {
+    min-block-size: 1.5rem;
+    padding-inline: var(--os-space-2);
+    font-size: var(--os-text-xs);
+  }
+}

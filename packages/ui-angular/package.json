@@ -1,0 +1,25 @@
+{
+  "name": "@openstuff-dev/ui-angular",
+  "version": "0.0.1",
+  "description": "Angular components for the OpenStuff design system, on top of @openstuff-dev/ui",
+  "peerDependencies": {
+    "@angular/aria": "^22.2.0",
+    "@angular/cdk": "^22.2.0",
+    "@angular/common": "^22.2.0",
+    "@angular/core": "^22.2.0"
+  },
+  "dependencies": {
+    "@openstuff-dev/ui": "0.0.1",
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openstuff-dev/design.git",
+    "directory": "packages/ui-angular"
+  },
+  "license": "MIT"
+}

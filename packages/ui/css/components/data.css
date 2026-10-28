@@ -1,0 +1,162 @@
+/*
+ * DataTable and StatTile.
+ *
+ *   <div class="os-data-table">
+ *     <table>
+ *       <caption class="os-visually-hidden">Projects</caption>
+ *       <thead><tr><th scope="col">Name</th><th scope="col">Owner</th></tr></thead>
+ *       <tbody><tr><td data-label="Name">Design</td><td data-label="Owner">Kim</td></tr></tbody>
+ *     </table>
+ *   </div>
+ *
+ * In a container narrower than 36rem each row becomes a stacked block, and data-label on each
+ * cell names its column. Give the table, rows and cells explicit roles (as the Angular
+ * DataTable does) so screen readers still read a table once the display changes.
+ */
+@layer os.components {
+  .os-data-table {
+    display: block;
+    inline-size: 100%;
+    overflow-x: auto;
+    container-type: inline-size;
+
+    & > table {
+      inline-size: 100%;
+      font-size: var(--os-text-base);
+      font-variant-numeric: tabular-nums;
+    }
+
+    & :where(th, td) {
+      padding: var(--os-space-2) var(--os-space-4);
+      border-block-end: 1px var(--os-border-style) var(--os-border-default);
+      text-align: start;
+      vertical-align: middle;
+    }
+
+    & :where(th) {
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
+      font-weight: var(--os-font-weight-medium);
+      white-space: nowrap;
+    }
+
+    & :where(tbody tr:last-child) > * {
+      border-block-end: 0;
+    }
+
+    & :where(tbody tr):has(a, button):hover {
+      background: var(--os-bg-hover);
+    }
+
+    & :where([data-align='end']) {
+      text-align: end;
+    }
+
+    & :where([aria-sort]) {
+      cursor: pointer;
+    }
+  }
+
+  /* A cell with a main line and a quieter second line. */
+  .os-cell-sub {
+    display: block;
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-data-table-empty {
+    padding: var(--os-space-8) var(--os-space-4);
+    color: var(--os-fg-light);
+    text-align: center;
+  }
+
+  @container (inline-size < 36rem) {
+    .os-data-table {
+      & > table,
+      & tbody,
+      & tr,
+      & td {
+        display: block;
+      }
+
+      & thead {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+
+      & tbody > tr {
+        display: grid;
+        gap: var(--os-space-1);
+        padding: var(--os-space-3) var(--os-space-4);
+        border-block-end: 1px var(--os-border-style) var(--os-border-default);
+      }
+
+      & tbody > tr:last-child {
+        border-block-end: 0;
+      }
+
+      & td {
+        display: grid;
+        grid-template-columns: minmax(6rem, 35%) minmax(0, 1fr);
+        gap: var(--os-space-3);
+        padding: 0;
+        border: 0;
+        text-align: start;
+      }
+
+      & td[data-label]::before {
+        color: var(--os-fg-light);
+        font-size: var(--os-text-sm);
+        content: attr(data-label);
+      }
+
+      /* The first cell is the row's title, so it needs no label. */
+      & td:first-child {
+        display: block;
+        font-weight: var(--os-font-weight-medium);
+      }
+
+      & td:first-child::before {
+        content: none;
+      }
+    }
+  }
+
+  .os-stat-tile {
+    display: grid;
+    gap: var(--os-space-1);
+    align-content: start;
+    min-inline-size: 0;
+    padding: var(--os-space-4);
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-lg);
+    background: var(--os-bg-surface-100);
+  }
+
+  .os-stat-label {
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-stat-value {
+    color: var(--os-fg-default);
+    font-size: var(--os-text-xl);
+    font-weight: var(--os-font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--os-leading-tight);
+  }
+
+  .os-stat-hint {
+    color: var(--os-tone-text);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+    gap: var(--os-space-4);
+  }
+}

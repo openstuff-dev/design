@@ -50,3 +50,7 @@ Thumbs.db
 .nx/migrate-runs
 vitest.config.*.timestamp*
 .vitest
+
+.angular
+
+__screenshots__/
