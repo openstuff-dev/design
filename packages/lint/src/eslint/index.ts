@@ -61,6 +61,11 @@ const config: Linter.Config[] = [
           { argsIgnorePattern: '^_', varsIgnorePattern: '^_', ignoreRestSiblings: true },
         ],
         '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
+        // `name || fallback` on a string is meant to treat a blank string as missing.
+        '@typescript-eslint/prefer-nullish-coalescing': [
+          'error',
+          { ignorePrimitives: { string: true } },
+        ],
       },
     },
     {
@@ -87,7 +92,8 @@ const config: Linter.Config[] = [
           ignoreRegExpLiterals: true,
         },
       ],
-      '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
+      // Template literals stay: Prettier keeps them, and Angular templates use them.
+      '@stylistic/quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: 'always' }],
       '@stylistic/operator-linebreak': [
         'error',
         'after',

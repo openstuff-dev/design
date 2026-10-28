@@ -4,6 +4,8 @@ import {
   Component,
   computed,
   Directive,
+  ElementRef,
+  inject,
   input,
   numberAttribute,
 } from '@angular/core';
@@ -13,7 +15,8 @@ import { uniqueId } from '../id';
 
 /**
  * A group of settings with a title, rows and an optional footer
- * (`<footer os-setting-card-footer>`).
+ * (`<footer os-setting-card-footer>`). Leave out the title when the page puts a heading above
+ * the card; then label it with `aria-labelledby` yourself.
  *
  * ```html
  * <section os-setting-card title="Profile" description="How others see you.">
@@ -28,25 +31,30 @@ import { uniqueId } from '../id';
   host: {
     class: 'os-setting-card',
     '[attr.data-tone]': 'tone() === "danger" ? "danger" : null',
-    '[attr.aria-labelledby]': 'titleId',
+    '[attr.aria-labelledby]': 'title() ? titleId : ownLabelledBy',
   },
   template: `
-    <header class="os-setting-card-header">
-      <h2 [attr.aria-level]="level()" [id]="titleId">{{ title() }}</h2>
-      @if (description()) {
-        <p>{{ description() }}</p>
-      }
-    </header>
+    @if (title()) {
+      <header class="os-setting-card-header">
+        <h2 [attr.aria-level]="level()" [id]="titleId">{{ title() }}</h2>
+        @if (description()) {
+          <p>{{ description() }}</p>
+        }
+      </header>
+    }
     <ng-content />
   `,
 })
 export class SettingCard {
-  readonly title = input.required<string>();
+  readonly title = input<string>();
   readonly description = input<string>();
   readonly level = input(2, { transform: numberAttribute });
   /** `danger` for a card of actions that delete or can't be undone. */
   readonly tone = input<Extract<Tone, 'neutral' | 'danger'>>('neutral');
   protected readonly titleId = uniqueId('setting-card');
+  /** Without a title, the card keeps the aria-labelledby the page gives it. */
+  protected readonly ownLabelledBy = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement
+    .getAttribute('aria-labelledby');
 }
 
 @Directive({

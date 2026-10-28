@@ -12,6 +12,7 @@
  *   <div id="tip" class="os-tooltip" popover="hint">Saves a draft</div>
  *
  * data-placement: bottom (the default), top, start, end. It flips when there's no room.
+ * data-align="end" lines a top or bottom one up with the trigger's end edge.
  */
 @layer os.components {
   .os-popover,
@@ -35,6 +36,14 @@
   :is(.os-popover, .os-menu, .os-tooltip)[data-placement='end'] {
     position-area: inline-end span-block-end;
     margin: 0 0 0 var(--os-space-1);
+  }
+
+  :is(.os-popover, .os-menu, .os-tooltip)[data-align='end']:not([data-placement]) {
+    position-area: block-end span-inline-start;
+  }
+
+  :is(.os-popover, .os-menu, .os-tooltip)[data-align='end'][data-placement='top'] {
+    position-area: block-start span-inline-start;
   }
 
   .os-popover {

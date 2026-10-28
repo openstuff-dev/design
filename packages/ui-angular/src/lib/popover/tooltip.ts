@@ -1,7 +1,7 @@
 import { afterNextRender, DestroyRef, Directive, effect, ElementRef, inject, input } from '@angular/core';
 import { anchor } from '@openstuff-dev/ui';
 import { uniqueId } from '../id';
-import type { Placement } from './popover';
+import type { Align, Placement } from './popover';
 
 /**
  * A short hint that shows on hover or keyboard focus (interestfor and popover="hint", with a
@@ -22,6 +22,7 @@ import type { Placement } from './popover';
 export class Tooltip {
   readonly text = input.required<string>({ alias: 'os-tooltip' });
   readonly placement = input<Placement>('top');
+  readonly align = input<Align>('start');
 
   protected readonly id = uniqueId('tooltip');
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
@@ -36,6 +37,8 @@ export class Tooltip {
       const placement = this.placement();
       if (placement === 'top') delete this.tip.dataset['placement'];
       else this.tip.dataset['placement'] = placement;
+      if (this.align() === 'end') this.tip.dataset['align'] = 'end';
+      else delete this.tip.dataset['align'];
     });
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {

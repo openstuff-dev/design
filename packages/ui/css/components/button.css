@@ -6,6 +6,7 @@
  *   <a class="os-button" data-variant="link" href="/docs">Docs</a>
  *
  * data-variant: primary, default (the default), ghost, danger, link. data-size: sm, md.
+ * data-tone="danger" on a link colours it red.
  * aria-busy="true" shows a spinner and keeps the width.
  */
 @layer os.components {
@@ -108,6 +109,11 @@
     &:hover {
       text-decoration-color: currentcolor;
     }
+  }
+
+  /* A link for an action that deletes, such as Remove. */
+  .os-button[data-variant='link'][data-tone='danger'] {
+    --os-button-fg: var(--os-danger-text);
   }
 
   /* IconButton: square, and the label lives in aria-label. */

@@ -3,7 +3,10 @@
  *
  *   <div class="os-callout" data-tone="warning" role="note">
  *     <svg class="os-icon">…</svg>
- *     <div><p class="os-callout-title">Read-only</p><p>You can't edit this project.</p></div>
+ *     <div>
+ *       <p class="os-callout-title">Read-only</p>
+ *       <div class="os-callout-body"><p>You can't edit this project.</p></div>
+ *     </div>
  *   </div>
  *   <kbd class="os-kbd">⌘</kbd><kbd class="os-kbd">K</kbd>
  *   <div class="os-skeleton" style="--os-skeleton-lines: 3" aria-hidden="true"></div>
@@ -35,6 +38,17 @@
 
   .os-callout-title {
     font-weight: var(--os-font-weight-semibold);
+  }
+
+  /* The body starts and ends flush, whatever margins its paragraphs or lists have. */
+  .os-callout-body {
+    & > :first-child {
+      margin-block-start: 0;
+    }
+
+    & > :last-child {
+      margin-block-end: 0;
+    }
   }
 
   :where(.os-callout-actions, .os-empty-state-actions):empty {
@@ -69,6 +83,10 @@
 
     & > p {
       max-inline-size: 36ch;
+    }
+
+    & > p:empty {
+      display: none;
     }
   }
 

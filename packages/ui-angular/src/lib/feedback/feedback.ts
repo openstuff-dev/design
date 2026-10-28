@@ -43,9 +43,15 @@ const TONE_ICONS: Record<Tone, IconNode> = {
     <svg os-icon [icon]="icon()"></svg>
     <div>
       @if (title()) {
-        <p class="os-callout-title">{{ title() }}</p>
+        <p
+          class="os-callout-title"
+          [attr.role]="level() ? 'heading' : null"
+          [attr.aria-level]="level()"
+        >
+          {{ title() }}
+        </p>
       }
-      <div><ng-content /></div>
+      <div class="os-callout-body"><ng-content /></div>
       <div class="os-callout-actions"><ng-content select="[os-actions]" /></div>
     </div>
   `,
@@ -53,6 +59,11 @@ const TONE_ICONS: Record<Tone, IconNode> = {
 export class Callout {
   readonly tone = input<Tone>('info');
   readonly title = input<string>();
+  /** Makes the title a heading of this level, for a callout that starts a section. */
+  readonly level = input(undefined, {
+    transform: (v: unknown) => (v === undefined || v === null || v === '' ? undefined : numberAttribute(v)),
+  });
+
   protected readonly icon = computed(() => TONE_ICONS[this.tone()]);
 }
 

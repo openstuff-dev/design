@@ -16,6 +16,7 @@ export type ButtonSize = 'sm' | 'md';
  * ```html
  * <button os-button variant="primary" type="submit" [loading]="saving()">Save</button>
  * <a os-button variant="link" href="/docs">Docs</a>
+ * <button os-button variant="link" tone="danger" (click)="remove()">Remove</button>
  * ```
  */
 @Component({
@@ -26,6 +27,7 @@ export type ButtonSize = 'sm' | 'md';
     class: 'os-button',
     '[attr.data-variant]': 'variant()',
     '[attr.data-size]': 'size()',
+    '[attr.data-tone]': 'tone() === "danger" ? "danger" : null',
     '[attr.aria-busy]': 'loading() || null',
     '[attr.aria-disabled]': 'loading() || null',
   },
@@ -33,6 +35,8 @@ export type ButtonSize = 'sm' | 'md';
 export class Button {
   readonly variant = input<ButtonVariant>('default');
   readonly size = input<ButtonSize>('md');
+  /** `danger` colours a link variant red, for an action that deletes. */
+  readonly tone = input<'neutral' | 'danger'>('neutral');
   /** Shows a spinner and ignores clicks, but keeps focus (unlike `disabled`). */
   readonly loading = input(false, { transform: booleanAttribute });
 

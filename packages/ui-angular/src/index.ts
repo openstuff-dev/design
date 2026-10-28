@@ -31,7 +31,7 @@ export {
   type ClosedBy,
 } from './lib/dialog/dialog';
 export { Menu, MenuItem, MenuLabel, MenuSeparator } from './lib/popover/menu';
-export { Popover, PopoverBase, PopoverTrigger, type Placement } from './lib/popover/popover';
+export { Popover, PopoverBase, PopoverTrigger, type Align, type Placement } from './lib/popover/popover';
 export { Tooltip } from './lib/popover/tooltip';
 export { Toaster, type ToastOptions } from './lib/toast/toast';
 
