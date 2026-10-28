@@ -4,7 +4,7 @@ import {
   generateFiles,
   type Tree,
 } from '@nx/devkit';
-import * as path from 'path';
+import * as path from 'node:path';
 import type { PresetGeneratorSchema } from './schema';
 
 export async function presetGenerator(
