@@ -56,7 +56,7 @@ function parseArgs(argv: string[]): {
   for (let i = 0; i < argv.length; i++) {
     const match = /^--(?:packageManager|pm)(?:=(.*))?$/.exec(argv[i]);
     if (match) {
-      packageManager = match[1] ?? argv[++i];
+      packageManager = match.at(1) ?? argv[++i];
     } else if (name === undefined && !argv[i].startsWith('-')) {
       name = argv[i];
     }
@@ -66,7 +66,7 @@ function parseArgs(argv: string[]): {
 }
 
 async function main() {
-  // TODO: use libraries like yargs, @clack/prompts, or another prompting library to set your workspace name
+  // TODO: ask for the name with a prompting library such as @clack/prompts (phase 7)
   const { name, packageManager } = parseArgs(process.argv.slice(2));
   if (!name) {
     throw new Error('Please provide a name for the workspace');
@@ -75,7 +75,9 @@ async function main() {
   console.log(`Creating the workspace: ${name}`);
 
   // This assumes "@openstuff-dev/nx" and "create-app" are at the same version
-  const presetVersion = createRequire(import.meta.url)('../../package.json').version;
+  const { version: presetVersion } = createRequire(import.meta.url)('../../package.json') as {
+    version: string;
+  };
 
   // TODO: update below to customize the workspace
   const { directory } = await createWorkspace(
@@ -90,4 +92,7 @@ async function main() {
   console.log(`Successfully created the workspace: ${directory}.`);
 }
 
-main();
+main().catch((error: unknown) => {
+  console.error(error);
+  process.exitCode = 1;
+});

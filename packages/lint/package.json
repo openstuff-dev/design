@@ -1,17 +1,39 @@
 {
   "name": "@openstuff-dev/lint",
   "version": "0.0.1",
+  "description": "Shared ESLint, Stylelint and Prettier setup for OpenStuff projects",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
-    ".": {
-      "@openstuff-dev/source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+    "./eslint": {
+      "@openstuff-dev/source": "./src/eslint/index.ts",
+      "types": "./dist/eslint/index.d.ts",
+      "import": "./dist/eslint/index.js",
+      "default": "./dist/eslint/index.js"
+    },
+    "./eslint/angular": {
+      "@openstuff-dev/source": "./src/eslint/angular.ts",
+      "types": "./dist/eslint/angular.d.ts",
+      "import": "./dist/eslint/angular.js",
+      "default": "./dist/eslint/angular.js"
+    },
+    "./eslint/plugin": {
+      "@openstuff-dev/source": "./src/eslint/plugin.ts",
+      "types": "./dist/eslint/plugin.d.ts",
+      "import": "./dist/eslint/plugin.js",
+      "default": "./dist/eslint/plugin.js"
+    },
+    "./stylelint": {
+      "@openstuff-dev/source": "./src/stylelint/index.ts",
+      "types": "./dist/stylelint/index.d.ts",
+      "import": "./dist/stylelint/index.js",
+      "default": "./dist/stylelint/index.js"
+    },
+    "./prettier": {
+      "@openstuff-dev/source": "./src/prettier/index.ts",
+      "types": "./dist/prettier/index.d.ts",
+      "import": "./dist/prettier/index.js",
+      "default": "./dist/prettier/index.js"
     }
   },
   "files": [
@@ -25,7 +47,30 @@
     ]
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "@nx/eslint-plugin": "^24.0.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@stylistic/stylelint-config": "^5.0.0",
+    "@stylistic/stylelint-plugin": "^5.3.1",
+    "angular-eslint": "^22.6.0",
+    "globals": "^17.13.0",
+    "stylelint-config-standard": "^40.0.0",
+    "synckit": "^0.12.3",
+    "tslib": "^2.3.0",
+    "typescript-eslint": "^8.72.1"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0",
+    "prettier": "^3.0.0",
+    "stylelint": "^17.6.0",
+    "typescript": ">=5.8.0 <6.1.0"
+  },
+  "peerDependenciesMeta": {
+    "prettier": {
+      "optional": true
+    },
+    "stylelint": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"
