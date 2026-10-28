@@ -1,6 +1,7 @@
 {
   "name": "@openstuff-dev/tokens",
   "version": "0.0.1",
+  "description": "A complete light and dark theme for OpenStuff projects, generated from one primary colour",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -12,7 +13,23 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
-    }
+    },
+    "./build": {
+      "@openstuff-dev/source": "./src/build/index.ts",
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build/index.js",
+      "default": "./dist/build/index.js"
+    },
+    "./values": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.js",
+      "default": "./dist/tokens.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./dist/tokens.json"
+  },
+  "bin": {
+    "os-tokens": "./dist/build/cli.js"
   },
   "files": [
     "dist",
@@ -22,10 +39,54 @@
     "name": "tokens",
     "tags": [
       "type:package"
-    ]
+    ],
+    "targets": {
+      "build": {
+        "options": {
+          "command": "tsc --build tsconfig.lib.json && node dist/build/cli.js"
+        },
+        "inputs": [
+          "{projectRoot}/package.json",
+          "{workspaceRoot}/tsconfig.base.json",
+          "{projectRoot}/tsconfig.lib.json",
+          "{projectRoot}/src/**/*.ts",
+          "!{projectRoot}/vite.config.ts",
+          "!{projectRoot}/vite.config.mts",
+          "!{projectRoot}/vitest.config.ts",
+          "!{projectRoot}/vitest.config.mts",
+          "!{projectRoot}/src/**/*.test.ts",
+          "!{projectRoot}/src/**/*.spec.ts",
+          "!{projectRoot}/src/**/*.test.tsx",
+          "!{projectRoot}/src/**/*.spec.tsx",
+          "!{projectRoot}/src/**/*.test.js",
+          "!{projectRoot}/src/**/*.spec.js",
+          "!{projectRoot}/src/**/*.test.jsx",
+          "!{projectRoot}/src/**/*.spec.jsx",
+          {
+            "dependentTasksOutputFiles": "**/*.{d.ts,d.cts,d.mts,tsbuildinfo}",
+            "transitive": true
+          },
+          {
+            "fileset": "{projectRoot}/**/*.{d.ts,d.cts,d.mts}",
+            "dependencies": true
+          },
+          "{projectRoot}/tokens.config.json"
+        ],
+        "outputs": [
+          "{projectRoot}/dist/**/*.{js,cjs,mjs,jsx,d.ts,d.cts,d.mts}{,.map}",
+          "{projectRoot}/dist/tokens.{css,json}",
+          "{projectRoot}/dist/tsconfig.lib.tsbuildinfo"
+        ]
+      }
+    }
   },
   "dependencies": {
+    "culori": "^4.0.2",
+    "style-dictionary": "^5.7.1",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"
