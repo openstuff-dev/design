@@ -11,6 +11,8 @@ import { anchor } from '@openstuff-dev/ui';
 import { uniqueId } from '../id';
 
 export type Placement = 'bottom' | 'top' | 'start' | 'end';
+/** Which edge of the trigger a top or bottom popover lines up with. */
+export type Align = 'start' | 'end';
 
 /** What Popover and Menu share: a native popover with an id, opened next to its trigger. */
 @Directive({
@@ -18,11 +20,14 @@ export type Placement = 'bottom' | 'top' | 'start' | 'end';
     popover: 'auto',
     '[id]': 'id',
     '[attr.data-placement]': 'placement() === "bottom" ? null : placement()',
+    '[attr.data-align]': 'align() === "end" ? "end" : null',
     '(toggle)': 'onToggle($event)',
   },
 })
 export abstract class PopoverBase {
   readonly placement = input<Placement>('bottom');
+  /** `end` lines it up with the trigger's end edge, for a trigger at the end of a bar. */
+  readonly align = input<Align>('start');
   readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   readonly id = uniqueId('popover');
   readonly isOpen = signal(false);

@@ -117,7 +117,8 @@ export class DataTable<T extends object> {
 }
 
 /**
- * One number with its label and an optional hint, such as a change since yesterday.
+ * One number with its label and an optional hint, such as a change since yesterday. Content
+ * goes under them, such as a sparkline or a short list.
  *
  * ```html
  * <os-stat-tile label="Open findings" value="6" hint="2 need a decision" tone="warning" />
@@ -133,6 +134,7 @@ export class DataTable<T extends object> {
     @if (hint()) {
       <span class="os-stat-hint" [attr.data-tone]="tone()">{{ hint() }}</span>
     }
+    <ng-content />
   `,
 })
 export class StatTile {

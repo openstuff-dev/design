@@ -81,13 +81,19 @@ export class Field implements FieldContext {
     '[class.os-select]': 'tag === "SELECT"',
     '[attr.data-size]': 'size() === "md" ? null : size()',
     '[id]': 'id()',
-    '[attr.aria-describedby]': 'field?.describedBy() ?? null',
+    '[attr.aria-describedby]': 'describedBy()',
     '[attr.aria-invalid]': 'isInvalid() || null',
   },
 })
 export class Control {
   protected readonly field = inject(FIELD, { optional: true });
-  protected readonly tag = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement.tagName;
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  protected readonly tag = this.element.tagName;
+  /** An aria-describedby written in the template is kept, before the field's hint and error. */
+  private readonly ownDescribedBy = this.element.getAttribute('aria-describedby');
+  protected readonly describedBy = computed(
+    () => [this.ownDescribedBy, this.field?.describedBy()].filter(Boolean).join(' ') || null,
+  );
 
   readonly size = input<'sm' | 'md'>('md');
   /** Marks the control invalid when it isn't in a Field. */

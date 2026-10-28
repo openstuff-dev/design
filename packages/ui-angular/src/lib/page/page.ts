@@ -26,6 +26,8 @@ export class Page {
 
 /**
  * The page's title, an optional description, and its main actions (projected content).
+ * Content marked `os-page-meta` goes under the description, such as a line of facts or a
+ * callout; then `align="start"` keeps the actions at the top.
  *
  * ```html
  * <header os-page-header title="Projects" description="Everything your team works on.">
@@ -36,13 +38,14 @@ export class Page {
 @Component({
   selector: 'header[os-page-header]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'os-page-header' },
+  host: { class: 'os-page-header', '[attr.data-align]': 'align() === "start" ? "start" : null' },
   template: `
     <div>
       <h1 class="os-page-title">{{ title() }}</h1>
       @if (description()) {
         <p class="os-page-description">{{ description() }}</p>
       }
+      <div class="os-page-meta"><ng-content select="[os-page-meta]" /></div>
     </div>
     <div class="os-page-actions"><ng-content /></div>
   `,
@@ -50,6 +53,8 @@ export class Page {
 export class PageHeader {
   readonly title = input.required<string>();
   readonly description = input<string>();
+  /** Where the actions sit next to a tall title column: at its end (the default) or its top. */
+  readonly align = input<'end' | 'start'>('end');
 }
 
 /**

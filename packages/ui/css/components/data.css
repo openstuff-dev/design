@@ -1,5 +1,5 @@
 /*
- * DataTable and StatTile.
+ * DataTable and StatTile. A stat tile can hold more than its value, such as a sparkline.
  *
  *   <div class="os-data-table">
  *     <table>

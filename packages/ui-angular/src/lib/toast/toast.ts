@@ -66,6 +66,8 @@ interface Toast extends ToastOptions {
   `,
 })
 export class ToastRegion {
+  /** At most this many show at once; a new one closes the oldest. */
+  static readonly LIMIT = 4;
   readonly toasts = signal<Toast[]>([]);
   protected readonly iconX = iconX;
   private readonly timers = new Map<number, ReturnType<typeof setTimeout>>();
@@ -87,6 +89,8 @@ export class ToastRegion {
       this.region.hidePopover();
       this.region.showPopover();
     }
+    const extra = this.toasts().length + 1 - ToastRegion.LIMIT;
+    for (const old of this.toasts().slice(0, Math.max(0, extra))) this.dismiss(old.id);
     this.toasts.update((list) => [...list, toast]);
     this.resume(toast);
   }

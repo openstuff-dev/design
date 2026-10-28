@@ -30,6 +30,10 @@ describe('@openstuff-dev/lint/eslint', () => {
     expect(rules).toEqual([]);
     expect(output).toBe("export const greeting = 'hello';\n");
   });
+
+  it('keeps template literals and lets a blank string fall back with ||', async () => {
+    expect((await lint(base, 'strings.ts')).rules).toEqual([]);
+  });
 });
 
 describe('@openstuff-dev/lint/eslint/angular', () => {
