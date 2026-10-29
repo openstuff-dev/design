@@ -4,7 +4,8 @@
  */
 export type IconNode = readonly (readonly [tag: string, attributes: IconAttributes])[];
 
-type IconAttributes = Record<string, string | number>;
+// Lucide's attribute type allows undefined, so its icons type-check here; undefined is skipped.
+type IconAttributes = Record<string, string | number | undefined>;
 
 const SVG = 'http://www.w3.org/2000/svg';
 
@@ -39,7 +40,7 @@ export function renderIcon(svg: SVGSVGElement, node: IconNode): void {
     ...node.map(([tag, attributes]) => {
       const child = document.createElementNS(SVG, tag);
       for (const [name, value] of Object.entries(attributes)) {
-        child.setAttribute(name, String(value));
+        if (value !== undefined) child.setAttribute(name, String(value));
       }
       return child;
     }),
