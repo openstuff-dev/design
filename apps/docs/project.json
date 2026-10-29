@@ -4,25 +4,44 @@
   "sourceRoot": "apps/docs/src",
   "prefix": "docs",
   "projectType": "application",
-  "tags": ["type:app"],
+  "tags": [
+    "type:app"
+  ],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath.base}"],
-      "dependsOn": [{ "projects": ["tokens"], "target": "build" }],
+      "outputs": [
+        "{options.outputPath.base}"
+      ],
+      "dependsOn": [
+        "^build"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": { "base": "dist/apps/docs" },
+        "outputPath": {
+          "base": "dist/apps/docs"
+        },
         "browser": "apps/docs/src/main.ts",
         "index": "apps/docs/src/index.html",
         "tsConfig": "apps/docs/tsconfig.app.json",
-        "assets": [{ "glob": "**/*", "input": "apps/docs/public" }],
-        "styles": ["apps/docs/src/styles.css"]
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/docs/public"
+          }
+        ],
+        "styles": [
+          "apps/docs/src/styles.css"
+        ]
       },
       "configurations": {
         "production": {
           "budgets": [
-            { "type": "initial", "maximumWarning": "600kb", "maximumError": "1mb" }
+            {
+              "type": "initial",
+              "maximumWarning": "600kb",
+              "maximumError": "1mb"
+            }
           ],
           "outputHashing": "all"
         },
@@ -36,19 +55,32 @@
     "serve": {
       "executor": "@angular/build:dev-server",
       "continuous": true,
-      "dependsOn": [{ "projects": ["tokens"], "target": "build" }],
+      "dependsOn": [
+        "^build"
+      ],
       "defaultConfiguration": "development",
-      "options": { "port": 5300 },
+      "options": {
+        "port": 5300
+      },
       "configurations": {
-        "production": { "buildTarget": "docs:build:production" },
-        "development": { "buildTarget": "docs:build:development" }
+        "production": {
+          "buildTarget": "docs:build:production"
+        },
+        "development": {
+          "buildTarget": "docs:build:development"
+        }
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [{ "projects": ["tokens", "ui"], "target": "build" }],
-      "inputs": ["default", "^production"],
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^production"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "ngc -p tsconfig.app.json --noEmit && tsc -p tsconfig.spec.json --noEmit"
@@ -56,15 +88,28 @@
     },
     "stylelint": {
       "command": "stylelint \"src/**/*.css\"",
-      "options": { "cwd": "{projectRoot}" },
+      "options": {
+        "cwd": "{projectRoot}"
+      },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.css",
         "{workspaceRoot}/stylelint.config.mjs",
         "{workspaceRoot}/packages/lint/src/stylelint/**/*",
-        { "externalDependencies": ["stylelint"] }
+        {
+          "externalDependencies": [
+            "stylelint"
+          ]
+        }
       ],
-      "dependsOn": [{ "projects": ["lint"], "target": "build" }]
+      "dependsOn": [
+        {
+          "projects": [
+            "lint"
+          ],
+          "target": "build"
+        }
+      ]
     }
   }
 }
