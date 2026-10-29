@@ -25,12 +25,10 @@
     "tags": [
       "type:package"
     ],
-    "sourceRoot": "packages/create-app/bin",
-    "implicitDependencies": [
-      "nx"
-    ]
+    "sourceRoot": "packages/create-app/bin"
   },
   "dependencies": {
+    "@openstuff-dev/nx": "0.0.1",
     "create-nx-workspace": "24.0.0",
     "tslib": "^2.3.0"
   },
