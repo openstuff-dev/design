@@ -29,7 +29,7 @@
     "./tokens.json": "./dist/tokens.json"
   },
   "bin": {
-    "os-tokens": "./dist/build/cli.js"
+    "os-tokens": "dist/build/cli.js"
   },
   "files": [
     "dist",
