@@ -36,7 +36,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       # Versions, changelogs, tags and GitHub releases; publishing happens below
-      - run: npx nx release --yes --skip-publish ${{ inputs.dry-run && '--dry-run' || '' }}
+      - run: npx nx release --skip-publish ${{ inputs.dry-run && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
