@@ -1,6 +1,6 @@
 name: Docs
 
-# Publishes apps/docs to GitHub Pages (https://openstuff-dev.github.io/design/) from main.
+# Publishes apps/docs to GitHub Pages (https://design.openstuff.dev) from main.
 # Pages needs a public repository: until then the job is skipped. Turn Pages on once, under
 # Settings → Pages → Source: GitHub Actions.
 on:
@@ -31,7 +31,7 @@ jobs:
           cache: 'npm'
 
       - run: npm ci
-      - run: npx nx build docs --baseHref=/design/
+      - run: npx nx build docs --baseHref=/
       # Pages has no rewrites: its 404 page boots the app, which then shows the right route.
       - run: cp dist/apps/docs/browser/index.html dist/apps/docs/browser/404.html
 
