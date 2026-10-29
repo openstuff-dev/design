@@ -1,0 +1,58 @@
+@import '@openstuff-dev/ui/ui.css';
+@import '@openstuff-dev/tokens/tokens.css' layer(os.tokens);
+
+/* The docs' own text styles: prose between the examples. */
+.prose {
+  display: grid;
+  gap: var(--os-space-3);
+  max-inline-size: 44rem;
+  color: var(--os-fg-light);
+  line-height: var(--os-leading-relaxed);
+}
+
+.prose :where(h2) {
+  margin-block-start: var(--os-space-6);
+  color: var(--os-fg-default);
+  font-size: var(--os-text-lg);
+}
+
+.prose :where(h3) {
+  margin-block-start: var(--os-space-3);
+  color: var(--os-fg-default);
+  font-size: var(--os-text-md);
+}
+
+.prose :where(ul, ol) {
+  display: grid;
+  gap: var(--os-space-1);
+  padding-inline-start: var(--os-space-5);
+}
+
+.prose :where(code) {
+  padding: 0.1em 0.35em;
+  border-radius: var(--os-radius-sm);
+  background: var(--os-bg-surface-200);
+  color: var(--os-fg-default);
+  font-size: 0.9em;
+}
+
+.stack {
+  display: grid;
+  gap: var(--os-space-6);
+  min-inline-size: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--os-space-2);
+  align-items: center;
+}
+
+/* The routed page sits next to the outlet in <main os-page>, and gets the page's gaps. */
+main.os-page > :not(router-outlet) {
+  display: grid;
+  gap: var(--os-space-8);
+  align-content: start;
+  min-inline-size: 0;
+}

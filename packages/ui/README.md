@@ -133,5 +133,5 @@ looks right in a sidebar, a drawer or a full page.
 ```sh
 npx nx test ui
 npx nx stylelint ui
-npx vite packages/ui/demo   # every component in plain HTML, with theme, colour and width switches
+npx nx serve docs           # the docs site: every component, with its HTML
 ```

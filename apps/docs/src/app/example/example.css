@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+.example {
+  overflow: hidden;
+  border: 1px solid var(--os-border-default);
+  border-radius: var(--os-radius-lg);
+  background: var(--os-bg-surface-100);
+}
+
+/* The container the example's components measure. Resizing it shows their container queries. */
+.stage {
+  container-type: inline-size;
+  min-inline-size: 15rem;
+  max-inline-size: 100%;
+  overflow: auto;
+  border-inline-end: 1px dashed var(--os-border-strong);
+  background: var(--os-bg-default);
+  resize: horizontal;
+}
+
+.stage.padded .frame {
+  padding: var(--os-space-8) var(--os-space-6);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--os-space-2) var(--os-space-4);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--os-space-2) var(--os-space-3);
+  border-block: 1px solid var(--os-border-default);
+}
+
+.width {
+  color: var(--os-fg-lighter);
+  font-size: var(--os-text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.reset {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--os-brand-text);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (pointer: coarse) {
+  .hint {
+    display: none;
+  }
+}
