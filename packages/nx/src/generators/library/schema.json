@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "OpenStuffLibrary",
+  "title": "TypeScript package",
+  "description": "Adds a publishable TypeScript package with tests, built with tsc.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name; the package goes in packages/<name>.",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "What is the package called?"
+    },
+    "importPath": {
+      "type": "string",
+      "description": "The npm name, such as @acme/money. Defaults to @<workspace>/<name>."
+    }
+  },
+  "required": ["name"]
+}

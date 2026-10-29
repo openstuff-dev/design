@@ -1,17 +1,34 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "Preset",
-  "title": "",
+  "$id": "OpenStuffPreset",
+  "title": "OpenStuff workspace",
+  "description": "Sets up a new OpenStuff workspace: the shared layout, lint, CI, Docker and agent instructions, and a first app or package.",
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "What name would you like to use?"
+      "description": "The workspace name.",
+      "$default": { "$source": "argv", "index": 0 }
+    },
+    "stack": {
+      "type": "string",
+      "description": "What to start with: a web app, a web app with a server, or a package.",
+      "enum": ["web", "web-server", "library"],
+      "default": "web-server"
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "The brand colour every other colour is generated from, as hex.",
+      "default": "#2d5bff",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "openpurpose": {
+      "type": "string",
+      "description": "The OpenPurpose project this repository belongs to (org/slug), for .openpurpose.json."
+    },
+    "author": {
+      "type": "string",
+      "description": "Copyright holder in LICENSE. Defaults to git's user.name."
     }
   },
   "required": ["name"]
