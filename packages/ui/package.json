@@ -1,6 +1,6 @@
 {
   "name": "@openstuff-dev/ui",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -65,7 +65,7 @@
     "@oddbird/popover-polyfill": "^0.7.3",
     "invokers-polyfill": "^1.0.4",
     "tslib": "^2.3.0",
-    "@openstuff-dev/tokens": "0.0.1"
+    "@openstuff-dev/tokens": "0.1.0"
   },
   "publishConfig": {
     "access": "public"

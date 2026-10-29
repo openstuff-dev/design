@@ -1,6 +1,6 @@
 {
   "name": "@openstuff-dev/tokens",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A complete light and dark theme for OpenStuff projects, generated from one primary colour",
   "type": "module",
   "main": "./dist/index.js",

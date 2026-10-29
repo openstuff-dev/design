@@ -1,6 +1,6 @@
 {
   "name": "@openstuff-dev/lint",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Shared ESLint, Stylelint and Prettier setup for OpenStuff projects",
   "type": "module",
   "exports": {
