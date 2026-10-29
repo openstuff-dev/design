@@ -11,6 +11,8 @@ The shared toolkit for every [OpenStuff](https://github.com/openstuff-dev) proje
 | [`@openstuff-dev/nx`](packages/nx) | Nx preset and generators for OpenStuff workspaces. |
 | [`@openstuff-dev/create-app`](packages/create-app) | `npm create @openstuff-dev/app my-app`: a new project with all of the above set up. |
 
+The [docs site](https://openstuff-dev.github.io/design/) ([`apps/docs`](apps/docs)) shows every component in light and dark, themed from a colour you pick, with its Angular and HTML code. Run it locally with `npx nx serve docs`.
+
 
 ## Work on it
 

@@ -1,0 +1,11 @@
+{
+  "name": "@openstuff-dev/docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The OpenStuff design system site: every component, light and dark, themed from one colour",
+  "dependencies": {
+    "@openstuff-dev/tokens": "*",
+    "@openstuff-dev/ui": "*",
+    "@openstuff-dev/ui-angular": "*"
+  }
+}

@@ -1,9 +1,0 @@
-@import '../../ui/css/ui.css';
-@import '../../tokens/dist/tokens.css' layer(os.tokens);
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--os-space-2);
-  align-items: center;
-}

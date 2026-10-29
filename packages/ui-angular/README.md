@@ -78,7 +78,7 @@ are elements (`<os-callout>`, `<os-tabs>`).
 ```sh
 npx nx test ui-angular        # Vitest in jsdom: accessible names and keyboard for each component
 npx nx build ui-angular       # ng-packagr, into dist/packages/ui-angular
-npx nx demo ui-angular        # every component in a browser, on http://localhost:5200
+npx nx serve docs             # every component on the docs site, on http://localhost:5300
 ```
 
 The package is published from `dist/packages/ui-angular`.

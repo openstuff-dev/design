@@ -61,28 +61,6 @@
         "default",
         "^production"
       ]
-    },
-    "build-demo": {
-      "executor": "@angular/build:application",
-      "options": {
-        "outputPath": "dist/packages/ui-angular-demo",
-        "browser": "packages/ui-angular/demo/main.ts",
-        "index": "packages/ui-angular/demo/index.html",
-        "tsConfig": "packages/ui-angular/demo/tsconfig.json",
-        "styles": [
-          "packages/ui-angular/demo/styles.css"
-        ],
-        "optimization": false,
-        "sourceMap": true
-      }
-    },
-    "demo": {
-      "executor": "@angular/build:dev-server",
-      "options": {
-        "buildTarget": "ui-angular:build-demo",
-        "port": 5200
-      },
-      "continuous": true
     }
   }
 }

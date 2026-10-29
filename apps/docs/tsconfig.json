@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "emitDeclarationOnly": false,
+    "declarationMap": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "rootDir": "../..",
+    "noPropertyAccessFromIndexSignature": true,
+    "module": "preserve",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "paths": {
+      "@openstuff-dev/ui-angular": ["../../packages/ui-angular/src/index.ts"]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "include": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.spec.json" }]
+}

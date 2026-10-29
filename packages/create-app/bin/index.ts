@@ -136,10 +136,12 @@ async function main() {
     throw new Error(`--primary-color takes a hex colour such as #2d5bff, not "${primaryColor}".`);
   }
 
-  // This assumes "@openstuff-dev/nx" and "create-app" are at the same version
-  const { version: presetVersion } = createRequire(import.meta.url)('../../package.json') as {
-    version: string;
+  // The preset version is our own dependency on it, which nx release moves whenever
+  // @openstuff-dev/nx is released (and then releases create-app too), so it always exists.
+  const { dependencies } = createRequire(import.meta.url)('../../package.json') as {
+    dependencies: Record<string, string>;
   };
+  const presetVersion = dependencies['@openstuff-dev/nx'];
 
   const options = {
     name,
