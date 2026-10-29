@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "OpenStuffSync",
+  "title": "Sync with the OpenStuff defaults",
+  "description": "Adds shared files a workspace lacks, refreshes the OpenPurpose part of AGENTS.md, merges nx.json and package.json defaults and moves toolkit packages to their newest versions. Files you changed are listed, not overwritten.",
+  "type": "object",
+  "properties": {},
+  "required": []
+}

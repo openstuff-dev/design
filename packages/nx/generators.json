@@ -3,8 +3,33 @@
     "preset": {
       "factory": "./dist/generators/preset/preset",
       "schema": "./dist/generators/preset/schema.json",
-      "description": "preset generator",
-      "x-use-standalone-layout": true
+      "description": "Sets up a new OpenStuff workspace (used by npm create @openstuff-dev/app).",
+      "hidden": true
+    },
+    "app": {
+      "factory": "./dist/generators/app/app",
+      "schema": "./dist/generators/app/schema.json",
+      "description": "Adds an Angular web app with the OpenStuff toolkit wired up."
+    },
+    "server": {
+      "factory": "./dist/generators/server/server",
+      "schema": "./dist/generators/server/schema.json",
+      "description": "Adds a Fastify + TypeScript API."
+    },
+    "library": {
+      "factory": "./dist/generators/library/library",
+      "schema": "./dist/generators/library/schema.json",
+      "description": "Adds a publishable TypeScript package."
+    },
+    "component": {
+      "factory": "./dist/generators/component/component",
+      "schema": "./dist/generators/component/schema.json",
+      "description": "Adds a standalone, OnPush Angular component."
+    },
+    "sync": {
+      "factory": "./dist/generators/sync/sync",
+      "schema": "./dist/generators/sync/schema.json",
+      "description": "Brings a workspace up to date with the shared OpenStuff files and toolkit versions."
     }
   }
 }

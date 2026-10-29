@@ -1,0 +1,10 @@
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+@Component({
+  selector: '<%= selector %>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<p>{{ text() }}</p>`,
+})
+export class <%= className %> {
+  readonly text = input('<%= fileName %> works');
+}

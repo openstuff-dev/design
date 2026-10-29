@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "OpenStuffApp",
+  "title": "Angular web app",
+  "description": "Adds an Angular web app with @openstuff-dev/tokens, ui and lint wired up.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name; the app goes in apps/<name>.",
+      "default": "web",
+      "$default": { "$source": "argv", "index": 0 }
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "The brand colour every other colour is generated from, as hex.",
+      "default": "#2d5bff",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "The app's name in the page title and header. Defaults to the workspace name."
+    },
+    "prefix": {
+      "type": "string",
+      "description": "Selector prefix for the app's components.",
+      "default": "app"
+    },
+    "server": {
+      "type": "string",
+      "description": "A server project the dev server sends /api requests to (on port 8080)."
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,4 @@
+/** Says hello. Replace it with what <%= importPath %> is for. */
+export function <%= propertyName %>(name: string): string {
+  return `Hello, ${name}!`;
+}

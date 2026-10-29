@@ -1,0 +1,8 @@
+import { describe, expect, it } from 'vitest';
+import { <%= propertyName %> } from '../src/index.js';
+
+describe('<%= importPath %>', () => {
+  it('says hello', () => {
+    expect(<%= propertyName %>('world')).toBe('Hello, world!');
+  });
+});

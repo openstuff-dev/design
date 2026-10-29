@@ -1,0 +1,4 @@
+{
+  "primaryColor": "<%= primaryColor %>",
+  "outDir": "src/tokens"
+}

@@ -1,0 +1,16 @@
+# <%= importPath %>
+
+```sh
+npm install <%= importPath %>
+```
+
+```ts
+import { <%= propertyName %> } from '<%= importPath %>';
+```
+
+## Develop
+
+```sh
+npx nx build <%= name %>
+npx nx test <%= name %>
+```

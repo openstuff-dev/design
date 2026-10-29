@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "OpenStuffServer",
+  "title": "Fastify server",
+  "description": "Adds a Fastify + TypeScript API with a health check, tests and settings from environment variables.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name; the server goes in apps/<name>.",
+      "default": "server",
+      "$default": { "$source": "argv", "index": 0 }
+    }
+  },
+  "required": []
+}

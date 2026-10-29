@@ -1,11 +1,32 @@
-# nx
+# @openstuff-dev/nx
 
-This library was generated with [Nx](https://nx.dev).
+Nx generators for OpenStuff projects. New projects start with
+[`npm create @openstuff-dev/app`](../create-app), which runs the `preset` generator here.
 
-## Building
+| Generator | What it adds |
+|---|---|
+| `app [name]` | An Angular web app in `apps/<name>` (default `web`), with tokens, ui, ui-angular and lint wired up. `--primaryColor`, `--prefix`, `--server <project>` sends `/api` to a server in development. |
+| `server [name]` | A Fastify + TypeScript API in `apps/<name>` (default `server`): a health check, settings from environment variables, a Vitest test. |
+| `library <name>` | A publishable TypeScript package in `packages/<name>`, built with `tsc`, with `publishConfig`, `license` and `repository` set. |
+| `component <name>` | A standalone, OnPush Angular component with a signal input, in the app's `src/app`. `--project` (default `web`). |
+| `sync` | Brings a workspace up to date: adds the shared files it lacks, refreshes the OpenPurpose part of `AGENTS.md`, merges `nx.json` and `package.json` defaults and moves toolkit packages to their newest versions. Files you changed are listed, not overwritten. |
 
-Run `nx build nx` to build the library.
+```sh
+npx nx g @openstuff-dev/nx:library money
+npx nx g @openstuff-dev/nx:component invoice-list
+npx nx g @openstuff-dev/nx:sync
+```
 
-## Running unit tests
+The toolkit packages are versioned independently, so the generators ask the registry
+(`npm view`) for each one's newest version, and use this plugin's version when it can't be reached.
 
-Run `nx test nx` to execute the unit tests via [Vitest](https://vitest.dev/).
+## Try it locally
+
+```sh
+npx nx local-registry                 # Verdaccio on :4873, in another terminal
+npx nx run-many -t build
+# publish every package to http://localhost:4873 (ui-angular from dist/packages/ui-angular), then:
+npm_config_registry=http://localhost:4873 npm create @openstuff-dev/app@<version> demo -- --yes
+```
+
+The Angular CLI needs Node 22.22.3 or newer.
