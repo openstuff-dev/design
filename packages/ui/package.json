@@ -19,6 +19,12 @@
       "import": "./dist/polyfills.js",
       "default": "./dist/polyfills.js"
     },
+    "./marketing": {
+      "@openstuff-dev/source": "./src/marketing.ts",
+      "types": "./dist/marketing.d.ts",
+      "import": "./dist/marketing.js",
+      "default": "./dist/marketing.js"
+    },
     "./ui.css": "./css/ui.css",
     "./*.css": "./css/*.css"
   },

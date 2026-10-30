@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "OpenStuffSite",
+  "title": "Marketing site",
+  "description": "Adds the project's one-page marketing site for GitHub Pages, built from @openstuff-dev/ui/marketing.css.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The project's name as people read it, e.g. OpenLedger.",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "What is the project called (e.g. OpenLedger)?"
+    },
+    "tagline": {
+      "type": "string",
+      "description": "The hero headline: what it does, in a few words."
+    },
+    "directory": {
+      "type": "string",
+      "description": "Where the site goes.",
+      "default": "site"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Where it is served. Defaults to <name without Open>.openstuff.dev, e.g. ledger.openstuff.dev."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The GitHub repository URL. Defaults to this repository's origin."
+    },
+    "appUrl": {
+      "type": "string",
+      "description": "The hosted app, e.g. https://ledger.openstuff.app. Without one, the buttons point to self-hosting."
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "The project's primary colour, as hex. Defaults to the one in apps/web/tokens.config.json.",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "glyph": {
+      "type": "string",
+      "description": "The shape inside the project's mark. Pick one no other OpenStuff project uses.",
+      "enum": ["diamond", "hexagon", "plus", "half", "bars"],
+      "default": "diamond"
+    }
+  },
+  "required": ["name"]
+}

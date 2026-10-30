@@ -9,11 +9,13 @@ Nx generators for OpenStuff projects. New projects start with
 | `server [name]` | A Fastify + TypeScript API in `apps/<name>` (default `server`): a health check, settings from environment variables, a Vitest test. |
 | `library <name>` | A publishable TypeScript package in `packages/<name>`, built with `tsc`, with `publishConfig`, `license` and `repository` set. |
 | `component <name>` | A standalone, OnPush Angular component with a signal input, in the app's `src/app`. `--project` (default `web`). |
-| `sync` | Brings a workspace up to date: adds the shared files it lacks, refreshes the OpenPurpose part of `AGENTS.md`, merges `nx.json` and `package.json` defaults and moves toolkit packages to their newest versions. Files you changed are listed, not overwritten. |
+| `site <name>` | The project's one-page marketing site in `site/`, for GitHub Pages: the same sections, bento grid and hover animations as every other OpenStuff page, themed from the app's primary colour, with a Pages workflow. `--tagline`, `--domain`, `--appUrl` (without one, the buttons point to self-hosting), `--glyph` for the mark. Its README is the brief for writing the copy. |
+| `sync` | Brings a workspace up to date: adds the shared files it lacks, refreshes the OpenPurpose part of `AGENTS.md`, merges `nx.json` and `package.json` defaults and moves toolkit packages to their newest versions, and refreshes the toolkit copy in every marketing site. Files you changed are listed, not overwritten. |
 
 ```sh
 npx nx g @openstuff-dev/nx:library money
 npx nx g @openstuff-dev/nx:component invoice-list
+npx nx g @openstuff-dev/nx:site OpenLedger --appUrl=https://ledger.openstuff.app
 npx nx g @openstuff-dev/nx:sync
 ```
 
