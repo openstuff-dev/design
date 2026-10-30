@@ -9,6 +9,8 @@ This workspace is an OpenStuff project: an Nx workspace built on the OpenStuff t
 - Colours come from `--os-*` tokens. Change the theme through `primaryColor` in the app's
   `tokens.config.json`, never with raw colours in CSS.
 - Components respond to their container (`@container`), not the viewport.
+- When you build a new app or screen, check it against the 20 UX details in
+  `.claude/skills/ux-details/SKILL.md` and build the ones that fit.
 - Commit messages are one past-tense sentence that says what changed for the user.
 - `npx nx g @openstuff-dev/nx:sync` brings the shared files and toolkit versions up to date.
 

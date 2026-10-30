@@ -19,6 +19,10 @@ npx nx g @openstuff-dev/nx:site OpenLedger --appUrl=https://ledger.openstuff.app
 npx nx g @openstuff-dev/nx:sync
 ```
 
+Every workspace also gets the `ux-details` skill (`.claude/skills/ux-details/SKILL.md`): 20 UX
+details, from skeleton loaders to idempotency keys, that an agent checks a new app against and
+builds where they fit. `sync` adds it to older workspaces.
+
 The toolkit packages are versioned independently, so the generators ask the registry
 (`npm view`) for each one's newest version, and use this plugin's version when it can't be reached.
 
