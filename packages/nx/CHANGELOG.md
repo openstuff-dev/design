@@ -1,3 +1,13 @@
+## 0.2.2 (2026-10-30)
+
+### 🩹 Fixes
+
+- Added the ux-details skill to every workspace: new projects get `.claude/skills/ux-details/SKILL.md`, and `sync` adds it to older ones. ([f6553a3](https://github.com/openstuff-dev/design/commit/f6553a3))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.2.1 (2026-10-30)
 
 ### 🧱 Updated Dependencies
