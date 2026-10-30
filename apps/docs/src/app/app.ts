@@ -40,7 +40,17 @@ import { ThemePicker } from './theme-picker';
         <svg os-icon [icon]="menuIcon"></svg>
       </button>
       <a class="brand" routerLink="/">
-        <span class="brand-mark" aria-hidden="true"></span>
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path
+            fill="currentColor"
+            fill-rule="evenodd"
+            d="M16 1.5a14.5 14.5 0 1 0 0 29a14.5 14.5 0 1 0 0-29Zm0 4a10.5 10.5 0 1 1 0 21a10.5 10.5 0 1 1 0-21Z"
+          />
+          <path
+            fill="#9442d9"
+            d="M13 11.4h6a1.6 1.6 0 0 1 1.6 1.6v6a1.6 1.6 0 0 1 -1.6 1.6h-6a1.6 1.6 0 0 1 -1.6 -1.6v-6a1.6 1.6 0 0 1 1.6 -1.6Z"
+          />
+        </svg>
         OpenStuff <span class="brand-light">Design</span>
       </a>
       <div class="topbar-actions">
