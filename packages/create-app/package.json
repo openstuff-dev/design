@@ -1,6 +1,6 @@
 {
   "name": "@openstuff-dev/create-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "module": "./dist/index.js",
   "files": [
@@ -28,7 +28,7 @@
     "sourceRoot": "packages/create-app/bin"
   },
   "dependencies": {
-    "@openstuff-dev/nx": "0.1.0",
+    "@openstuff-dev/nx": "0.2.0",
     "create-nx-workspace": "24.0.0",
     "tslib": "^2.3.0"
   },

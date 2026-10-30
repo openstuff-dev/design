@@ -1,6 +1,6 @@
 {
   "name": "@openstuff-dev/ui-angular",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Angular components for the OpenStuff design system, on top of @openstuff-dev/ui",
   "peerDependencies": {
     "@angular/aria": "^22.2.0",
