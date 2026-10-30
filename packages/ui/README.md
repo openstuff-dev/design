@@ -81,6 +81,21 @@ Helpers in the main entry point:
 - `anchor(trigger, popover)` anchors a popover, menu or tooltip to the element that opens it,
   with a unique anchor name (and the polyfill where needed).
 
+## Marketing pages
+
+`marketing.css` and `@openstuff-dev/ui/marketing` are the one-page site every OpenStuff project
+gets (like https://purpose.openstuff.dev): top bar, hero, bento grid, steps, comparison, FAQ and
+footer, all from the tokens. They aren't part of `ui.css`. Start a site with
+`npx nx g @openstuff-dev/nx:site OpenLedger`, which copies them in, rather than by hand.
+
+Bento tiles (`.os-tile`) are still until they're hovered, focused or tapped; then every element
+inside with `data-play` (`fade`, `rise`, `slide`, `pop`, `grow`, `shrink`, `dim`, `highlight`,
+`type`, `fill`, `pulse`) moves to its final state and settles. The markup is the final state, so
+with reduced motion people see it without movement. `marketing.css` starts with the markup and
+lists every illustration piece. `startMarketingPage()` adds the glow that follows the pointer,
+tap to play, copy buttons and closing the mobile menu; it imports nothing, so a static site can
+serve the built `marketing.js` as it is.
+
 ## Browser support
 
 - Features that are Baseline **widely available** work fully.

@@ -26,6 +26,11 @@
       "schema": "./dist/generators/component/schema.json",
       "description": "Adds a standalone, OnPush Angular component."
     },
+    "site": {
+      "factory": "./dist/generators/site/site",
+      "schema": "./dist/generators/site/schema.json",
+      "description": "Adds the project's one-page marketing site for GitHub Pages, on @openstuff-dev/ui/marketing.css."
+    },
     "sync": {
       "factory": "./dist/generators/sync/sync",
       "schema": "./dist/generators/sync/schema.json",

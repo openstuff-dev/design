@@ -5,14 +5,17 @@ import {
   updateToolkitVersions,
   writeWorkspaceFiles,
 } from '../../utils/workspace';
+import { syncSites } from '../../utils/site';
 
 export async function syncGenerator(tree: Tree): Promise<GeneratorCallback | undefined> {
   const differ = writeWorkspaceFiles(tree, false);
   updateRootPackageJson(tree);
   updateNxJson(tree);
   const upgraded = updateToolkitVersions(tree);
+  const sites = await syncSites(tree);
 
   for (const line of upgraded) logger.info(`Updated ${line}`);
+  for (const site of sites) logger.info(`Updated the toolkit copy in ${site}/assets/os`);
   if (differ.length > 0) {
     logger.warn(
       [

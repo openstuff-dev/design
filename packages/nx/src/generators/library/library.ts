@@ -8,10 +8,9 @@ import {
   type Tree,
   writeJson,
 } from '@nx/devkit';
-import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { versions } from '../../utils/versions';
-import { workspaceScope } from '../../utils/workspace';
+import { gitRemote, workspaceScope } from '../../utils/workspace';
 import type { LibraryGeneratorSchema } from './schema';
 
 export async function libraryGenerator(
@@ -68,20 +67,6 @@ export async function libraryGenerator(
     // Forced: the new dependencies are in the project's package.json, not the root one.
     installPackagesTask(tree, true);
   };
-}
-
-/** The repository's https remote, for package.json's `repository` field. */
-function gitRemote(cwd: string): string | null {
-  try {
-    const url = execFileSync('git', ['remote', 'get-url', 'origin'], {
-      cwd,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-    return url.replace(/^git@([^:]+):/, 'https://$1/') || null;
-  } catch {
-    return null;
-  }
 }
 
 export default libraryGenerator;

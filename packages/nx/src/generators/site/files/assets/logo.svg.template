@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- The OpenStuff family: the same ring, a different glyph inside it in the project's colour (set with the CSS property os-mark-core). -->
+  <symbol id="mark-openstuff" viewBox="0 0 32 32"><path fill="currentColor" fill-rule="evenodd" d="<%= ring %>"/><path style="fill:var(--os-mark-core,currentColor)" d="<%= stuffDot %>"/></symbol>
+  <symbol id="mark-openstuff-design" viewBox="0 0 32 32"><path fill="currentColor" fill-rule="evenodd" d="<%= ring %>"/><path style="fill:var(--os-mark-core,currentColor)" d="M13 11.4h6a1.6 1.6 0 0 1 1.6 1.6v6a1.6 1.6 0 0 1 -1.6 1.6h-6a1.6 1.6 0 0 1 -1.6 -1.6v-6a1.6 1.6 0 0 1 1.6 -1.6Z"/></symbol>
+  <symbol id="mark-<%= slug %>" viewBox="0 0 32 32"><path fill="currentColor" fill-rule="evenodd" d="<%= ring %>"/><path style="fill:var(--os-mark-core,currentColor)" d="<%= glyph %>"/></symbol>
+</svg>

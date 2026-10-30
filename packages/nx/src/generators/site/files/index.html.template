@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Replace every "Replace:" comment and every sentence in square brackets, then delete the comment. See README.md. -->
+  <title><%= name %>: <%= tagline %></title>
+  <meta name="description" content="[<%= name %> does one thing for one kind of person. One or two sentences, for search results.]">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="https://<%= domain %>/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= name %>">
+  <meta property="og:title" content="<%= name %>: <%= tagline %>">
+  <meta property="og:description" content="[One sentence. Open source, MIT, self-hostable.]">
+  <meta property="og:url" content="https://<%= domain %>/">
+  <meta property="og:image" content="https://<%= domain %>/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="<%= name %>: <%= tagline %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="assets/os/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/site.css">
+  <script type="module" src="assets/site.js"></script>
+</head>
+<body class="os-site">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 16 16"><path d="M4.5 4.5l7 7m0-7l-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-dash" viewBox="0 0 16 16"><path d="M4 8h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5v-.5a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5"/></g></symbol>
+  <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" d="M8 .2a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 .2z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M3 8h10m-4-4 4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 16 16"><path d="M2.5 4.5h11m-11 4h11m-11 4h11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M8 2 14.5 13.5h-13z"/><path d="M8 6.5v3" stroke-linecap="round"/></g><circle cx="8" cy="11.6" r=".8" fill="currentColor"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M10 2.5 17.5 6.5 10 10.5 2.5 6.5z"/><path d="m2.5 10 7.5 4 7.5-4M2.5 13.5l7.5 4 7.5-4"/></g></symbol>
+  <symbol id="i-building" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="3.5" y="2.5" width="9" height="15" rx="1"/><path d="M12.5 7.5h3a1 1 0 0 1 1 1v9h-4M6.5 6h3M6.5 9h3M6.5 12h3"/></g></symbol>
+  <symbol id="i-shield" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M10 2.5 16 5v5c0 3.6-2.5 6.3-6 7.5C6.5 16.3 4 13.6 4 10V5z"/><path d="m7.5 10 2 2 3.5-4" stroke-linecap="round"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7.5" cy="7" r="3"/><path d="M2.5 16.5c.6-2.6 2.6-4 5-4s4.4 1.4 5 4"/><path d="M13 4.3a3 3 0 0 1 0 5.4M14.5 12.8c1.4.5 2.5 1.8 3 3.7"/></g></symbol>
+  <symbol id="i-key" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="13.5" r="3.5"/><path d="m9 11 7.5-7.5M14 6l2 2M12 8l1.5 1.5"/></g></symbol>
+  <symbol id="i-swap" viewBox="0 0 20 20"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h12m-3-3 3 3-3 3M16 13H4m3-3-3 3 3 3"/></g></symbol>
+</svg>
+
+<a class="os-skip-link" href="#main">Skip to content</a>
+
+<!-- 1. Top bar -->
+<header class="os-topbar">
+  <div class="os-wrap">
+    <a class="os-brand" href="./" aria-label="<%= name %> home">
+      <svg class="os-mark" aria-hidden="true"><use href="assets/logo.svg#mark-<%= slug %>"/></svg>
+      <span class="os-wordmark" aria-hidden="true"><%= open %><b><%= rest %></b></span>
+    </a>
+    <nav class="os-nav" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#self-host">Self-host</a>
+      <a href="<%= repository %>">GitHub</a>
+    </nav>
+    <div class="os-topbar-actions">
+<% if (appUrl) { %>      <a class="os-button" data-variant="ghost" data-hide-sm href="<%= appUrl %>/sign-in">Sign in</a>
+      <a class="os-button" data-variant="primary" href="<%= appUrl %>/sign-up">Try it free</a>
+<% } else { %>      <a class="os-button" data-variant="primary" href="#self-host">Self-host it</a>
+<% } %>      <button class="os-button os-menu-button" data-variant="ghost" data-icon-only popovertarget="os-menu" aria-label="Open menu">
+        <svg class="os-icon" aria-hidden="true"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav id="os-menu" class="os-menu" popover aria-label="Mobile">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#self-host">Self-host</a>
+    <a href="<%= repository %>">GitHub</a>
+<% if (appUrl) { %>    <hr>
+    <a href="<%= appUrl %>/sign-in">Sign in</a>
+    <a class="os-button" data-variant="primary" href="<%= appUrl %>/sign-up">Try it free</a>
+<% } %>  </nav>
+</header>
+
+<main id="main">
+
+<!-- 2. Hero: a short headline, one sentence, two buttons, and a picture of the product at work. -->
+<section class="os-hero" aria-labelledby="hero-title">
+  <div class="os-wrap">
+    <div class="os-hero-copy">
+      <a class="os-pill" href="<%= repository %>"><b>MIT</b> Open source and self-hostable</a>
+      <h1 id="hero-title"><%= tagline %><span class="os-soft">[The payoff, in a few words.]</span></h1>
+      <p class="os-hero-sub">[<%= name %> is … for … : one sentence that says what it does and who it's for.]</p>
+      <div class="os-cta-row">
+<% if (appUrl) { %>        <a class="os-button" data-variant="primary" data-size="lg" href="<%= appUrl %>/sign-up">Try it free</a>
+<% } %>        <a class="os-button" data-size="lg"<% if (!appUrl) { %> data-variant="primary"<% } %> href="#self-host">Self-host it <svg class="os-icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+      <p class="os-hero-meta"><span>Open source</span> · <span>MIT</span> · <span>[Works with … , … and …]</span></p>
+    </div>
+
+    <!-- Replace: show the product doing its job: a terminal, an editor or a UI fragment. Real-looking data, not lorem ipsum. -->
+    <figure class="os-hero-visual" aria-label="[What the picture shows, in one sentence]">
+      <div class="os-term">
+        <div class="os-term-bar"><span class="os-term-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="os-term-title">terminal · acme/shop</span></div>
+<pre><code><span class="os-c-mut">$</span> <span class="os-c-brand"><%= slug %></span> [a command people run]
+<span class="os-c-mut">← [what comes back, in one line]</span>
+
+  [A few lines of realistic output.]
+  [Use concrete names: acme/shop, frontend/**, invoice 2026-118.]
+  [End on the line that shows the payoff.]     <span class="os-c-brand">← [say why it matters]</span></code></pre>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- 3. The problem: show what people do today and where it hurts. Don't lecture. -->
+<section class="os-section" data-divider aria-labelledby="problem-title">
+  <div class="os-wrap">
+    <div class="os-section-head">
+      <span class="os-eyebrow">The problem</span>
+      <h2 id="problem-title">[The problem, in six words.]</h2>
+      <p class="os-lede">[What people do today, and what goes wrong. Concrete: files, tools, numbers.]</p>
+    </div>
+
+    <div class="os-files">
+      <figure class="os-file">
+        <figcaption class="os-file-head"><span><b>shop</b>/notes.md</span><small>edited 2 days ago</small></figcaption>
+        <ol>
+          <li>[The same line in every copy]</li>
+          <li data-drift="changed here only">[A line that drifted]</li>
+          <li>[Another shared line]</li>
+        </ol>
+      </figure>
+      <figure class="os-file">
+        <figcaption class="os-file-head"><span><b>admin</b>/notes.md</span><small>edited 3 weeks ago</small></figcaption>
+        <ol>
+          <li>[The same line in every copy]</li>
+          <li data-gone>[A line someone removed]</li>
+          <li>[Another shared line]</li>
+        </ol>
+      </figure>
+      <figure class="os-file">
+        <figcaption class="os-file-head"><span><b>api</b>/notes.md</span><small>edited 5 months ago</small></figcaption>
+        <ol>
+          <li>[The same line in every copy]</li>
+          <li data-drift="never updated">[An old version]</li>
+          <li>[Another shared line]</li>
+        </ol>
+      </figure>
+    </div>
+    <div class="os-notes">
+      <p><b>[Pain one]</b>[One sentence.]</p>
+      <p><b>[Pain two]</b>[One sentence.]</p>
+      <p><b>[Pain three]</b>[One sentence.]</p>
+    </div>
+  </div>
+</section>
+
+<!--
+  4. Bento grid of features: 6 to 8 tiles of mixed sizes. Each has an illustration, a title and
+  one sentence. Tiles are still until hovered, focused or tapped; then the elements with
+  data-play animate and settle. Every tile below shows one pattern: keep the patterns you
+  need, change the content, delete the rest. The heart of the product gets the big tile.
+-->
+<section class="os-section" data-divider id="features" aria-labelledby="features-title">
+  <div class="os-wrap">
+    <div class="os-section-head">
+      <span class="os-eyebrow">Features</span>
+      <h2 id="features-title">[What you get, in one line.]</h2>
+      <p class="os-lede">[One sentence that ties the tiles together.]</p>
+    </div>
+
+    <div class="os-bento">
+      <!-- Pattern: a request turns into a proposal, gets approved and joins a list (fade, rise, pop, grow). -->
+      <article class="os-tile" data-span="2" data-rows="2" data-size="lg" tabindex="0" aria-labelledby="t-main">
+        <span class="os-tile-tag">The heart of <%= name %></span>
+        <div class="os-viz" data-layout="split" aria-hidden="true">
+          <div class="os-viz-list">
+            <p class="os-viz-bubble"><span class="os-viz-who">you</span>[Something a person says or does.]</p>
+            <p class="os-viz-who" data-play="fade" style="--os-play-delay: 60ms">→ [what <%= name %> does with it]</p>
+            <div class="os-viz-panel" data-play="rise" style="--os-play-delay: 160ms">
+              <div class="os-viz-panel-head"><b>[A proposal]</b><span class="os-badge" data-tone="brand">new</span></div>
+              <div class="os-viz-panel-body"><span class="os-viz-add">[The change it makes]</span></div>
+              <div class="os-viz-panel-foot"><span class="os-viz-avatar">MK</span>[A reviewer] <span class="os-badge" data-tone="success" data-play="pop" style="--os-play-delay: 620ms">✓ approved</span></div>
+            </div>
+          </div>
+          <ul class="os-viz-list">
+            <li class="os-viz-list-head"><span>[The list]</span><span>4</span></li>
+            <li class="os-viz-row" data-new data-play="grow" style="--os-play-delay: 900ms">[The new item]</li>
+            <li class="os-viz-row">[An item]</li>
+            <li class="os-viz-row">[An item]</li>
+            <li class="os-viz-row">[An item]</li>
+          </ul>
+        </div>
+        <h3 id="t-main">[The most important feature]</h3>
+        <p>[One sentence on why it matters. This is the tile people remember.]</p>
+      </article>
+
+      <!-- Pattern: stacked plates fan out, the most specific one lights up. -->
+      <article class="os-tile" tabindex="0" aria-labelledby="t-plates">
+        <div class="os-viz" aria-hidden="true">
+          <div class="os-viz-plates">
+            <div class="os-viz-plate" style="--i: 0"><span>[General]</span><span>3</span></div>
+            <div class="os-viz-plate" style="--i: 1"><span>[Narrower]</span><span>5</span></div>
+            <div class="os-viz-plate" style="--i: 2"><span>[Narrower still]</span><span>2</span></div>
+            <div class="os-viz-plate" data-current style="--i: 3"><span>[Most specific]</span><span>wins</span></div>
+          </div>
+        </div>
+        <h3 id="t-plates">[A feature with levels]</h3>
+        <p>[One sentence.]</p>
+      </article>
+
+      <!-- Pattern: part of a tree lights up and the rest dims (highlight, dim; stagger with --d). -->
+      <article class="os-tile" tabindex="0" aria-labelledby="t-tree">
+        <div class="os-viz" aria-hidden="true">
+          <ul class="os-viz-tree">
+            <li data-play="highlight" style="--d: 0">frontend/ <span class="os-badge" data-tone="brand" data-play="fade" style="--os-play-delay: 260ms">matched</span></li>
+            <li data-play="highlight" style="--d: 1; --depth: 1">src/</li>
+            <li data-play="highlight" style="--d: 2; --depth: 2">cart.ts</li>
+            <li data-play="dim">backend/</li>
+            <li data-play="dim" style="--depth: 1">api.ts</li>
+          </ul>
+        </div>
+        <h3 id="t-tree">[A feature that picks the right part]</h3>
+        <p>[One sentence.]</p>
+      </article>
+
+      <!-- Pattern: a UI card flips to show what's underneath. -->
+      <article class="os-tile" tabindex="0" aria-labelledby="t-flip">
+        <div class="os-viz" aria-hidden="true">
+          <div class="os-viz-list" style="inline-size: min(100%, 17rem)">
+            <div class="os-viz-panel-foot" style="border: 0; justify-content: flex-end">[A switch] <span class="os-viz-switch"></span></div>
+            <div class="os-viz-flip">
+              <div class="os-viz-face"><b>[What people see]</b><p>[A line of UI text.]</p></div>
+              <div class="os-viz-face">[What's underneath,
+word for word.]</div>
+            </div>
+          </div>
+        </div>
+        <h3 id="t-flip">[A feature with two views]</h3>
+        <p>[One sentence.]</p>
+      </article>
+
+      <!-- Pattern: things connect to one node, a pulse runs along each wire (pulse; stagger with --d). -->
+      <article class="os-tile" tabindex="0" aria-labelledby="t-wires">
+        <div class="os-viz" aria-hidden="true">
+          <svg class="os-viz-wires" viewBox="0 0 320 170">
+            <g><rect x="8" y="12" width="96" height="28" rx="6"/><text x="56" y="30" text-anchor="middle">[one]</text></g>
+            <g><rect x="8" y="71" width="96" height="28" rx="6"/><text x="56" y="89" text-anchor="middle">[two]</text></g>
+            <g><rect x="8" y="130" width="96" height="28" rx="6"/><text x="56" y="148" text-anchor="middle">[three]</text></g>
+            <path class="os-viz-wire" d="M104 26C150 26 160 85 206 85"/>
+            <path class="os-viz-wire" d="M104 85H206"/>
+            <path class="os-viz-wire" d="M104 144C150 144 160 85 206 85"/>
+            <path data-play="pulse" style="--d: 0" d="M104 26C150 26 160 85 206 85"/>
+            <path data-play="pulse" style="--d: 1" d="M104 85H206"/>
+            <path data-play="pulse" style="--d: 2" d="M104 144C150 144 160 85 206 85"/>
+            <g data-node><rect x="206" y="64" width="106" height="42" rx="8"/><text x="259" y="89" text-anchor="middle"><%= name %></text></g>
+          </svg>
+        </div>
+        <h3 id="t-wires">[A feature that connects things]</h3>
+        <p>[One sentence.]</p>
+      </article>
+
+      <!-- Pattern: long sections shrink, a meter fills (shrink, fill). -->
+      <article class="os-tile" tabindex="0" aria-labelledby="t-shrink">
+        <div class="os-viz" aria-hidden="true">
+          <div class="os-viz-list" style="inline-size: min(100%, 17rem)">
+            <div class="os-viz-lines"><i style="--w: 80%"></i><div class="os-viz-lines" data-play="shrink"><i></i><i style="--w: 60%"></i></div></div>
+            <div class="os-viz-lines"><i style="--w: 70%"></i><div class="os-viz-lines" data-play="shrink" style="--d: 1"><i></i><i style="--w: 50%"></i></div></div>
+            <div class="os-viz-lines" data-tone="brand"><i></i><i style="--w: 90%"></i><i style="--w: 65%"></i></div>
+            <div class="os-viz-list-head"><span>[budget]</span><span>[82%]</span></div>
+            <div class="os-viz-meter" data-play="fill" style="--value: 82%; --rest: 100%"><i></i></div>
+          </div>
+        </div>
+        <h3 id="t-shrink">[A feature that keeps things small]</h3>
+        <p>[One sentence.]</p>
+      </article>
+
+      <!-- Pattern: an item gets filed into the right place (dim, grow). -->
+      <article class="os-tile" tabindex="0" aria-labelledby="t-file">
+        <div class="os-viz" data-layout="stack" aria-hidden="true">
+          <span class="os-badge" data-tone="warning" data-play="dim" style="justify-self: center"><svg class="os-icon" aria-hidden="true"><use href="#i-warn"/></svg>[Something noticed]</span>
+          <div class="os-viz-panel">
+            <div class="os-viz-panel-head"><b>[Where it goes]</b><span>3</span></div>
+            <ul class="os-viz-list os-viz-panel-body">
+              <li class="os-viz-row" data-tone="warning" data-play="grow" style="--os-play-delay: 220ms">[The new item]</li>
+              <li class="os-viz-row">[An older item]</li>
+            </ul>
+          </div>
+        </div>
+        <h3 id="t-file">[A feature that sorts things out]</h3>
+        <p>[One sentence.]</p>
+      </article>
+
+      <!-- Pattern: a command types itself, then its output appears (type with --chars, rise). -->
+      <article class="os-tile" data-span="2" tabindex="0" aria-labelledby="t-type">
+        <div class="os-viz" data-layout="stack" aria-hidden="true">
+          <div class="os-term">
+            <div class="os-term-bar"><span class="os-term-dots"><i></i><i></i><i></i></span><span class="os-term-title">~/<%= slug %></span></div>
+<pre><code><span class="os-c-mut">$ </span><span data-play="type" style="--chars: 20">docker compose up -d</span><span class="os-viz-caret"></span>
+<span class="os-c-ok" data-play="rise" style="--os-play-delay: 700ms">✔ [service] started</span>
+<span class="os-c-mut" data-play="rise" style="--os-play-delay: 860ms">→ open http://localhost:8080</span></code></pre>
+          </div>
+        </div>
+        <h3 id="t-type">Self-host in one command</h3>
+        <p>One Docker image, configured with environment variables, with a sensible default for every setting.</p>
+      </article>
+    </div>
+
+    <div class="os-also">
+      <div><h3>[Also in the box]</h3><p>[One sentence.]</p></div>
+      <div><h3>[Also in the box]</h3><p>[One sentence.]</p></div>
+      <div><h3>Export and import</h3><p>Everything you put in comes out again, and goes back in.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. How it works: three steps, the first one gets people running. -->
+<section class="os-section" data-divider id="how" aria-labelledby="how-title">
+  <div class="os-wrap">
+    <div class="os-section-head" data-align="center">
+      <span class="os-eyebrow">How it works</span>
+      <h2 id="how-title">[Running in five minutes.]</h2>
+    </div>
+    <ol class="os-steps">
+      <li class="os-step">
+        <span class="os-step-n">1</span>
+        <h3>Run it</h3>
+        <p><% if (appUrl) { %>Start on the hosted version, or run it yourself.<% } else { %>Run it on your own server.<% } %></p>
+        <div class="os-term">
+          <div class="os-term-bar"><span class="os-term-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="os-term-title">terminal</span><button class="os-copy" type="button" data-copy="code-run"><svg aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+<pre><code id="code-run"><span class="os-c-mut">$ </span>git clone <%= repository %>
+<span class="os-c-mut">$ </span>cd <%= slug %> &amp;&amp; docker compose up -d</code></pre>
+        </div>
+      </li>
+      <li class="os-step">
+        <span class="os-step-n">2</span>
+        <h3>[Connect it]</h3>
+        <p>[One sentence.]</p>
+      </li>
+      <li class="os-step">
+        <span class="os-step-n">3</span>
+        <h3>[Get the payoff]</h3>
+        <p>[One sentence.]</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6. Why: an honest comparison with how people do it today. Don't name or criticise other products. -->
+<section class="os-section" data-divider aria-labelledby="why-title">
+  <div class="os-wrap">
+    <div class="os-section-head">
+      <span class="os-eyebrow">Why <%= name %></span>
+      <h2 id="why-title">[Why it's better than what you do today.]</h2>
+    </div>
+    <div class="os-compare-box">
+      <table class="os-compare">
+        <thead><tr><th scope="col"><span class="os-visually-hidden">What matters</span></th><th scope="col">[How people do it today]</th><th scope="col" data-us><%= name %></th></tr></thead>
+        <tbody>
+          <tr>
+            <th scope="row">[What matters]</th>
+            <td><span class="os-yn" data-answer="no"><svg aria-hidden="true"><use href="#i-x"/></svg>No</span>[Why not.]</td>
+            <td data-us><span class="os-yn" data-answer="yes"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</span>[How.]</td>
+          </tr>
+          <tr>
+            <th scope="row">[What matters]</th>
+            <td><span class="os-yn" data-answer="partly"><svg aria-hidden="true"><use href="#i-dash"/></svg>Partly</span>[Why only partly.]</td>
+            <td data-us><span class="os-yn" data-answer="yes"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</span>[How.]</td>
+          </tr>
+          <tr>
+            <th scope="row">You own the data</th>
+            <td><span class="os-yn" data-answer="partly"><svg aria-hidden="true"><use href="#i-dash"/></svg>Partly</span>[Why only partly.]</td>
+            <td data-us><span class="os-yn" data-answer="yes"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</span>Self-host it, and export everything.</td>
+          </tr>
+          <tr>
+            <th scope="row">Open source</th>
+            <td><span class="os-yn" data-answer="partly"><svg aria-hidden="true"><use href="#i-dash"/></svg>Depends</span>[On what.]</td>
+            <td data-us><span class="os-yn" data-answer="yes"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</span>MIT licence.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Open source -->
+<section class="os-section" data-divider id="self-host" aria-labelledby="oss-title">
+  <div class="os-wrap os-split">
+    <div>
+      <span class="os-eyebrow">Open source</span>
+      <h2 id="oss-title">Read the code, run it, change it.</h2>
+      <ul class="os-checklist">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>MIT licence.</b> Use it at work, fork it, sell it.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>One Docker image.</b> Configured with environment variables.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Your data.</b> On your servers, exportable at any time.</span></li>
+      </ul>
+      <div class="os-cta-row">
+        <a class="os-button" data-variant="primary" href="<%= repository %>"><svg class="os-icon" aria-hidden="true"><use href="#i-github"/></svg>View on GitHub</a>
+        <a class="os-button" href="<%= repository %>#readme">Self-hosting guide</a>
+      </div>
+    </div>
+    <div>
+      <div class="os-term">
+        <div class="os-term-bar"><span class="os-term-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="os-term-title">terminal</span><button class="os-copy" type="button" data-copy="code-pull"><svg aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+<pre><code id="code-pull"><span class="os-c-mut">$ </span>docker pull <%= image %></code></pre>
+      </div>
+      <div class="os-family">
+        <p>Part of the OpenStuff family: tools built on one shared toolkit.</p>
+        <div class="os-family-row">
+          <a href="https://github.com/openstuff-dev"><svg class="os-mark" aria-hidden="true"><use href="assets/logo.svg#mark-openstuff"/></svg>OpenStuff</a>
+          <span><svg class="os-mark" aria-hidden="true"><use href="assets/logo.svg#mark-<%= slug %>"/></svg><%= name %></span>
+          <a href="https://design.openstuff.dev" style="--os-mark-core: #9442d9"><svg class="os-mark" aria-hidden="true"><use href="assets/logo.svg#mark-openstuff-design"/></svg>OpenStuff Design</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. For teams and enterprises -->
+<section class="os-section" data-divider aria-labelledby="teams-title">
+  <div class="os-wrap">
+    <div class="os-section-head">
+      <span class="os-eyebrow">For teams and enterprises</span>
+      <h2 id="teams-title">[Shared where you want it. Private everywhere else.]</h2>
+      <p class="os-lede">[One sentence.]</p>
+    </div>
+    <div class="os-features">
+      <div><svg aria-hidden="true"><use href="#i-layers"/></svg><h3>[Feature]</h3><p>[One sentence.]</p></div>
+      <div><svg aria-hidden="true"><use href="#i-building"/></svg><h3>[Feature]</h3><p>[One sentence.]</p></div>
+      <div><svg aria-hidden="true"><use href="#i-shield"/></svg><h3>[Feature]</h3><p>[One sentence.]</p></div>
+      <div><svg aria-hidden="true"><use href="#i-users"/></svg><h3>Roles</h3><p>[Who can do what.]</p></div>
+      <div><svg aria-hidden="true"><use href="#i-key"/></svg><h3>[Feature]</h3><p>[One sentence.]</p></div>
+      <div><svg aria-hidden="true"><use href="#i-swap"/></svg><h3>Export and import</h3><p>[Move between hosted and self-hosted.]</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. FAQ: the questions people ask first. -->
+<section class="os-section" data-divider aria-labelledby="faq-title">
+  <div class="os-wrap">
+    <div class="os-section-head" data-align="center">
+      <span class="os-eyebrow">FAQ</span>
+      <h2 id="faq-title">Questions people ask first</h2>
+    </div>
+    <div class="os-faq">
+      <details name="faq">
+        <summary>Is it free?</summary>
+        <div class="os-faq-answer"><p>Yes. <%= name %> is open source under the MIT licence, so self-hosting costs nothing but your server.</p></div>
+      </details>
+      <details name="faq">
+        <summary>Can I self-host it?</summary>
+        <div class="os-faq-answer"><p>Yes. It ships as one Docker image, <code><%= image %></code>, configured with environment variables.</p></div>
+      </details>
+      <details name="faq">
+        <summary>Where is my data?</summary>
+        <div class="os-faq-answer"><p>[Where it is when hosted, and when self-hosted. That you can export everything.]</p></div>
+      </details>
+      <details name="faq">
+        <summary>[How is this different from …?]</summary>
+        <div class="os-faq-answer"><p>[An honest answer.]</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- 10. Final call to action -->
+<section class="os-section os-final" data-divider aria-labelledby="final-title">
+  <div class="os-wrap">
+    <h2 id="final-title">[The promise, one more time.]</h2>
+    <p class="os-lede">[<% if (appUrl) { %>Start on the hosted version in a minute, or run it yourself.<% } else { %>Run it on your own server in five minutes.<% } %>]</p>
+    <div class="os-cta-row">
+<% if (appUrl) { %>      <a class="os-button" data-variant="primary" data-size="lg" href="<%= appUrl %>/sign-up">Try it free</a>
+<% } %>      <a class="os-button" data-size="lg"<% if (!appUrl) { %> data-variant="primary"<% } %> href="<%= repository %>">Self-host it <svg class="os-icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="os-footer">
+  <div class="os-wrap">
+    <div>
+      <a class="os-brand" href="https://github.com/openstuff-dev" aria-label="OpenStuff on GitHub">
+        <svg class="os-mark" aria-hidden="true"><use href="assets/logo.svg#mark-openstuff"/></svg>
+        <span class="os-wordmark" aria-hidden="true">Open<b>Stuff</b></span>
+      </a>
+      <small>Made by OpenStuff. <%= name %> is released under the MIT licence.</small>
+    </div>
+    <nav aria-label="Footer">
+      <a href="<%= repository %>">GitHub</a>
+      <a href="https://design.openstuff.dev">Design</a>
+      <a href="<%= repository %>/blob/HEAD/LICENSE">Licence</a>
+<% if (appUrl) { %>      <a href="<%= appUrl %>/sign-in">Sign in</a>
+<% } %>    </nav>
+  </div>
+</footer>
+</body>
+</html>

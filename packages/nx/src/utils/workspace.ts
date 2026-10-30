@@ -5,6 +5,7 @@ import {
   visitNotIgnoredFiles,
   writeJson,
 } from '@nx/devkit';
+import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import {
@@ -225,4 +226,18 @@ export function titleCase(name: string): string {
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+/** The repository's https remote, for package.json's `repository` field and the site's links. */
+export function gitRemote(cwd: string): string | null {
+  try {
+    const url = execFileSync('git', ['remote', 'get-url', 'origin'], {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return url.replace(/^git@([^:]+):/, 'https://$1/') || null;
+  } catch {
+    return null;
+  }
 }
