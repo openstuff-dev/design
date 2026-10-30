@@ -48,6 +48,8 @@ export const PAGES: readonly DocPage[] = [
     load: () => import('./pages/toast').then((m) => m.ToastPage) },
   { path: 'page', title: 'Page, header and panel', group: 'Components',
     load: () => import('./pages/page').then((m) => m.PageLayoutPage) },
+  { path: 'shell', title: 'App shell', group: 'Components',
+    load: () => import('./pages/shell').then((m) => m.ShellPage) },
   { path: 'tabs', title: 'Tabs', group: 'Components',
     load: () => import('./pages/tabs').then((m) => m.TabsPage) },
   { path: 'settings', title: 'Settings', group: 'Components',

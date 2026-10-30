@@ -66,6 +66,7 @@ warning, success, info).
 | `command-palette.css` | `.os-command-palette`: a dialog with a combobox and a listbox |
 | `toast.css` | `.os-toast-region` (a manual popover) and `.os-toast` |
 | `page.css` | `.os-page`, `.os-page-header`, `.os-breadcrumbs`, `.os-panel`, `.os-card`, `.os-card-grid`, `.os-tabs` |
+| `shell.css` | `.os-shell`, `.os-shell-sidebar`, `.os-shell-brand`, `.os-shell-content`, `.os-shell-topbar`, `.os-shell-menu` |
 | `settings.css` | `.os-setting-card`, `.os-setting-row`, `.os-form-actions` |
 | `data.css` | `.os-data-table` (stacked rows below 36rem), `.os-stat-tile`, `.os-stat-grid` |
 

@@ -19,6 +19,7 @@
 @import './components/command-palette.css';
 @import './components/toast.css';
 @import './components/page.css';
+@import './components/shell.css';
 @import './components/settings.css';
 @import './components/data.css';
 @import './utilities.css';

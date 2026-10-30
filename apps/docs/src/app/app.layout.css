@@ -48,10 +48,9 @@
 }
 
 .brand-mark {
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  border: 0.25rem solid var(--os-brand-default);
-  border-radius: var(--os-radius-full);
+  flex-shrink: 0;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
 }
 
 .brand-light {
