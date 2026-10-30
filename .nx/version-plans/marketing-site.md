@@ -1,5 +1,5 @@
 ---
-ui: minor
+ui: patch
 nx: minor
 ---
 
