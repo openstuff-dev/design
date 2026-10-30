@@ -65,6 +65,7 @@ describe('preset generator', () => {
       'stylelint.config.mjs',
       'AGENTS.md',
       'CLAUDE.md',
+      '.claude/skills/ux-details/SKILL.md',
       'LICENSE',
       'README.md',
       'docker-compose.yml',
