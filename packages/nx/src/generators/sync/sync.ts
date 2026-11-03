@@ -1,5 +1,6 @@
 import { formatFiles, type GeneratorCallback, installPackagesTask, logger, type Tree } from '@nx/devkit';
 import {
+  updateDockerfile,
   updateNxJson,
   updateRootPackageJson,
   updateToolkitVersions,
@@ -11,6 +12,7 @@ export async function syncGenerator(tree: Tree): Promise<GeneratorCallback | und
   const differ = writeWorkspaceFiles(tree, false);
   updateRootPackageJson(tree);
   updateNxJson(tree);
+  updateDockerfile(tree);
   const upgraded = updateToolkitVersions(tree);
   const sites = await syncSites(tree);
 

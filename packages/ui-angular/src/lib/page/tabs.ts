@@ -3,6 +3,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   contentChildren,
   Directive,
   effect,
@@ -15,13 +16,16 @@ import { Tab as AriaTab, TabContent, TabList, TabPanel, Tabs as AriaTabs } from 
 
 /**
  * One tab of a Tabs: its label and, inside the template, its content (rendered when chosen).
+ * When `os-tab` has no value (`<ng-template os-tab label="Install">`), the label is used as the
+ * tab's value.
  */
 @Directive({ selector: 'ng-template[os-tab]' })
 export class Tab {
-  readonly value = input.required<string>({ alias: 'os-tab' });
+  readonly osTab = input('', { alias: 'os-tab' });
   readonly label = input.required<string>();
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly template = inject<TemplateRef<unknown>>(TemplateRef);
+  readonly value = computed(() => this.osTab().trim() || this.label());
 }
 
 /**
@@ -80,6 +84,14 @@ export class Tabs {
 
   constructor() {
     effect(() => {
+      const seen = new Set<string>();
+      for (const tab of this.tabs()) {
+        const value = tab.value();
+        if (seen.has(value)) {
+          throw new Error(`Duplicate os-tab value "${value}". Give each tab a distinct value.`);
+        }
+        seen.add(value);
+      }
       if (this.selected() === undefined) {
         this.selected.set(this.tabs().find((tab) => !tab.disabled())?.value());
       }

@@ -70,7 +70,10 @@ describe('sync generator', () => {
 
     const nxJson = readJson<{ defaultBase: string; targetDefaults: Record<string, unknown>; plugins: unknown[] }>(tree, 'nx.json');
     expect(nxJson.defaultBase).toBe('master');
-    expect(nxJson.targetDefaults.build).toEqual({ cache: false });
+    expect(nxJson.targetDefaults.build).toEqual({ cache: false, dependsOn: ['^build'] });
+    expect(nxJson.targetDefaults.test).toEqual({ cache: true, dependsOn: ['^build'] });
+    expect(nxJson.targetDefaults.typecheck).toEqual({ cache: true, dependsOn: ['^build'] });
+    expect(nxJson.targetDefaults.lint).toMatchObject({ cache: true, dependsOn: ['^build'] });
     expect(nxJson.targetDefaults.stylelint).toBeDefined();
     expect(nxJson.plugins).toContainEqual({ plugin: '@nx/eslint/plugin', options: { targetName: 'lint' } });
   });

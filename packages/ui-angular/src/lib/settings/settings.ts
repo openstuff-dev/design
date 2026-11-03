@@ -30,6 +30,7 @@ import { uniqueId } from '../id';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'os-setting-card',
+    '[attr.title]': 'null',
     '[attr.data-tone]': 'tone() === "danger" ? "danger" : null',
     '[attr.aria-labelledby]': 'title() ? titleId : ownLabelledBy',
   },

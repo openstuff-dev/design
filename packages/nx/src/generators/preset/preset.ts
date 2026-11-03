@@ -62,7 +62,11 @@ export async function presetGenerator(
       server: stack === 'web-server' ? 'server' : undefined,
     });
     if (stack === 'web-server') await serverGenerator(tree, { name: 'server' });
-    generateFiles(tree, join(__dirname, 'files', `docker-${stack}`), '.', { dot: '.' });
+    generateFiles(tree, join(__dirname, 'files', `docker-${stack}`), '.', {
+      dot: '.',
+      packages: [],
+      runtimePackages: [],
+    });
   }
 
   await formatFiles(tree);

@@ -2,6 +2,7 @@ import { readJson, type Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearVersionCache } from '../../utils/versions';
+import { libraryGenerator } from '../library/library';
 import { presetGenerator } from './preset';
 
 // No registry and no git in tests: toolkit versions fall back to this plugin's version.
@@ -52,6 +53,14 @@ describe('preset generator', () => {
     expect(tree.read('apps/web/src/app/home.ts', 'utf8')).toContain("fetch('/api/health')");
 
     expect(readJson<Manifest>(tree, 'apps/server/package.json').nx?.name).toBe('server');
+    const nxJson = readJson<{ targetDefaults: Record<string, { dependsOn?: string[] }> }>(
+      tree,
+      'nx.json',
+    );
+    expect(nxJson.targetDefaults.build.dependsOn).toEqual(['^build']);
+    expect(nxJson.targetDefaults.test.dependsOn).toEqual(['^build']);
+    expect(nxJson.targetDefaults.typecheck.dependsOn).toEqual(['^build']);
+    expect(nxJson.targetDefaults.lint.dependsOn).toEqual(['^build']);
     expect(tree.read('Dockerfile', 'utf8')).toContain('WEB_DIR=/app/web');
     for (const file of [
       '.gitignore',
@@ -123,6 +132,20 @@ describe('preset generator', () => {
   it('refuses an OpenPurpose project that is not org/slug', async () => {
     await expect(presetGenerator(tree, { name: 'demo', openpurpose: 'demo' })).rejects.toThrow(
       'org/slug',
+    );
+  });
+
+  it('updates the web-server Dockerfile when a workspace library is added', async () => {
+    await presetGenerator(tree, { name: 'demo' });
+    await libraryGenerator(tree, { name: 'contracts' });
+
+    const dockerfile = tree.read('Dockerfile', 'utf8') ?? '';
+    expect(dockerfile).toContain('COPY packages/contracts/package.json packages/contracts/');
+    expect(dockerfile).toContain('FROM manifests AS packages');
+    expect(dockerfile).toContain('RUN npm run build -w packages/contracts');
+    expect(dockerfile).toContain('FROM packages AS server');
+    expect(dockerfile).toContain(
+      'COPY --from=packages /app/packages/contracts/dist /app/packages/contracts/dist',
     );
   });
 });

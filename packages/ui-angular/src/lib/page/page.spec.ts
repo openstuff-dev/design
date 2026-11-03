@@ -40,9 +40,12 @@ describe('Page, PageHeader, Breadcrumbs, Panel and Card', () => {
   it('names the page heading, breadcrumbs and panel', async () => {
     const { root } = await render(Host);
     expect(query(root, 'main', HTMLElement).dataset['width']).toBe('narrow');
+    const header = query(root, 'header[os-page-header]', HTMLElement);
+    expect(header.hasAttribute('title')).toBe(false);
     expect(accessibleName(query(root, 'h1', HTMLHeadingElement))).toBe('Design');
     expect(accessibleName(query(root, 'nav', HTMLElement))).toBe('Breadcrumbs');
     const panel = query(root, 'section', HTMLElement);
+    expect(panel.hasAttribute('title')).toBe(false);
     expect(accessibleName(panel)).toBe('Members');
     expect(query(panel, '.os-panel-header button', HTMLButtonElement).textContent.trim()).toBe('Invite');
     expect(query(root, 'a.os-card', HTMLAnchorElement).className).toBe('os-card');
@@ -91,5 +94,46 @@ describe('Tabs', () => {
     press(tabs[3], 'Home');
     await fixture.whenStable();
     expect(host.tab()).toBe('overview');
+  });
+
+  it('falls back to each tab label when os-tab has no value and shows the chosen panel', async () => {
+    @Component({
+      imports: [Tab, Tabs],
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      template: `
+        <os-tabs label="Install">
+          <ng-template os-tab label="Docker"><p>Docker panel</p></ng-template>
+          <ng-template os-tab label="Compose"><p>Compose panel</p></ng-template>
+        </os-tabs>
+      `,
+    })
+    class ValuelessTabsHost {}
+
+    const { fixture, root } = await render(ValuelessTabsHost);
+    const tabs = [...root.querySelectorAll<HTMLElement>('[role="tab"]')];
+    expect(root.textContent).toContain('Docker panel');
+    expect(root.textContent).not.toContain('Compose panel');
+
+    tabs[0].focus();
+    press(tabs[0], 'ArrowRight');
+    await fixture.whenStable();
+    expect(tabs[1].getAttribute('aria-selected')).toBe('true');
+    expect(root.textContent).toContain('Compose panel');
+  });
+
+  it('throws when two tabs resolve to the same value', async () => {
+    @Component({
+      imports: [Tab, Tabs],
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      template: `
+        <os-tabs label="Duplicate">
+          <ng-template os-tab label="Same"><p>One</p></ng-template>
+          <ng-template os-tab label="Same"><p>Two</p></ng-template>
+        </os-tabs>
+      `,
+    })
+    class DuplicateTabsHost {}
+
+    await expect(render(DuplicateTabsHost)).rejects.toThrow('Duplicate os-tab value "Same"');
   });
 });

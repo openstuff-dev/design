@@ -8,7 +8,11 @@
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "bin/**/*.ts"],
-  "references": [],
+  "references": [
+    {
+      "path": "../nx/tsconfig.lib.json"
+    }
+  ],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",
