@@ -31,7 +31,9 @@ class Host {}
 describe('SettingCard, SettingRow and FormActions', () => {
   it('names the card by its title and each control by its row', async () => {
     const { root } = await render(Host);
-    expect(accessibleName(query(root, 'section', HTMLElement))).toBe('Profile');
+    const card = query(root, 'section', HTMLElement);
+    expect(card.hasAttribute('title')).toBe(false);
+    expect(accessibleName(card)).toBe('Profile');
     const input = query(root, 'input', HTMLInputElement);
     expect(accessibleName(input)).toBe('Name');
     expect(accessibleDescription(input)).toBe('Shown to your team.');

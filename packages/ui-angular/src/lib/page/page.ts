@@ -38,7 +38,11 @@ export class Page {
 @Component({
   selector: 'header[os-page-header]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'os-page-header', '[attr.data-align]': 'align() === "start" ? "start" : null' },
+  host: {
+    class: 'os-page-header',
+    '[attr.title]': 'null',
+    '[attr.data-align]': 'align() === "start" ? "start" : null',
+  },
   template: `
     <div>
       <h1 class="os-page-title">{{ title() }}</h1>
@@ -90,7 +94,11 @@ export class Breadcrumbs {
 @Component({
   selector: '[os-panel]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'os-panel', '[attr.aria-labelledby]': 'title() ? titleId : null' },
+  host: {
+    class: 'os-panel',
+    '[attr.title]': 'null',
+    '[attr.aria-labelledby]': 'title() ? titleId : null',
+  },
   template: `
     @if (title()) {
       <header class="os-panel-header">

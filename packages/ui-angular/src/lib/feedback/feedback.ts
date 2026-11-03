@@ -38,7 +38,7 @@ const TONE_ICONS: Record<Tone, IconNode> = {
   selector: 'os-callout',
   imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'os-callout', '[attr.data-tone]': 'tone()' },
+  host: { class: 'os-callout', '[attr.title]': 'null', '[attr.data-tone]': 'tone()' },
   template: `
     <svg os-icon [icon]="icon()"></svg>
     <div>
@@ -81,7 +81,11 @@ export class Callout {
   selector: 'os-empty-state',
   imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'os-empty-state', '[attr.data-bordered]': 'bordered() ? "" : null' },
+  host: {
+    class: 'os-empty-state',
+    '[attr.title]': 'null',
+    '[attr.data-bordered]': 'bordered() ? "" : null',
+  },
   template: `
     @if (icon(); as icon) {
       <svg os-icon [icon]="icon"></svg>

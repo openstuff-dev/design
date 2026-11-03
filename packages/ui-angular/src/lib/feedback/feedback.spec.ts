@@ -28,8 +28,11 @@ describe('Callout, EmptyState, Kbd and Skeleton', () => {
   it('reads a callout as its title and text, and names the empty state heading', async () => {
     const { root } = await render(Host);
     const callout = query(root, 'os-callout', HTMLElement);
+    expect(callout.hasAttribute('title')).toBe(false);
     expect(callout.dataset['tone']).toBe('danger');
     expect(callout.textContent).toMatch(/Couldn't save\s+The server didn't answer\./);
+    const emptyState = query(root, 'os-empty-state', HTMLElement);
+    expect(emptyState.hasAttribute('title')).toBe(false);
     const heading = query(root, '[role="heading"]', HTMLElement);
     expect(heading.getAttribute('aria-level')).toBe('2');
     expect(accessibleName(heading)).toBe('No proposals yet');

@@ -10,7 +10,7 @@ import {
 } from '@nx/devkit';
 import { join } from 'node:path';
 import { versions } from '../../utils/versions';
-import { gitRemote, workspaceScope } from '../../utils/workspace';
+import { gitRemote, updateDockerfile, workspaceScope } from '../../utils/workspace';
 import type { LibraryGeneratorSchema } from './schema';
 
 export async function libraryGenerator(
@@ -61,6 +61,7 @@ export async function libraryGenerator(
       },
     },
   });
+  updateDockerfile(tree);
 
   await formatFiles(tree);
   return () => {

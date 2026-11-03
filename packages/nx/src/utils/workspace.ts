@@ -151,7 +151,22 @@ const LINT_INPUTS = (tool: string, config: string): unknown[] => [
 export function updateNxJson(tree: Tree): void {
   if (!tree.exists('nx.json')) writeJson(tree, 'nx.json', {});
   updateJson<Record<string, unknown>>(tree, 'nx.json', (json) => {
-    const targetDefaults = (json.targetDefaults ?? {}) as Record<string, unknown>;
+    const targetDefaults = (json.targetDefaults ?? {}) as Record<string, Record<string, unknown>>;
+    const defaults: Record<string, Record<string, unknown>> = {
+      build: { cache: true, dependsOn: ['^build'] },
+      test: { cache: true, dependsOn: ['^build'] },
+      typecheck: { cache: true, dependsOn: ['^build'] },
+      lint: {
+        cache: true,
+        dependsOn: ['^build'],
+        inputs: LINT_INPUTS('eslint', 'eslint.config.mjs'),
+      },
+      stylelint: { cache: true, inputs: LINT_INPUTS('stylelint', 'stylelint.config.mjs') },
+    };
+    const mergedTargets: Record<string, unknown> = { ...targetDefaults };
+    for (const [name, config] of Object.entries(defaults)) {
+      mergedTargets[name] = { ...config, ...targetDefaults[name] };
+    }
     const plugins = (json.plugins ?? []) as (string | { plugin: string })[];
     const hasEslint = plugins.some(
       (p) => (typeof p === 'string' ? p : p.plugin) === '@nx/eslint/plugin',
@@ -160,14 +175,7 @@ export function updateNxJson(tree: Tree): void {
       $schema: './node_modules/nx/schemas/nx-schema.json',
       defaultBase: 'main',
       ...json,
-      targetDefaults: {
-        build: { cache: true, dependsOn: ['^build'] },
-        test: { cache: true },
-        typecheck: { cache: true },
-        lint: { cache: true, inputs: LINT_INPUTS('eslint', 'eslint.config.mjs') },
-        stylelint: { cache: true, inputs: LINT_INPUTS('stylelint', 'stylelint.config.mjs') },
-        ...targetDefaults,
-      },
+      targetDefaults: mergedTargets,
       plugins: hasEslint
         ? plugins
         : [...plugins, { plugin: '@nx/eslint/plugin', options: { targetName: 'lint' } }],
@@ -240,4 +248,106 @@ export function gitRemote(cwd: string): string | null {
   } catch {
     return null;
   }
+}
+
+export function renderWebServerDockerfile(
+  packages: string[],
+  runtimePackages: string[] = packages,
+): string {
+  const wsFlags = packages.map((p) => ` -w ${p}`).join('');
+  const baseStage = packages.length > 0 ? 'packages' : 'manifests';
+  const manifestCopies = packages.map((p) => `COPY ${p}/package.json ${p}/\n`).join('');
+  const packagesStage =
+    packages.length > 0
+      ? `\nFROM manifests AS packages\nRUN npm ci${wsFlags}\nCOPY packages/ packages/\nRUN npm run build${wsFlags}\n`
+      : '';
+  const runtimeCopies = runtimePackages
+    .map(
+      (p) =>
+        `COPY --from=packages /app/${p}/package.json /app/${p}/\nCOPY --from=packages /app/${p}/dist /app/${p}/dist\n`,
+    )
+    .join('');
+  return `# One image with the API and the web app. The server serves the built web app from WEB_DIR.
+FROM node:24-alpine AS manifests
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY apps/server/package.json apps/server/
+COPY apps/web/package.json apps/web/
+${manifestCopies}${packagesStage}
+FROM ${baseStage} AS web
+RUN npm ci -w apps/web${wsFlags}
+COPY apps/web/ apps/web/
+RUN npm run tokens -w apps/web && npm run build -w apps/web
+
+FROM ${baseStage} AS server
+RUN npm ci -w apps/server${wsFlags}
+COPY apps/server/ apps/server/
+RUN npm run build -w apps/server
+
+FROM manifests AS server-deps
+RUN npm ci -w apps/server --omit=dev && mkdir -p apps/server/node_modules
+
+FROM node:24-alpine
+ENV NODE_ENV=production \\
+    PORT=8080 \\
+    WEB_DIR=/app/web
+WORKDIR /app/apps/server
+COPY --from=server-deps /app/node_modules /app/node_modules
+# Anything npm had to nest under the server instead of hoisting (usually empty).
+COPY --from=server-deps /app/apps/server/node_modules ./node_modules
+${runtimeCopies}COPY --from=server /app/apps/server/dist ./dist
+COPY --from=server /app/apps/server/package.json ./
+COPY --from=web /app/apps/web/dist/web/browser /app/web
+USER node
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://127.0.0.1:8080/api/health || exit 1
+CMD ["node", "dist/index.js"]
+`;
+}
+
+/**
+ * Updates the web-server Dockerfile to build any workspace packages in `packages/` and copy
+ * runtime packages into the final image. Leaves customized Dockerfiles untouched.
+ */
+export function updateDockerfile(tree: Tree): void {
+  if (
+    !tree.exists('Dockerfile') ||
+    !tree.exists('apps/server/package.json') ||
+    !tree.exists('apps/web/package.json')
+  ) {
+    return;
+  }
+  const current = tree.read('Dockerfile', 'utf8') ?? '';
+  const prevPackages = [
+    ...current.matchAll(/^COPY (packages\/[^\s/]+)\/package\.json \1\/$/gm),
+  ].map((m) => m[1]);
+  const prevRuntime = [
+    ...current.matchAll(
+      /^COPY --from=packages \/app\/(packages\/[^\s/]+)\/package\.json \/app\/\1\/$/gm,
+    ),
+  ].map((m) => m[1]);
+  if (current.trim() !== renderWebServerDockerfile(prevPackages, prevRuntime).trim()) {
+    return;
+  }
+
+  const packages = tree.exists('packages')
+    ? tree
+        .children('packages')
+        .sort((a, b) => a.localeCompare(b))
+        .map((dir) => `packages/${dir}`)
+        .filter((pkg) => tree.exists(`${pkg}/package.json`))
+    : [];
+  const serverManifest = readJson<PackageJson>(tree, 'apps/server/package.json');
+  const serverDeps = serverManifest.dependencies ?? {};
+  const serverDevDeps = serverManifest.devDependencies ?? {};
+  const runtimePackages = packages.filter((pkg) => {
+    const name = readJson<PackageJson>(tree, `${pkg}/package.json`).name;
+    if (!name) return true;
+    if (name in serverDeps) return true;
+    if (name in serverDevDeps) return false;
+    return true;
+  });
+
+  const next = renderWebServerDockerfile(packages, runtimePackages);
+  if (current !== next) tree.write('Dockerfile', next);
 }
