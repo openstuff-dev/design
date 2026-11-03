@@ -33,7 +33,16 @@ Every change to a package needs a version plan, which CI checks on pull requests
 npx nx release plan     # pick the bump and write one sentence for the changelog
 ```
 
-Merge it, then run the **Release** workflow on GitHub (it starts as a dry run). It bumps versions, writes changelogs and GitHub releases, tags `<package>@<version>` and publishes to npm with provenance. It needs an `NPM_TOKEN` secret.
+Merge it, then run the **Release** workflow on GitHub (it starts as a dry run). With a stage-only `NPM_TOKEN` secret, the workflow bumps versions, writes changelogs and GitHub releases, tags `<package>@<version>`, and runs `tools/stage-publish.sh` (`npm stage publish` with provenance).
+
+Nothing is public on npm until a maintainer approves each staged package with 2FA (needs **npm 12+** and **Node ≥ 22.22.2**, or approve on npmjs.com). Approve base packages (`@openstuff-dev/tokens`, `@openstuff-dev/ui`, `@openstuff-dev/lint`) before the packages that depend on them (`@openstuff-dev/ui-angular`, `@openstuff-dev/nx`, `@openstuff-dev/create-app`):
+
+```sh
+npm stage list
+npm stage approve <stage-id>
+```
+
+Because `nx release` creates the GitHub releases and `<package>@<version>` tags before 2FA approval, if you reject a staged package, delete its GitHub release and `<package>@<version>` tag by hand.
 
 ## License
 

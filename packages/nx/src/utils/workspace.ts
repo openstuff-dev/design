@@ -66,10 +66,21 @@ export function readStaticFiles(dir: string): Map<string, string> {
  */
 export function writeWorkspaceFiles(tree: Tree, overwrite: boolean): string[] {
   const differ: string[] = [];
+  const ignored =
+    !overwrite && tree.exists('.gitignore')
+      ? new Set(
+          (tree.read('.gitignore', 'utf8') ?? '')
+            .split('\n')
+            .filter((line) => line.trim() && !line.trim().startsWith('#'))
+            .map(normalizeIgnore),
+        )
+      : new Set<string>();
   for (const [path, content] of readStaticFiles(WORKSPACE_FILES)) {
     const current = tree.exists(path) ? tree.read(path, 'utf8') : null;
-    if (current === null || overwrite) {
+    if (overwrite) {
       tree.write(path, content);
+    } else if (current === null) {
+      if (!ignored.has(normalizeIgnore(path))) tree.write(path, content);
     } else if (current === content) {
       continue;
     } else if (path === 'AGENTS.md') {
@@ -100,12 +111,32 @@ export function replaceAgentsBlock(current: string, template: string): string {
   return current.slice(0, start) + block + current.slice(end + AGENTS_END.length);
 }
 
+function normalizeIgnore(line: string): string {
+  return line.trim().replace(/^\/+|\/+$/g, '');
+}
+
+function isIgnored(have: Set<string>, entry: string): boolean {
+  if (have.has(entry)) return true;
+  if (!entry.includes('/') || !entry.includes('*')) return false;
+  const pattern = new RegExp(
+    `^${entry.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replaceAll('*', '[^/]+')}$`,
+  );
+  return [...have].some((line) => pattern.test(line));
+}
+
 /** Appends the template's lines that the file doesn't have yet. */
 export function mergeLines(current: string, template: string): string {
-  const have = new Set(current.split('\n').map((line) => line.trim()));
+  const have = new Set(
+    current
+      .split('\n')
+      .filter((line) => line.trim() && !line.trim().startsWith('#'))
+      .map(normalizeIgnore),
+  );
   const missing = template
     .split('\n')
-    .filter((line) => line.trim() && !line.startsWith('#') && !have.has(line.trim()));
+    .filter(
+      (line) => line.trim() && !line.startsWith('#') && !isIgnored(have, normalizeIgnore(line)),
+    );
   if (missing.length === 0) return current;
   return `${current.trimEnd()}\n\n# OpenStuff\n${missing.join('\n')}\n`;
 }

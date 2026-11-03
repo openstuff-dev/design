@@ -36,6 +36,18 @@ describe('sync generator', () => {
     expect(gitignore.match(/^node_modules$/gm)).toHaveLength(1);
   });
 
+  it('does not duplicate .gitignore lines that have slashes or concrete app paths, or create ignored files', async () => {
+    tree.write('.gitignore', '/dist/\nnode_modules/\napps/web/src/tokens/\nAGENTS.md\n');
+
+    await syncGenerator(tree);
+
+    const gitignore = tree.read('.gitignore', 'utf8') ?? '';
+    expect(gitignore.match(/^\/*dist\/*$/gm)).toHaveLength(1);
+    expect(gitignore.match(/^\/*node_modules\/*$/gm)).toHaveLength(1);
+    expect(gitignore).not.toContain('apps/*/src/tokens');
+    expect(tree.exists('AGENTS.md')).toBe(false);
+  });
+
   it('replaces only the OpenPurpose part of AGENTS.md', async () => {
     tree.write('AGENTS.md', `# Ours\n\nKeep this.\n\n${AGENTS_START}\nold\n${AGENTS_END}\n\nAnd this.\n`);
 

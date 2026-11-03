@@ -19,6 +19,7 @@ const FIELDS = `
     </os-field>
     <os-field label="Region">
       <select os-select>
+        <button><selectedcontent></selectedcontent></button>
         <option>Europe (Frankfurt)</option>
         <option>US East (Virginia)</option>
       </select>
@@ -117,7 +118,10 @@ class Sizes {}
           <code>os-field</code> gives its control the label's id, an
           <code>aria-describedby</code> for the hint and error, and <code>aria-invalid</code> when
           there's an error. Type more than 40 characters to see one. Forms keep using
-          <code>[(ngModel)]</code>, reactive forms or signal forms on the native element.
+          <code>[(ngModel)]</code>, reactive forms or signal forms on the native element. Put
+          <code>&lt;button&gt;&lt;selectedcontent&gt;&lt;/selectedcontent&gt;&lt;/button&gt;</code>
+          at the start of a <code>&lt;select os-select&gt;</code> so browsers with
+          <code>appearance: base-select</code> truncate long options with an ellipsis.
         </p>
       </section>
       <docs-example [code]="fields"><docs-fields /></docs-example>

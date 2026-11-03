@@ -51,7 +51,7 @@ class Sizes {
 const STATES = `
   <div class="row">
     <button os-button variant="primary" [loading]="saving()" (click)="save()">
-      {{ saving() ? 'Saving' : 'Save' }}
+      Save
     </button>
     <button os-button disabled>Not allowed</button>
     <button os-button variant="link" tone="danger">
@@ -114,8 +114,9 @@ class States {
         <h2 id="states">Loading and disabled</h2>
         <p>
           <code>loading</code> shows a spinner and ignores clicks but keeps focus, so a keyboard
-          user doesn't lose their place. Prefer it to <code>disabled</code> while saving. A link
-          button with <code>tone="danger"</code> is a quiet delete.
+          user doesn't lose their place. Keep the button's label unchanged while loading so its
+          width never shifts. Prefer it to <code>disabled</code> while saving. A link button with
+          <code>tone="danger"</code> is a quiet delete.
         </p>
       </section>
       <docs-example [code]="states"><docs-button-states /></docs-example>
