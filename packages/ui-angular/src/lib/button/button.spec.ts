@@ -58,4 +58,20 @@ describe('Button', () => {
     expect(fixture.componentInstance.clicks()).toBe(1);
     expect(document.activeElement).toBe(save);
   });
+
+  it('wraps its content in .os-button-label and keeps its box and label while loading', async () => {
+    const { fixture, root } = await render();
+    const save = query(root, 'button', HTMLButtonElement);
+    const label = query(save, '.os-button-label', HTMLSpanElement);
+    expect(label.textContent.trim()).toBe('Save');
+    const before = save.getBoundingClientRect();
+
+    fixture.componentInstance.loading.set(true);
+    await fixture.whenStable();
+    const during = save.getBoundingClientRect();
+    expect(label.textContent.trim()).toBe('Save');
+    expect(save.contains(label)).toBe(true);
+    expect(during.width).toBe(before.width);
+    expect(during.height).toBe(before.height);
+  });
 });

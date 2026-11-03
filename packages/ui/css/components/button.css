@@ -1,13 +1,15 @@
 /*
  * Button, IconButton and LinkButton. Works on <button> and <a>:
  *
- *   <button class="os-button" data-variant="primary">Save</button>
+ *   <button class="os-button" data-variant="primary">
+ *     <span class="os-button-label">Save</span>
+ *   </button>
  *   <button class="os-button" data-icon-only aria-label="Close">…svg…</button>
  *   <a class="os-button" data-variant="link" href="/docs">Docs</a>
  *
  * data-variant: primary, default (the default), ghost, danger, link. data-size: sm, md.
  * data-tone="danger" on a link colours it red.
- * aria-busy="true" shows a spinner and keeps the width.
+ * aria-busy="true" cross-fades .os-button-label and the spinner in place, keeping the button's box.
  */
 @layer os.components {
   .os-button {
@@ -17,6 +19,7 @@
     --os-button-fg: var(--os-fg-default);
     --os-button-border: var(--os-border-control);
 
+    position: relative;
     display: inline-flex;
     flex-shrink: 0;
     gap: var(--os-space-2);
@@ -64,6 +67,35 @@
       inline-size: 1rem;
       block-size: 1rem;
     }
+
+    &::after {
+      position: absolute;
+      inset: 0;
+      inline-size: 1rem;
+      block-size: 1rem;
+      margin: auto;
+      border: 2px solid var(--os-button-fg);
+      border-inline-end-color: transparent;
+      border-radius: var(--os-radius-full);
+      content: '';
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      animation: os-spin 0.7s linear infinite paused;
+      transition:
+        opacity var(--os-duration-fast) var(--os-ease-standard),
+        visibility var(--os-duration-fast) allow-discrete;
+    }
+  }
+
+  .os-button-label {
+    display: inline-flex;
+    gap: inherit;
+    align-items: center;
+    justify-content: inherit;
+    transition:
+      opacity var(--os-duration-fast) var(--os-ease-standard),
+      visibility var(--os-duration-fast) allow-discrete;
   }
 
   .os-button[data-size='sm'] {
@@ -122,23 +154,31 @@
     padding-inline: 0;
   }
 
-  /* Loading: the label goes transparent, so the width stays, and a spinner sits on top. */
+  /* Loading: the label and spinner cross-fade in place, so the button keeps its box. */
   .os-button[aria-busy='true'] {
-    position: relative;
-    color: transparent;
     cursor: progress;
 
     &::after {
-      position: absolute;
-      inset: 0;
-      inline-size: 1rem;
-      block-size: 1rem;
-      margin: auto;
-      border: 2px solid var(--os-button-fg);
-      border-inline-end-color: transparent;
-      border-radius: var(--os-radius-full);
-      content: '';
-      animation: os-spin 0.7s linear infinite;
+      opacity: 1;
+      visibility: visible;
+      animation-play-state: running;
+    }
+
+    & > .os-button-label {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    &:not(:has(> .os-button-label)) {
+      color: transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .os-button::after,
+    .os-button-label {
+      animation: none;
+      transition: none;
     }
   }
 

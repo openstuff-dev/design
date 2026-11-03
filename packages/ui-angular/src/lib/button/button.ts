@@ -22,7 +22,7 @@ export type ButtonSize = 'sm' | 'md';
 @Component({
   selector: 'button[os-button], a[os-button]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content />',
+  template: '<span class="os-button-label"><ng-content /></span>',
   host: {
     class: 'os-button',
     '[attr.data-variant]': 'variant()',
@@ -65,7 +65,7 @@ export class Button {
 @Component({
   selector: 'button[os-icon-button], a[os-icon-button]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '<ng-content />',
+  template: '<span class="os-button-label"><ng-content /></span>',
   host: {
     class: 'os-button',
     'data-icon-only': '',

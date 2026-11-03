@@ -95,24 +95,26 @@
   }
 
   @container os-shell (inline-size < 52rem) {
-    /* Out of the grid's flow, so its column shrinks to nothing and the content takes the width. */
+    /*
+     * Out of the grid's flow, parked just past the start edge so translate stays `none` when the
+     * container query resolves on first layout (avoiding a close animation on page load).
+     */
     .os-shell-sidebar {
       position: fixed;
       inset-block: 0;
-      inset-inline-start: 0;
+      inset-inline-end: 100%;
       z-index: 3;
       inline-size: min(var(--os-shell-sidebar-width), 85%);
-      translate: -100% 0;
       transition: translate var(--os-duration-normal) var(--os-ease-standard);
     }
 
-    .os-shell-sidebar:dir(rtl) {
+    .os-shell[data-open] > .os-shell-sidebar {
       translate: 100% 0;
+      box-shadow: 0 0 0 100vmax var(--os-backdrop);
     }
 
-    .os-shell[data-open] > .os-shell-sidebar {
-      translate: none;
-      box-shadow: 0 0 0 100vmax var(--os-backdrop);
+    .os-shell[data-open] > .os-shell-sidebar:dir(rtl) {
+      translate: -100% 0;
     }
 
     .os-shell-menu {
