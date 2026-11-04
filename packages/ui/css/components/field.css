@@ -104,21 +104,27 @@
     field-sizing: content;
   }
 
-  /* A chevron drawn with two gradients, so it follows the theme without an image. */
+  /* A chevron stroked with two gradients, so it follows the theme without an image. */
   .os-select {
     --os-chevron: var(--os-fg-lighter);
+    --os-chevron-arm: 0.3125rem;
+    --os-chevron-stroke:
+      transparent calc(50% - 1px),
+      var(--os-chevron) calc(50% - 0.5px),
+      var(--os-chevron) calc(50% + 0.5px),
+      transparent calc(50% + 1px);
 
     min-inline-size: 0;
     overflow: hidden;
     padding-inline-end: var(--os-space-8);
     background-image:
-      linear-gradient(45deg, transparent 50%, var(--os-chevron) 50%),
-      linear-gradient(135deg, var(--os-chevron) 50%, transparent 50%);
+      linear-gradient(45deg, var(--os-chevron-stroke)),
+      linear-gradient(135deg, var(--os-chevron-stroke));
     background-repeat: no-repeat;
     background-position:
-      right 0.9rem top 55%,
-      right 0.6rem top 55%;
-    background-size: 0.3rem 0.3rem;
+      right calc(0.625rem + var(--os-chevron-arm)) center,
+      right 0.625rem center;
+    background-size: var(--os-chevron-arm) var(--os-chevron-arm);
     text-overflow: ellipsis;
     white-space: nowrap;
     appearance: none;
@@ -126,8 +132,8 @@
 
     &:dir(rtl) {
       background-position:
-        left 0.6rem top 55%,
-        left 0.9rem top 55%;
+        left 0.625rem center,
+        left calc(0.625rem + var(--os-chevron-arm)) center;
     }
 
     & > button {
@@ -145,7 +151,7 @@
     .os-select {
       gap: var(--os-space-2);
       align-items: center;
-      padding-inline-end: var(--os-space-3);
+      padding-inline-end: var(--os-space-2);
       background-image: none;
 
       & > button {
@@ -162,19 +168,14 @@
       white-space: nowrap;
     }
 
+    /* The same chevron as the os-icon set; the mask lets it take the theme's colour. */
     .os-select::picker-icon {
       flex-shrink: 0;
-      inline-size: 0.6rem;
-      block-size: 0.5rem;
-      background-image:
-        linear-gradient(45deg, transparent 50%, var(--os-chevron) 50%),
-        linear-gradient(135deg, var(--os-chevron) 50%, transparent 50%);
-      background-repeat: no-repeat;
-      background-position:
-        left 0 top 55%,
-        left 0.3rem top 55%;
-      background-size: 0.3rem 0.3rem;
+      inline-size: 1rem;
+      block-size: 1rem;
+      background: var(--os-chevron);
       content: '';
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 
     .os-select::picker(select) {
