@@ -6,5 +6,5 @@ export interface SiteGeneratorSchema {
   repository?: string;
   appUrl?: string;
   primaryColor?: string;
-  glyph?: 'diamond' | 'hexagon' | 'plus' | 'half' | 'bars';
+  glyph?: 'diamond' | 'hexagon' | 'plus' | 'half' | 'bars' | 'check';
 }

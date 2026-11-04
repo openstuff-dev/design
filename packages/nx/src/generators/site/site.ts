@@ -15,6 +15,7 @@ export const GLYPHS = {
   plus: 'M14.2 10.5h3.6v3.7h3.7v3.6h-3.7v3.7h-3.6v-3.7h-3.7v-3.6h3.7Z',
   half: 'M10.75 17.4a5.25 5.25 0 0 1 10.5 0Z',
   bars: 'M10.6 11h10.8v2.6H10.6ZM10.6 14.7h10.8v2.6H10.6ZM10.6 18.4h7v2.6h-7Z',
+  check: 'M10.3 16.1l2-2 2.4 2.4 5-5 2 2-7 7Z',
 } as const;
 
 export const RING =
