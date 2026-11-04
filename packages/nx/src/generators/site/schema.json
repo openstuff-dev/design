@@ -40,7 +40,7 @@
     "glyph": {
       "type": "string",
       "description": "The shape inside the project's mark. Pick one no other OpenStuff project uses.",
-      "enum": ["diamond", "hexagon", "plus", "half", "bars"],
+      "enum": ["diamond", "hexagon", "plus", "half", "bars", "check"],
       "default": "diamond"
     }
   },

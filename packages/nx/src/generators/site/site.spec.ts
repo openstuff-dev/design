@@ -43,6 +43,14 @@ describe('site generator', () => {
     }
   });
 
+  it('draws every glyph inside the ring', async () => {
+    for (const glyph of Object.keys(GLYPHS) as (keyof typeof GLYPHS)[]) {
+      const tree = createTreeWithEmptyWorkspace();
+      await siteGenerator(tree, { name: 'OpenLedger', glyph });
+      expect(tree.read('site/assets/logo.svg', 'utf8')).toContain(GLYPHS[glyph]);
+    }
+  });
+
   it('points the buttons at self-hosting when there is no hosted app', async () => {
     await siteGenerator(tree, { name: 'OpenDesk' });
 
