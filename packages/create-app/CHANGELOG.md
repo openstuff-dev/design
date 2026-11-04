@@ -1,3 +1,17 @@
+## 0.1.4 (2026-11-04)
+
+### 🩹 Fixes
+
+- Cleared host `title` attributes on titled components, defaulted `os-tab` values to their labels, added `^build` dependencies to `test`/`typecheck`/`lint` targets, and updated the web-server `Dockerfile` when workspace libraries are added. ([32e929b](https://github.com/openstuff-dev/design/commit/32e929b))
+
+### 🧱 Updated Dependencies
+
+- Updated nx to 0.3.0
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.3 (2026-10-30)
 
 ### 🧱 Updated Dependencies

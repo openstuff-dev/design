@@ -1,3 +1,14 @@
+## 0.1.4 (2026-11-04)
+
+### 🩹 Fixes
+
+- Centred the text and arrow in `.os-select` vertically, and replaced its filled triangle with a stroked chevron. ([7141844](https://github.com/openstuff-dev/design/commit/7141844))
+- Fixed the `.os-shell` narrow drawer animating shut on page load, truncated long `.os-select` options with an ellipsis and matched its `base-select` chevron to the fallback, cross-faded loading `.os-button` labels and spinners in a fixed box, normalised `.gitignore` entries and skipped ignored files in `sync`, and documented 2FA approval of staged npm releases. ([44a2ecb](https://github.com/openstuff-dev/design/commit/44a2ecb))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.3 (2026-10-30)
 
 ### 🩹 Fixes

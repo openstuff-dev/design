@@ -1,3 +1,18 @@
+## 0.1.4 (2026-11-04)
+
+### 🩹 Fixes
+
+- Cleared host `title` attributes on titled components, defaulted `os-tab` values to their labels, added `^build` dependencies to `test`/`typecheck`/`lint` targets, and updated the web-server `Dockerfile` when workspace libraries are added. ([32e929b](https://github.com/openstuff-dev/design/commit/32e929b))
+- Fixed the `.os-shell` narrow drawer animating shut on page load, truncated long `.os-select` options with an ellipsis and matched its `base-select` chevron to the fallback, cross-faded loading `.os-button` labels and spinners in a fixed box, normalised `.gitignore` entries and skipped ignored files in `sync`, and documented 2FA approval of staged npm releases. ([44a2ecb](https://github.com/openstuff-dev/design/commit/44a2ecb))
+
+### 🧱 Updated Dependencies
+
+- Updated ui to 0.1.4
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.3 (2026-10-30)
 
 ### 🧱 Updated Dependencies
