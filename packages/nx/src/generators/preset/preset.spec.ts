@@ -29,6 +29,14 @@ describe('preset generator', () => {
     tree.write('package.json', JSON.stringify({ name: '@demo/source', devDependencies: { nx: '24.0.2' } }));
   });
 
+  it('answers a missing file with a 404 in the server it generates', async () => {
+    await presetGenerator(tree, { name: 'demo' });
+
+    expect(tree.read('apps/server/src/app.ts', 'utf-8')).toContain(
+      String.raw`/\.\w+$/.test(request.url.split('?')[0] ?? '')`,
+    );
+  });
+
   it('sets up a web app with a server by default', async () => {
     await presetGenerator(tree, { name: 'demo' });
 
