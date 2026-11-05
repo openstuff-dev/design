@@ -27,6 +27,53 @@
     line-height: var(--os-leading-snug);
   }
 
+  /* "(optional)" after a label: quieter than the label itself. */
+  .os-label-optional {
+    color: var(--os-fg-light);
+    font-weight: var(--os-font-weight-regular);
+  }
+
+  /* A native file picker, so the keyboard, drag and drop and the file's name keep working. */
+  .os-file-input {
+    inline-size: 100%;
+    min-inline-size: 0;
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+    cursor: pointer;
+
+    &::file-selector-button {
+      min-block-size: 2.125rem;
+      margin-inline-end: var(--os-space-3);
+      padding-inline: var(--os-space-3);
+      border: 1px var(--os-border-style) var(--os-border-control);
+      border-radius: var(--os-radius-md);
+      background: var(--os-bg-control);
+      color: var(--os-fg-default);
+      font: inherit;
+      font-weight: var(--os-font-weight-medium);
+      cursor: pointer;
+    }
+
+    &:hover::file-selector-button {
+      background: var(--os-bg-hover);
+    }
+
+    &:focus-visible {
+      border-radius: var(--os-radius-md);
+      outline: 2px solid var(--os-focus-ring);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    &:disabled::file-selector-button {
+      cursor: not-allowed;
+    }
+  }
+
   .os-hint,
   .os-error {
     font-size: var(--os-text-sm);

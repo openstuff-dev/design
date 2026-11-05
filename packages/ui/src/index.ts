@@ -5,8 +5,12 @@ export {
   iconCheck,
   iconCircleAlert,
   iconCircleCheck,
+  iconCopy,
   iconInfo,
+  iconMonitor,
+  iconMoon,
   iconSearch,
+  iconSun,
   iconTriangleAlert,
   iconX,
 } from './lib/icons.js';

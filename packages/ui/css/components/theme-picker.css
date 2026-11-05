@@ -1,0 +1,99 @@
+/*
+ * ThemePicker: native radios shown as small pictures of each theme, so arrow keys work without
+ * script. The pictures draw the real tokens: `color-scheme` picks a side of their light-dark().
+ *
+ *   <div class="os-theme-picker" role="radiogroup" aria-label="Theme">
+ *     <label class="os-theme-option">
+ *       <input type="radio" name="theme" value="dark" />
+ *       <span class="os-theme-swatch" data-option="dark"><i></i><i></i></span>
+ *       <span class="os-theme-option-label"><svg>…</svg>Dark</span>
+ *     </label>
+ *   </div>
+ */
+@layer os.components {
+  .os-theme-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    gap: var(--os-space-3);
+    max-inline-size: 30rem;
+  }
+
+  .os-theme-option {
+    position: relative;
+    display: grid;
+    gap: var(--os-space-2);
+    padding: var(--os-space-2);
+    border: 1px var(--os-border-style) var(--os-border-strong);
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-surface-100);
+    cursor: pointer;
+
+    &:has(:checked) {
+      border-color: var(--os-brand-default);
+      box-shadow: 0 0 0 1px var(--os-brand-default);
+    }
+
+    &:has(:focus-visible) {
+      outline: 2px solid var(--os-focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* The radio stays focusable and in the form; only its circle is hidden. */
+    & > input {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .os-theme-swatch {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    block-size: 4rem;
+    overflow: hidden;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-sm);
+
+    & > i {
+      display: block;
+      background: var(--os-bg-default);
+    }
+
+    & > i:first-child {
+      background: var(--os-bg-surface-200);
+    }
+
+    &[data-option='light'] {
+      color-scheme: light;
+    }
+
+    &[data-option='dark'] {
+      color-scheme: dark;
+    }
+
+    /* Half of each: system could be either. */
+    &[data-option='system'] {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &[data-option='system'] > i:first-child {
+      background: var(--os-bg-default);
+      color-scheme: light;
+    }
+
+    &[data-option='system'] > i:last-child {
+      color-scheme: dark;
+    }
+  }
+
+  .os-theme-option-label {
+    display: flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    color: var(--os-fg-default);
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-medium);
+  }
+}

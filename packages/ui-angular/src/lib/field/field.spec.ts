@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { SettingRow } from '../settings/settings';
 import { accessibleDescription, accessibleName, query, render } from '../testing';
-import { Check, Checkbox, Control, Field, Switch } from './field';
+import { Check, Checkbox, Control, Field, FileInput, Switch } from './field';
 
 @Component({
   imports: [Field, Control, Check, Checkbox, Switch, SettingRow],
@@ -63,5 +63,64 @@ describe('Field and controls', () => {
     toggle.focus();
     toggle.click();
     expect(toggle.checked).toBe(false);
+  });
+});
+
+@Component({
+  imports: [Control, Field, FileInput],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <os-field id="optional" label="Nickname" optional><input os-input /></os-field>
+    <os-field id="plain" label="Name"><input os-input /></os-field>
+    <os-field id="rich"
+      ><span os-field-label>Email <a href="#why">Why?</a></span
+      ><input os-input
+    /></os-field>
+    <os-field id="file" label="File to import" hint="A JSON file." [error]="error()">
+      <input type="file" os-file-input accept=".json" />
+    </os-field>
+    <input id="alone" type="file" os-file-input aria-label="Photo" />
+  `,
+})
+class LabelHost {
+  readonly error = signal<string | null>(null);
+}
+
+describe('Field labels and FileInput', () => {
+  it('adds a quiet "(optional)" that is part of the control\'s name', async () => {
+    const { root } = await render(LabelHost);
+    const label = query(root, '#optional label', HTMLLabelElement);
+    expect(label.querySelector('.os-label-optional')?.textContent.trim()).toBe('(optional)');
+    expect(accessibleName(query(root, '#optional input', HTMLInputElement))).toBe(
+      'Nickname (optional)',
+    );
+    expect(root.querySelector('#plain .os-label-optional')).toBeNull();
+  });
+
+  it('takes markup in the label and still wires it to the control', async () => {
+    const { root } = await render(LabelHost);
+    expect(root.querySelector('#rich label a')).not.toBeNull();
+    expect(accessibleName(query(root, '#rich input', HTMLInputElement))).toBe('Email Why?');
+  });
+
+  it('labels and describes a file input, and marks it invalid', async () => {
+    const { fixture, host, root } = await render(LabelHost);
+    const input = query(root, '#file input', HTMLInputElement);
+    expect(input.classList.contains('os-file-input')).toBe(true);
+    expect(input.accept).toBe('.json');
+    expect(accessibleName(input)).toBe('File to import');
+    expect(accessibleDescription(input)).toBe('A JSON file.');
+    expect(input.hasAttribute('aria-invalid')).toBe(false);
+
+    host.error.set('That isn\'t a JSON file.');
+    await fixture.whenStable();
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(accessibleDescription(input)).toContain('That isn\'t a JSON file.');
+  });
+
+  it('works without a field', async () => {
+    const { root } = await render(LabelHost);
+    const input = query(root, '#alone', HTMLInputElement);
+    expect(accessibleName(input)).toBe('Photo');
   });
 });

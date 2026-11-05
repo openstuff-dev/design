@@ -33,6 +33,9 @@ export const FIELD = new InjectionToken<FieldContext>('FIELD');
  *   <input os-input [(ngModel)]="name" />
  * </os-field>
  * ```
+ *
+ * `optional` adds a quiet "(optional)" to the label. For other markup in the label, project it:
+ * `<span os-field-label>Name <a href="…">Why?</a></span>`.
  */
 @Component({
   selector: 'os-field',
@@ -41,7 +44,12 @@ export const FIELD = new InjectionToken<FieldContext>('FIELD');
   providers: [{ provide: FIELD, useExisting: Field }],
   host: { class: 'os-field' },
   template: `
-    <label class="os-label" [for]="controlId">{{ label() }}</label>
+    <label class="os-label" [for]="controlId">
+      {{ label() }}<ng-content select="[os-field-label]" />
+      @if (optional()) {
+        {{ ' ' }}<span class="os-label-optional">(optional)</span>
+      }
+    </label>
     <ng-content />
     @if (hint()) {
       <p class="os-hint" [id]="hintId">{{ hint() }}</p>
@@ -55,7 +63,10 @@ export const FIELD = new InjectionToken<FieldContext>('FIELD');
   `,
 })
 export class Field implements FieldContext {
-  readonly label = input.required<string>();
+  /** The label's text. Leave it out when you project an `os-field-label`. */
+  readonly label = input('');
+  /** Adds a quiet "(optional)" to the label. */
+  readonly optional = input(false, { transform: booleanAttribute });
   readonly hint = input<string>();
   /** Shown under the control, and marks it invalid. */
   readonly error = input<string | null>();
@@ -101,6 +112,28 @@ export class Control {
   readonly id = input(this.field?.controlId ?? uniqueId('control'));
 
   protected readonly isInvalid = computed(() => this.invalid() || (this.field?.invalid() ?? false));
+}
+
+/**
+ * A file picker that keeps the browser's own behaviour: keyboard, drag and drop and the file's
+ * name. A Field or SettingRow labels it; on its own, give it an aria-label.
+ *
+ * ```html
+ * <os-field label="File to import"><input type="file" os-file-input accept=".json" /></os-field>
+ * ```
+ */
+@Directive({
+  selector: 'input[type=file][os-file-input]',
+  host: {
+    class: 'os-file-input',
+    '[id]': 'id()',
+    '[attr.aria-describedby]': 'field?.describedBy() ?? null',
+    '[attr.aria-invalid]': 'field?.invalid() || null',
+  },
+})
+export class FileInput {
+  protected readonly field = inject(FIELD, { optional: true });
+  readonly id = input(this.field?.controlId ?? uniqueId('file'));
 }
 
 /**

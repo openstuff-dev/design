@@ -69,6 +69,46 @@
     letter-spacing: -0.01em;
   }
 
+  /*
+   * A heading, a line of explanation and actions above a list or some cards: one step below the
+   * page's header, with no border. The actions move under the text when there's no room.
+   */
+  .os-section-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2) var(--os-space-4);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .os-section-header-text {
+    display: grid;
+    flex: 1 1 18rem;
+    gap: var(--os-space-1);
+    min-inline-size: 0;
+
+    & > :where(h2, h3) {
+      font-size: var(--os-text-lg);
+      letter-spacing: -0.01em;
+    }
+
+    & > :where(p) {
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
+    }
+  }
+
+  .os-section-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    align-items: center;
+  }
+
+  .os-section-header-actions:empty {
+    display: none;
+  }
+
   .os-page-description {
     max-inline-size: 65ch;
     color: var(--os-fg-light);

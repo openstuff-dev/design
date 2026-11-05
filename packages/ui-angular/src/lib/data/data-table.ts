@@ -37,6 +37,7 @@ export class Cell {
  *   <ng-template os-cell="name" let-project>
  *     <a [routerLink]="project.id">{{ project.name }}</a>
  *   </ng-template>
+ *   <os-empty-state title="No projects yet">Make one to get started.</os-empty-state>
  * </os-data-table>
  * ```
  */
@@ -84,7 +85,7 @@ export class Cell {
         } @empty {
           <tr role="row">
             <td role="cell" class="os-data-table-empty" [attr.colspan]="columns().length">
-              {{ empty() }}
+              <ng-content select="os-empty-state">{{ empty() }}</ng-content>
             </td>
           </tr>
         }
@@ -99,7 +100,7 @@ export class DataTable<T extends object> {
   readonly rows = input.required<readonly T[]>();
   /** A property that identifies each row, so rows aren't re-created when the data changes. */
   readonly rowKey = input<keyof T>();
-  /** Shown when there are no rows. */
+  /** Shown when there are no rows. Project an `os-empty-state` to explain and offer an action. */
   readonly empty = input('Nothing here yet.');
 
   private readonly cellTemplates = contentChildren(Cell);

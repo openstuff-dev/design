@@ -1,0 +1,54 @@
+/*
+ * CodeBlock: a command or snippet with a copy button in its corner, and optionally a switch
+ * between variants above it (npm, pnpm, yarn). Long lines scroll, or wrap with data-wrap.
+ *
+ *   <div class="os-code-block">
+ *     <div class="os-code-block-head"><div class="os-segmented">…</div></div>
+ *     <div class="os-code-block-body">
+ *       <pre tabindex="0"><code>npm install</code></pre>
+ *       <button class="os-button os-code-block-copy">Copy</button>
+ *     </div>
+ *   </div>
+ */
+@layer os.components {
+  .os-code-block {
+    display: grid;
+    gap: var(--os-space-2);
+    min-inline-size: 0;
+  }
+
+  .os-code-block-body {
+    position: relative;
+    min-inline-size: 0;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-alternative);
+
+    & > pre {
+      min-block-size: 3rem;
+      margin: 0;
+      overflow-x: auto;
+      padding: var(--os-space-3);
+      padding-inline-end: 6rem;
+      border-radius: inherit;
+      font-size: var(--os-text-sm);
+      line-height: var(--os-leading-snug);
+    }
+
+    & > pre:focus-visible {
+      outline: 2px solid var(--os-focus-ring);
+      outline-offset: 1px;
+    }
+  }
+
+  .os-code-block[data-wrap] pre {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  .os-code-block-copy {
+    position: absolute;
+    inset-block-start: var(--os-space-2);
+    inset-inline-end: var(--os-space-2);
+  }
+}

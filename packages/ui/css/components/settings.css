@@ -10,8 +10,121 @@
  *     </div>
  *     <footer class="os-setting-card-footer"><div class="os-form-actions">…</div></footer>
  *   </section>
+ *
+ * Settings, SettingsNav and SettingsGroup: the whole page, a side menu next to the chosen tab. When
+ * the page is narrow, the menu becomes a row that scrolls, above the tab.
+ *
+ *   <div class="os-settings">
+ *     <div class="os-settings-layout">
+ *       <nav class="os-settings-nav" aria-label="Settings">
+ *         <div class="os-settings-group" role="group" aria-labelledby="g">
+ *           <p class="os-settings-group-label" id="g">You</p>
+ *           <div class="os-settings-group-links">
+ *             <a class="os-nav-link" href="/settings/account" aria-current="page">Account</a>
+ *           </div>
+ *         </div>
+ *       </nav>
+ *       <div class="os-settings-body">…</div>
+ *     </div>
+ *   </div>
+ *
+ * SettingItem (.os-setting-item) is one thing in a list inside a card: a token or an organization.
+ * IntegrationCard (.os-integration-card) is one service the app can connect to.
  */
 @layer os.components {
+  .os-settings {
+    display: block;
+    min-inline-size: 0;
+    container: os-settings / inline-size;
+  }
+
+  .os-settings-layout {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: var(--os-space-10);
+    align-items: start;
+  }
+
+  .os-settings-nav {
+    position: sticky;
+    inset-block-start: calc(var(--os-shell-bar-height, 0px) + var(--os-space-5));
+    display: grid;
+    gap: var(--os-space-5);
+    min-inline-size: 0;
+  }
+
+  /* A group the person has no tabs in disappears. */
+  .os-settings-group:not(:has(a)) {
+    display: none;
+  }
+
+  .os-settings-group-label {
+    padding: 0 var(--os-space-2) var(--os-space-1);
+    color: var(--os-fg-light);
+    font-size: var(--os-text-xs);
+    font-weight: var(--os-font-weight-medium);
+  }
+
+  .os-settings-group-links {
+    display: grid;
+    gap: 1px;
+  }
+
+  .os-settings-body {
+    display: grid;
+    gap: var(--os-space-6);
+    align-content: start;
+    min-inline-size: 0;
+  }
+
+  @container os-settings (inline-size < 44rem) {
+    .os-settings-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--os-space-5);
+    }
+
+    .os-settings-nav {
+      position: static;
+      display: flex;
+      gap: var(--os-space-1);
+      overflow-x: auto;
+      padding-block: 2px var(--os-space-2);
+      padding-inline: 2px;
+      border-block-end: 1px var(--os-border-style) var(--os-border-default);
+    }
+
+    .os-settings-group {
+      display: flex;
+      flex-shrink: 0;
+      gap: var(--os-space-1);
+    }
+
+    .os-settings-group + .os-settings-group {
+      padding-inline-start: var(--os-space-1);
+      border-inline-start: 1px var(--os-border-style) var(--os-border-default);
+    }
+
+    /* Kept for screen readers: the row has no room for it. */
+    .os-settings-group-label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .os-settings-group-links {
+      display: flex;
+      gap: var(--os-space-1);
+    }
+
+    .os-settings-group-links > .os-nav-link {
+      white-space: nowrap;
+    }
+  }
+
   .os-setting-card {
     min-inline-size: 0;
     border: 1px var(--os-border-style) var(--os-border-default);
@@ -47,7 +160,8 @@
     align-items: start;
     padding: var(--os-space-4) var(--os-space-5);
 
-    & + & {
+    & + &,
+    .os-setting-item + & {
       border-block-start: 1px var(--os-border-style) var(--os-border-default);
     }
   }
@@ -80,6 +194,131 @@
     min-inline-size: 0;
   }
 
+  .os-setting-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--os-space-2) var(--os-space-4);
+    align-items: center;
+    padding: var(--os-space-3) var(--os-space-5);
+
+    & + &,
+    .os-setting-row + & {
+      border-block-start: 1px var(--os-border-style) var(--os-border-default);
+    }
+  }
+
+  .os-setting-item-text {
+    display: grid;
+    gap: var(--os-space-1);
+    min-inline-size: 0;
+  }
+
+  .os-setting-item-title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    align-items: center;
+    color: var(--os-fg-default);
+    font-size: var(--os-text-base);
+    font-weight: var(--os-font-weight-medium);
+    overflow-wrap: anywhere;
+  }
+
+  .os-setting-item-meta {
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .os-setting-item[data-archived] .os-setting-item-title {
+    color: var(--os-fg-light);
+  }
+
+  .os-setting-item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .os-setting-item-actions:empty {
+    display: none;
+  }
+
+  .os-integration-card {
+    display: block;
+    min-inline-size: 0;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-lg);
+    background: var(--os-bg-surface-100);
+  }
+
+  .os-integration-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-3);
+    align-items: center;
+    padding: var(--os-space-4) var(--os-space-5);
+  }
+
+  .os-integration-card-mark {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-surface-200);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .os-integration-card-title {
+    display: grid;
+    flex: 1 1 10rem;
+    gap: var(--os-space-1);
+    min-inline-size: 0;
+
+    & > :where(h2, h3, h4) {
+      font-size: var(--os-text-md);
+    }
+
+    & > .os-status-dot {
+      font-size: var(--os-text-sm);
+    }
+  }
+
+  .os-integration-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2);
+    align-items: center;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .os-integration-card-description {
+    padding: 0 var(--os-space-5) var(--os-space-4);
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-integration-card-body {
+    display: grid;
+    gap: var(--os-space-4);
+    padding: var(--os-space-4) var(--os-space-5);
+    border-block-start: 1px var(--os-border-style) var(--os-border-default);
+
+    &:empty {
+      display: none;
+    }
+  }
+
   .os-setting-card-footer {
     padding: var(--os-space-3) var(--os-space-5);
     border-block-start: 1px var(--os-border-style) var(--os-border-default);
@@ -91,8 +330,17 @@
   @container (inline-size < 36rem) {
     .os-setting-card-header,
     .os-setting-row,
+    .os-setting-item,
     .os-setting-card-footer {
       padding-inline: var(--os-space-4);
+    }
+
+    .os-setting-item {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .os-setting-item-actions {
+      justify-content: flex-start;
     }
 
     .os-setting-row:not([data-inline]) {
