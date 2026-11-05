@@ -201,6 +201,16 @@
     }
   }
 
+  /* iOS Safari zooms the page when a focused field's text is under 16px. */
+  @media (pointer: coarse) {
+    .os-input,
+    .os-textarea,
+    .os-select,
+    :is(.os-input, .os-select)[data-size='sm'] {
+      font-size: max(16px, var(--os-text-sm));
+    }
+  }
+
   /* Checkbox, radio and switch with their label. */
   .os-check {
     display: inline-flex;
