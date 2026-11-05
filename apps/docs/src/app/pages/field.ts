@@ -5,6 +5,7 @@ import {
   Control,
   Field,
   Fieldset,
+  FileInput,
   PageHeader,
   Radio,
   Switch,
@@ -24,15 +25,18 @@ const FIELDS = `
         <option>US East (Virginia)</option>
       </select>
     </os-field>
-    <os-field label="Description" hint="Shown on the project's page.">
+    <os-field label="Description" optional hint="Shown on the project's page.">
       <textarea os-textarea rows="3"></textarea>
+    </os-field>
+    <os-field label="Logo" optional>
+      <input type="file" os-file-input accept="image/*" />
     </os-field>
   </form>
 `;
 
 @Component({
   selector: 'docs-fields',
-  imports: [Control, Field],
+  imports: [Control, Field, FileInput],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: FIELDS,
   styles: `

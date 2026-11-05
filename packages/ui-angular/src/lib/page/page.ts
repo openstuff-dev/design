@@ -25,6 +25,37 @@ export class Page {
 }
 
 /**
+ * A heading, one line about it and its actions (the content), above a list or some cards. It's one
+ * step below PageHeader and has no border.
+ *
+ * ```html
+ * <header os-section-header title="Members" description="Who can sign in to this network.">
+ *   <button os-button variant="primary">Add a member</button>
+ * </header>
+ * ```
+ */
+@Component({
+  selector: 'header[os-section-header]',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'os-section-header', '[attr.title]': 'null' },
+  template: `
+    <div class="os-section-header-text">
+      <h2 [attr.aria-level]="level()">{{ title() }}</h2>
+      @if (description()) {
+        <p>{{ description() }}</p>
+      }
+    </div>
+    <div class="os-section-header-actions"><ng-content /></div>
+  `,
+})
+export class SectionHeader {
+  readonly title = input.required<string>();
+  readonly description = input<string>();
+  /** The heading's level, to fit the page's outline. */
+  readonly level = input(2, { transform: numberAttribute });
+}
+
+/**
  * The page's title, an optional description, and its main actions (projected content).
  * Content marked `os-page-meta` goes under the description, such as a line of facts or a
  * callout; then `align="start"` keeps the actions at the top.

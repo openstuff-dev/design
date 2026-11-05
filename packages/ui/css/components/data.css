@@ -68,6 +68,10 @@
     padding: var(--os-space-8) var(--os-space-4);
     color: var(--os-fg-light);
     text-align: center;
+
+    &:has(> .os-empty-state) {
+      padding: 0;
+    }
   }
 
   @container (inline-size < 36rem) {

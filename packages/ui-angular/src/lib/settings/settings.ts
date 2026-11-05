@@ -102,6 +102,47 @@ export class SettingRow implements FieldContext {
 }
 
 /**
+ * One thing in a list inside a card, such as a token or an organization: a title, a line about it
+ * and its actions (the content). Use it when a row isn't one labelled control. Put a badge next to
+ * the title with `os-setting-item-tag`, and a richer line with `os-setting-item-meta`.
+ *
+ * ```html
+ * <os-setting-item title="Laptop" meta="Last used 2 days ago" [archived]="revoked">
+ *   <span os-badge os-setting-item-tag>Read only</span>
+ *   <button os-button type="button">Revoke…</button>
+ * </os-setting-item>
+ * ```
+ */
+@Component({
+  selector: 'os-setting-item',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'os-setting-item',
+    '[attr.title]': 'null',
+    '[attr.data-archived]': 'archived() ? "" : null',
+  },
+  template: `
+    <div class="os-setting-item-text">
+      <p class="os-setting-item-title">
+        {{ title() }}
+        <ng-content select="[os-setting-item-tag]" />
+      </p>
+      @if (meta()) {
+        <p class="os-setting-item-meta">{{ meta() }}</p>
+      }
+      <ng-content select="[os-setting-item-meta]" />
+    </div>
+    <div class="os-setting-item-actions"><ng-content /></div>
+  `,
+})
+export class SettingItem {
+  readonly title = input.required<string>();
+  readonly meta = input<string>();
+  /** Mutes the text, for something revoked or archived. Its actions keep their colour. */
+  readonly archived = input(false, { transform: booleanAttribute });
+}
+
+/**
  * A form's buttons, at the end, stacked full width in a narrow container. Put the main action
  * last. A `<span os-form-actions-note>` goes at the start.
  */

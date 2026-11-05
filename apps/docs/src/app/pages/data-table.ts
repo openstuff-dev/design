@@ -3,6 +3,7 @@ import {
   Badge,
   Cell,
   DataTable,
+  EmptyState,
   PageHeader,
   StatGrid,
   StatTile,
@@ -28,6 +29,7 @@ const TABLE = `
     <ng-template os-cell="status" let-project>
       <span os-badge [tone]="project.status === 'Live' ? 'success' : 'neutral'">{{ project.status }}</span>
     </ng-template>
+    <os-empty-state title="No projects yet">Make one to get started.</os-empty-state>
   </os-data-table>
 `;
 
@@ -43,7 +45,7 @@ protected readonly columns: Column<Project>[] = [
 
 @Component({
   selector: 'docs-table-example',
-  imports: [Badge, Cell, DataTable],
+  imports: [Badge, Cell, DataTable, EmptyState],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: TABLE,
 })

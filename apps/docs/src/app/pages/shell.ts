@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { Button, PageHeader } from '@openstuff-dev/ui-angular';
+import { Button, NavLink, PageHeader } from '@openstuff-dev/ui-angular';
 import { CodeBlock } from '../example/code-block';
 import { Example } from '../example/example';
 
@@ -7,8 +7,8 @@ const SHELL = `
   <div class="os-shell" [attr.data-open]="open() ? '' : null" style="--os-shell-height: 24rem">
     <nav class="os-shell-sidebar" id="shell-sidebar" aria-label="Main">
       <a class="os-shell-brand" href="#shell">OpenLedger</a>
-      <a os-button variant="ghost" href="#shell">Overview</a>
-      <a os-button variant="ghost" href="#shell">Invoices</a>
+      <a os-nav-link href="#shell" aria-current="page">Overview</a>
+      <a os-nav-link href="#shell" [count]="3">Invoices</a>
     </nav>
     <div class="os-shell-content">
       <header class="os-shell-topbar">
@@ -34,7 +34,7 @@ const SHELL = `
 
 @Component({
   selector: 'docs-shell-example',
-  imports: [Button, PageHeader],
+  imports: [Button, NavLink, PageHeader],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: SHELL,
 })
@@ -68,6 +68,11 @@ class ShellExample {
           <code>data-open</code> on <code>os-shell</code>, and let the button with
           <code>os-shell-menu</code> (hidden on wide screens) toggle it. Drag the corner below to
           try it.
+        </p>
+        <p>
+          Sidebar links are <code>a[os-nav-link]</code>, with an optional <code>icon</code> and
+          <code>count</code>. They look the same as the Settings menu's links. Add the router's
+          <code>routerLinkActive ariaCurrentWhenActive="page"</code> to mark the current page.
         </p>
       </div>
       <docs-example [code]="shell" [flush]="true"><docs-shell-example /></docs-example>

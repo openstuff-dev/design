@@ -137,3 +137,35 @@ describe('Tabs', () => {
     await expect(render(DuplicateTabsHost)).rejects.toThrow('Duplicate os-tab value "Same"');
   });
 });
+
+describe('Tabs inside a tab', () => {
+  @Component({
+    imports: [Tab, Tabs],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+      <os-tabs id="outer" label="Outer">
+        <ng-template os-tab="one" label="One">
+          <os-tabs id="inner" label="Inner">
+            <ng-template os-tab="npm" label="npm"><p>npm install</p></ng-template>
+            <ng-template os-tab="pnpm" label="pnpm"><p>pnpm add</p></ng-template>
+          </os-tabs>
+        </ng-template>
+        <ng-template os-tab="two" label="Two"><p>Second</p></ng-template>
+      </os-tabs>
+    `,
+  })
+  class NestedHost {}
+
+  it('renders the inner tab list, and the outer one keeps only its own tabs', async () => {
+    const { fixture, root } = await render(NestedHost);
+    await fixture.whenStable();
+    const labels = (selector: string) =>
+      [...root.querySelectorAll(selector)].map((tab) => tab.textContent.trim());
+    expect(labels('#outer > [ngTabList] > .os-tab, #outer > .os-tab-list > .os-tab')).toEqual([
+      'One',
+      'Two',
+    ]);
+    expect(labels('#inner .os-tab')).toEqual(['npm', 'pnpm']);
+    expect(root.querySelector('#inner')?.textContent).toContain('npm install');
+  });
+});

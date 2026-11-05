@@ -18,6 +18,12 @@
  *     </div>
  *   </div>
  *
+ * Links are .os-nav-link, here and in the Settings menu, so the two look the same. Mark the current
+ * page with aria-current="page":
+ *
+ *   <a class="os-nav-link" href="/inbox" aria-current="page"><svg>…</svg>Inbox
+ *     <span class="os-nav-link-count">3</span></a>
+ *
  * Narrower than 52rem, the sidebar becomes a drawer: show it with data-open on .os-shell (and
  * aria-expanded on the menu button). Change --os-shell-bar-height to make both rows taller.
  */
@@ -70,6 +76,63 @@
   /* Links in the sidebar read as a list, from the start. */
   .os-shell-sidebar > .os-button {
     justify-content: start;
+  }
+
+  .os-nav-link {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--os-space-2);
+    align-items: center;
+    min-block-size: 2rem;
+    padding-inline: var(--os-space-2);
+    border-radius: var(--os-radius-sm);
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-medium);
+    text-decoration: none;
+    transition:
+      background-color var(--os-duration-fast) var(--os-ease-standard),
+      color var(--os-duration-fast) var(--os-ease-standard);
+
+    & > .os-icon {
+      flex-shrink: 0;
+      color: var(--os-fg-lighter);
+    }
+
+    &:hover {
+      background: var(--os-bg-hover);
+      color: var(--os-fg-default);
+    }
+
+    &[aria-current='page'] {
+      background: var(--os-bg-surface-100);
+      color: var(--os-fg-default);
+      box-shadow: 0 0 0 1px var(--os-border-default);
+    }
+
+    &[aria-current='page'] > .os-icon {
+      color: var(--os-brand-text);
+    }
+  }
+
+  .os-nav-link-count {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin-inline-start: auto;
+    padding-inline: var(--os-space-1);
+    border-radius: var(--os-radius-full);
+    background: var(--os-brand-default);
+    color: var(--os-brand-ink);
+    font-size: var(--os-text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (pointer: coarse) {
+    .os-nav-link {
+      min-block-size: 2.75rem;
+    }
   }
 
   .os-shell-content {
@@ -127,7 +190,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .os-shell-sidebar {
+    .os-shell-sidebar,
+    .os-nav-link {
       transition: none;
     }
   }

@@ -9,6 +9,7 @@ export {
   Field,
   FIELD,
   Fieldset,
+  FileInput,
   Radio,
   Switch,
   type FieldContext,
@@ -33,16 +34,38 @@ export {
 export { Menu, MenuItem, MenuLabel, MenuSeparator } from './lib/popover/menu';
 export { Popover, PopoverBase, PopoverTrigger, type Align, type Placement } from './lib/popover/popover';
 export { Tooltip } from './lib/popover/tooltip';
+export { SecretDialog, type SecretOptions } from './lib/dialog/secret';
 export { Toaster, type ToastOptions } from './lib/toast/toast';
 
 // Wave 3: layout and data
 export { Cell, DataTable, StatGrid, StatTile, type Column } from './lib/data/data-table';
-export { Breadcrumbs, Card, CardGrid, Page, PageHeader, Panel } from './lib/page/page';
+export {
+  Breadcrumbs,
+  Card,
+  CardGrid,
+  Page,
+  PageHeader,
+  Panel,
+  SectionHeader,
+} from './lib/page/page';
 export { Tab, Tabs } from './lib/page/tabs';
 export {
   FormActions,
   FormActionsNote,
   SettingCard,
   SettingCardFooter,
+  SettingItem,
   SettingRow,
 } from './lib/settings/settings';
+export { Settings, SettingsGroup, SettingsNav } from './lib/settings/settings-layout';
+export { IntegrationCard, type IntegrationStatus } from './lib/settings/integration-card';
+export { NavLink } from './lib/shell/nav-link';
+export { CodeBlock, type CodeVariant } from './lib/copy/code-block';
+export { CopyButton } from './lib/copy/copy-button';
+export {
+  provideTheme,
+  Theme,
+  THEME_STORAGE_KEY,
+  ThemePicker,
+  type ThemeChoice,
+} from './lib/theme/theme';

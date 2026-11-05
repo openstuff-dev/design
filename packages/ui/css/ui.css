@@ -21,5 +21,7 @@
 @import './components/page.css';
 @import './components/shell.css';
 @import './components/settings.css';
+@import './components/theme-picker.css';
+@import './components/code-block.css';
 @import './components/data.css';
 @import './utilities.css';

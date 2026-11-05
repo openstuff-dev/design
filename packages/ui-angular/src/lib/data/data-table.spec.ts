@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { EmptyState } from '../feedback/feedback';
 import { accessibleName, query, render } from '../testing';
 import { Cell, DataTable, StatTile, type Column } from './data-table';
 
@@ -66,5 +67,33 @@ describe('DataTable and StatTile', () => {
     const parts = [...tile.children].map((part) => part.textContent.trim());
     expect(parts).toEqual(['Open findings', '6', '2 need a decision']);
     expect(query(tile, '.os-stat-hint', HTMLElement).dataset['tone']).toBe('warning');
+  });
+});
+
+describe('DataTable with an empty state', () => {
+  @Component({
+    imports: [DataTable, EmptyState],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+      <os-data-table caption="Keys" [columns]="columns" [rows]="rows()">
+        <os-empty-state title="No keys yet">Make one to connect a shop.</os-empty-state>
+      </os-data-table>
+    `,
+  })
+  class EmptyHost {
+    readonly columns: readonly Column<{ name: string }>[] = [{ key: 'name', label: 'Name' }];
+    readonly rows = signal<readonly { name: string }[]>([]);
+  }
+
+  it('shows the projected state only while there are no rows', async () => {
+    const { fixture, host, root } = await render(EmptyHost);
+    const cell = query(root, '.os-data-table-empty', HTMLElement);
+    expect(cell.querySelector('os-empty-state')?.textContent).toContain('No keys yet');
+    expect(cell.textContent).not.toContain('Nothing here yet.');
+
+    host.rows.set([{ name: 'Shop' }]);
+    await fixture.whenStable();
+    expect(root.querySelector('os-empty-state')).toBeNull();
+    expect(root.querySelector('tbody')?.textContent).toContain('Shop');
   });
 });
