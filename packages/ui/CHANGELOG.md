@@ -1,3 +1,16 @@
+## 0.1.5 (2026-11-05)
+
+### 🩹 Fixes
+
+- The app sidebar no longer leaves a gap below its last row, so the account row sits against the bottom of the window. ([a2f0561](https://github.com/openstuff-dev/design/commit/a2f0561))
+- In a stacked `.os-data-table`, a cell's badge or status dot keeps its own width instead of stretching across the column. ([8c10c4d](https://github.com/openstuff-dev/design/commit/8c10c4d))
+- Fields use 16px text on touch screens, so iOS Safari no longer zooms the page when one gets focus. ([ae72d7c](https://github.com/openstuff-dev/design/commit/ae72d7c))
+- Added everything a Settings page needs: `os-settings` with its menu and groups, `os-section-header`, `os-setting-item`, `os-integration-card`, `SecretDialog`, `os-copy-button`, `os-code-block`, `Theme` with `provideTheme` and `os-theme-picker`, and `os-file-input`. Added `a[os-nav-link]` for the app sidebar, with the same look as the Settings menu. `os-field` takes `optional` and an `os-field-label`, and `os-data-table` shows a projected `os-empty-state` when it has no rows. ([1ab47ff](https://github.com/openstuff-dev/design/commit/1ab47ff))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.4 (2026-11-04)
 
 ### 🩹 Fixes

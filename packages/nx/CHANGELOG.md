@@ -1,3 +1,17 @@
+## 0.3.1 (2026-11-05)
+
+### 🩹 Fixes
+
+- The generated server answers a missing file with a 404 instead of `index.html`, so a tab on an old build recovers instead of showing a blank page. ([5b38ea3](https://github.com/openstuff-dev/design/commit/5b38ea3))
+
+### 🧱 Updated Dependencies
+
+- Updated ui to 0.1.5
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.3.0 (2026-11-04)
 
 ### 🚀 Features

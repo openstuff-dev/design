@@ -1,3 +1,17 @@
+## 0.1.5 (2026-11-05)
+
+### 🩹 Fixes
+
+- Added everything a Settings page needs: `os-settings` with its menu and groups, `os-section-header`, `os-setting-item`, `os-integration-card`, `SecretDialog`, `os-copy-button`, `os-code-block`, `Theme` with `provideTheme` and `os-theme-picker`, and `os-file-input`. Added `a[os-nav-link]` for the app sidebar, with the same look as the Settings menu. `os-field` takes `optional` and an `os-field-label`, and `os-data-table` shows a projected `os-empty-state` when it has no rows. ([1ab47ff](https://github.com/openstuff-dev/design/commit/1ab47ff))
+
+### 🧱 Updated Dependencies
+
+- Updated ui to 0.1.5
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.4 (2026-11-04)
 
 ### 🩹 Fixes
