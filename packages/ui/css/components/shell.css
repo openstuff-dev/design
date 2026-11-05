@@ -45,7 +45,7 @@
     inline-size: var(--os-shell-sidebar-width);
     block-size: var(--os-shell-height);
     overflow-y: auto;
-    padding: 0 var(--os-space-3) var(--os-space-3);
+    padding: 0 var(--os-space-3);
     border-inline-end: 1px var(--os-border-style) var(--os-border-default);
     background: var(--os-bg-alternative);
   }
