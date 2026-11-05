@@ -84,7 +84,9 @@
     }
 
     .os-settings-nav {
-      position: static;
+      /* Keeps the hidden group labels inside the row: otherwise they widen the whole page. */
+      position: relative;
+      inset-block-start: auto;
       display: flex;
       gap: var(--os-space-1);
       overflow-x: auto;
