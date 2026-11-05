@@ -1,3 +1,13 @@
+## 0.1.6 (2026-11-05)
+
+### 🩹 Fixes
+
+- Stopped the Settings menu from making the whole page scroll sideways on a narrow screen. ([0fda019](https://github.com/openstuff-dev/design/commit/0fda019))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.5 (2026-11-05)
 
 ### 🩹 Fixes
