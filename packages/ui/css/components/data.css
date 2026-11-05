@@ -105,6 +105,11 @@
         padding: 0;
         border: 0;
         text-align: start;
+
+        /* A badge or status dot keeps its own width instead of filling the column. */
+        & > * {
+          justify-self: start;
+        }
       }
 
       & td[data-label]::before {
