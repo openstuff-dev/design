@@ -1,0 +1,37 @@
+{
+  "name": "@openstuff-dev/server",
+  "version": "0.1.0",
+  "description": "Server building blocks shared by OpenStuff apps: a guarded fetch and encrypted storage for integration keys",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@openstuff-dev/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "nx": {
+    "name": "server",
+    "tags": [
+      "type:package"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openstuff-dev/design.git",
+    "directory": "packages/server"
+  },
+  "license": "MIT"
+}

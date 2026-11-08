@@ -17,6 +17,9 @@
     },
     {
       "path": "./packages/create-app"
+    },
+    {
+      "path": "./packages/server"
     }
   ],
   "compilerOptions": {}
