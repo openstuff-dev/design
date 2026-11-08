@@ -6,6 +6,8 @@ Server building blocks shared by OpenStuff apps, so each app doesn't keep its ow
   its own network. Internal addresses (loopback, private ranges, the cloud metadata address) are
   refused by default. Each address a name resolves to is checked when the connection is made, which
   also stops DNS rebinding. Redirects are not followed.
+- **Integration routes**: the server-admin routes for OpenVersion and OpenAnnounce connections, with
+  the checks they run (below).
 - **`vaultFor` and `loadVault`**: encrypts integration keys with AES-256-GCM. Each seal uses a fresh
   IV. Without a configured secret, one is made on first start and kept in the database, with a
   warning, because a database dump alone could then reveal the keys.
@@ -33,7 +35,40 @@ const { status, body } = await safeFetch('https://example.com/api', policy, { ti
 `envPrefix` only shapes the refusal message, which names the setting an admin should change, such
 as `OPENRELAY_FETCH=private`.
 
+## Integration routes
+
+`registerIntegrationRoutes` adds the server-admin routes for a server-wide connection to OpenVersion
+or OpenAnnounce, and `GET /api/client-config` for the web app's public values:
+
+- `GET /api/admin/integrations` lists each connection, with its status.
+- `PUT /api/admin/integrations/:kind` saves a connection, then tests it. The save happens even when
+  the test fails, so a fix can follow. A signing secret is encrypted and never returned.
+- `POST /api/admin/integrations/:kind/test` tests the values sent, or the saved connection.
+- `DELETE /api/admin/integrations/:kind` disconnects. The routes refuse all of these when the
+  environment sets the connection (409), and the card then reads "Set by the server's configuration".
+
+```ts
+import { openAnnounce, openVersion, registerIntegrationRoutes, serverIntegrationsSql } from '@openstuff-dev/server';
+
+// In a migration: run serverIntegrationsSql once.
+registerIntegrationRoutes(app, {
+  db: pool,
+  vault: () => vault,                       // from loadVault
+  policy,                                   // from your FETCH settings
+  origin: publicOrigin,                     // this server's address, sent to the other system
+  appName: 'OpenUsecase',
+  offers: [
+    { kind: openVersion, signingSecret: false, environment: envOpenVersion, envPrefix: 'OPENUSECASE_OPENVERSION' },
+  ],
+  isServerAdmin: (request) => requireAccount(request).isServerAdmin,
+});
+```
+
+`resolveConnection` returns a connection the app uses (the environment's values first, then the
+saved one with its secret opened). The table is server-wide: keep it outside tenant row-level
+security, and export nothing from it. Routes don't use `Idempotency-Key` yet.
+
 ## Scope
 
-This package holds only what is shared so far: the guarded fetch and encrypted storage. Sign-in,
-tenancy and database helpers are planned separately.
+This package holds the guarded fetch, encrypted storage and the server-wide integration routes.
+Sign-in, tenancy and database helpers are planned separately.

@@ -1,7 +1,7 @@
 {
   "name": "@openstuff-dev/server",
   "version": "0.1.0",
-  "description": "Server building blocks shared by OpenStuff apps: a guarded fetch and encrypted storage for integration keys",
+  "description": "Server building blocks shared by OpenStuff apps: a guarded fetch, encrypted storage for integration keys and the server-wide integration routes",
   "type": "module",
   "exports": {
     "./package.json": "./package.json",
@@ -33,5 +33,16 @@
     "url": "git+https://github.com/openstuff-dev/design.git",
     "directory": "packages/server"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "fastify": "^5.12.8"
+  },
+  "peerDependencies": {
+    "fastify": "^5.12.7"
+  },
+  "peerDependenciesMeta": {
+    "fastify": {
+      "optional": true
+    }
+  }
 }

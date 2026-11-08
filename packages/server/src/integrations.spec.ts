@@ -1,0 +1,453 @@
+import Fastify, { type FastifyInstance } from 'fastify';
+import { createServer, type Server } from 'node:http';
+import type { AddressInfo } from 'node:net';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import {
+  ConnectionError,
+  type ConnectionDetails,
+  type IntegrationOffer,
+  openAnnounce,
+  openVersion,
+  type Queryable,
+  registerIntegrationRoutes,
+  resolveConnection,
+} from './integrations.js';
+import { vaultFor } from './vault.js';
+
+// Private mode lets the checks reach a local test server. Real apps keep the default, public.
+const privateFetch = { mode: 'private' as const, allow: [], envPrefix: 'OPENTEST' };
+const context = { policy: privateFetch, origin: 'https://announce.example.com', userAgent: 'OpenTest' };
+
+/** Resolves to the error a check rejects with, and fails the test if it does not reject. */
+const failureOf = async (attempt: Promise<unknown>): Promise<ConnectionError> => {
+  try {
+    await attempt;
+  } catch (error) {
+    return error as ConnectionError;
+  }
+  throw new Error('Expected the check to fail.');
+};
+
+let server: Server;
+let base: string;
+
+beforeAll(async () => {
+  server = createServer((request, response) => {
+    const url = new URL(request.url ?? '/', 'http://x');
+    const key = url.searchParams.get('key');
+    const headerKey = request.headers['x-openannounce-key'];
+    const origin = request.headers.origin;
+    response.setHeader('content-type', 'application/json');
+    if (url.pathname === '/api/v1/version') {
+      if (origin === 'https://blocked.example.com') {
+        response.statusCode = 403;
+        response.end('{"error":"origin not allowed"}');
+        return;
+      }
+      if (key !== 'pk_good_key_1234') {
+        response.statusCode = 401;
+        response.end('{"error":"unknown key"}');
+        return;
+      }
+      response.end('{"version":"1.0.0"}');
+      return;
+    }
+    if (url.pathname === '/api/v1/feed') {
+      if (headerKey !== 'pk_feed_key_1234') {
+        response.statusCode = 401;
+        response.end('{"error":"unknown key"}');
+        return;
+      }
+      response.end('[]');
+      return;
+    }
+    response.statusCode = 404;
+    response.end('{"error":"not found"}');
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+});
+
+afterAll(async () => {
+  await new Promise<void>((resolve) => {
+    server.close(() => {
+      resolve();
+    });
+  });
+});
+
+describe('openVersion check', () => {
+  it('says connected for a known public key', async () => {
+    await expect(openVersion.check({ url: base, publicKey: 'pk_good_key_1234' }, context)).resolves.toBe(
+      'Connected to OpenVersion.',
+    );
+  });
+
+  it('says what to change when the origin is not allowed', async () => {
+    const blocked = { ...context, origin: 'https://blocked.example.com' };
+    await expect(openVersion.check({ url: base, publicKey: 'pk_good_key_1234' }, blocked)).rejects.toThrow(
+      'Add https://blocked.example.com to allowed origins in OpenVersion',
+    );
+  });
+
+  it('refuses an unknown key without retrying', async () => {
+    const error = await failureOf(openVersion.check({ url: base, publicKey: 'pk_bad_key_12345' }, context));
+    expect(error).toBeInstanceOf(ConnectionError);
+    expect(error.retry).toBe(false);
+  });
+
+  it('says the address did not answer, and that retrying may help', async () => {
+    const error = await failureOf(openVersion
+      .check({ url: 'http://127.0.0.1:1', publicKey: 'pk_good_key_1234' }, context),
+    );
+    expect(error.message).toContain('didn’t answer');
+    expect(error.retry).toBe(true);
+  });
+
+  it('refuses an internal address when fetching is public', async () => {
+    const publicContext = { ...context, policy: { ...privateFetch, mode: 'public' as const } };
+    const error = await failureOf(openVersion
+      .check({ url: base, publicKey: 'pk_good_key_1234' }, publicContext),
+    );
+    expect(error).toBeInstanceOf(ConnectionError);
+    expect(error.message).toContain('OPENTEST_FETCH');
+  });
+});
+
+describe('openAnnounce check', () => {
+  it('says connected for a known public key', async () => {
+    await expect(openAnnounce.check({ url: base, publicKey: 'pk_feed_key_1234' }, context)).resolves.toBe(
+      'Connected to OpenAnnounce.',
+    );
+  });
+
+  it('refuses an unknown key', async () => {
+    await expect(openAnnounce.check({ url: base, publicKey: 'pk_nope_key_12345' }, context)).rejects.toThrow(
+      'doesn’t recognise this public key',
+    );
+  });
+});
+
+/** An in-memory stand-in for server_integrations, answering the statements the routes send. */
+type Insert = [string, string, string, string | null, boolean, string];
+
+/** Parses a response body as JSON, typed as unknown so each check narrows it. */
+const json = (response: { body: string }): unknown => JSON.parse(response.body);
+
+function fakeTable(): Queryable & { rows: Map<string, Record<string, unknown>> } {
+  const rows = new Map<string, Record<string, unknown>>();
+  const statement = (text: string, values: unknown[]): { rows: unknown[] } => {
+    if (text.startsWith('SELECT')) {
+      const row = rows.get(values[0] as string);
+      return { rows: row ? [row] : [] };
+    }
+    if (text.startsWith('INSERT')) {
+      const [kind, url, publicKey, sealed, ok, message] = values as Insert;
+      const previous = rows.get(kind);
+      const secret = sealed ?? previous?.signing_secret_encrypted ?? null;
+      rows.set(kind, {
+        url,
+        public_key: publicKey,
+        signing_secret_encrypted: secret,
+        has_secret: secret !== null,
+        last_test_ok: ok,
+        last_test_message: message,
+        last_tested_at: new Date(),
+      });
+      return { rows: [] };
+    }
+    if (text.startsWith('UPDATE')) {
+      const [ok, message, kind] = values as [boolean, string, string];
+      const row = rows.get(kind);
+      if (row) {
+        Object.assign(row, {
+          last_test_ok: ok,
+          last_test_message: message,
+          last_tested_at: new Date(),
+        });
+      }
+      return { rows: [] };
+    }
+    if (text.startsWith('DELETE')) {
+      rows.delete(values[0] as string);
+      return { rows: [] };
+    }
+    throw new Error(`unexpected statement: ${text}`);
+  };
+  return {
+    rows,
+    query: (text, values) => Promise.resolve(statement(text, values)),
+  };
+}
+
+describe('integration routes', () => {
+  const vault = vaultFor('test-secret-key');
+  const adminHeader = 'x-admin';
+  let app: FastifyInstance;
+  let table: ReturnType<typeof fakeTable>;
+  let environment: ConnectionDetails | null;
+  let offers: IntegrationOffer[];
+
+  const build = async () => {
+    table = fakeTable();
+    app = Fastify();
+    offers = [
+      { kind: openVersion, signingSecret: false, environment, envPrefix: 'OPENTEST_OPENVERSION' },
+      { kind: openAnnounce, signingSecret: true, environment: null, envPrefix: 'OPENTEST_OPENANNOUNCE' },
+    ];
+    registerIntegrationRoutes(app, {
+      db: table,
+      vault: () => Promise.resolve(vault),
+      policy: privateFetch,
+      origin: 'https://announce.example.com',
+      appName: 'OpenTest',
+      offers,
+      isServerAdmin: (request) => request.headers[adminHeader] === 'yes',
+    });
+    await app.ready();
+  };
+
+  const admin = { [adminHeader]: 'yes' };
+
+  it('refuses everyone who is not a server admin', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({ method: 'GET', url: '/api/admin/integrations' });
+    expect(response.statusCode).toBe(403);
+    expect(json(response)).toEqual({ error: 'Only a server admin can manage server connections.' });
+    await app.close();
+  });
+
+  it('shows both connections as not connected before anything is saved', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({ method: 'GET', url: '/api/admin/integrations', headers: admin });
+    expect(json(response)).toEqual([
+      expect.objectContaining({ kind: 'openversion', status: 'not-connected' }),
+      expect.objectContaining({ kind: 'openannounce', status: 'not-connected' }),
+    ]);
+    await app.close();
+  });
+
+  it('saves a tested connection and shows it as connected', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234' },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(json(response)).toEqual(
+      expect.objectContaining({ kind: 'openversion', status: 'connected', source: 'database', message: 'Connected to OpenVersion.' }),
+    );
+    await app.close();
+  });
+
+  it('saves a connection that fails its test, so the admin can fix it, and shows the problem', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_bad_key_12345' },
+    });
+    expect(json(response)).toEqual(expect.objectContaining({ status: 'problem' }));
+    expect(table.rows.get('openversion')?.url).toBe(base);
+    await app.close();
+  });
+
+  it('never returns a signing secret, but says one is stored', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234', signingSecret: 'signing-secret-value' },
+    });
+    expect(json(response)).toEqual(expect.objectContaining({ hasSigningSecret: true, status: 'connected' }));
+    expect(response.body).not.toContain('signing-secret-value');
+    const stored = table.rows.get('openannounce')?.signing_secret_encrypted as string;
+    expect(stored).not.toContain('signing-secret-value');
+    expect(vault.open(stored)).toBe('signing-secret-value');
+    await app.close();
+  });
+
+  it('keeps the stored signing secret when a later save leaves it out', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234', signingSecret: 'signing-secret-value' },
+    });
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234' },
+    });
+    const stored = table.rows.get('openannounce')?.signing_secret_encrypted as string;
+    expect(vault.open(stored)).toBe('signing-secret-value');
+    await app.close();
+  });
+
+  it('refuses a signing secret for a connection that takes none', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234', signingSecret: 'signing-secret-value' },
+    });
+    expect(response.statusCode).toBe(400);
+    await app.close();
+  });
+
+  it('refuses an address with a user name in it', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: 'https://user:pw@openversion.example.com', publicKey: 'pk_good_key_1234' },
+    });
+    expect(response.statusCode).toBe(400);
+    await app.close();
+  });
+
+  it('tests the saved connection and records the result', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234' },
+    });
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_bad_key_12345' },
+    });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/admin/integrations/openversion/test',
+      headers: admin,
+    });
+    const result = json(response) as { ok: boolean; message: string };
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain('doesn’t recognise');
+    await app.close();
+  });
+
+  it('tests values sent without saving them', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/admin/integrations/openversion/test',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234' },
+    });
+    expect(json(response)).toEqual({ ok: true, message: 'Connected to OpenVersion.' });
+    expect(table.rows.has('openversion')).toBe(false);
+    await app.close();
+  });
+
+  it('answers 400 when testing with nothing to test', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/admin/integrations/openversion/test',
+      headers: admin,
+    });
+    expect(response.statusCode).toBe(400);
+    await app.close();
+  });
+
+  it('lets an environment value win: the card is read-only and saving answers 409', async () => {
+    environment = { url: base, publicKey: 'pk_good_key_1234' };
+    await build();
+    const list = await app.inject({ method: 'GET', url: '/api/admin/integrations', headers: admin });
+    expect((json(list) as unknown[])[0]).toEqual(expect.objectContaining({ status: 'set-by-server', source: 'environment' }));
+    const save = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234' },
+    });
+    expect(save.statusCode).toBe(409);
+    expect((json(save) as { error: string }).error).toContain('OPENTEST_OPENVERSION_URL');
+    const remove = await app.inject({ method: 'DELETE', url: '/api/admin/integrations/openversion', headers: admin });
+    expect(remove.statusCode).toBe(409);
+    await app.close();
+  });
+
+  it('disconnects a saved connection', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234' },
+    });
+    const response = await app.inject({ method: 'DELETE', url: '/api/admin/integrations/openversion', headers: admin });
+    expect(json(response)).toEqual({ ok: true });
+    expect(table.rows.has('openversion')).toBe(false);
+    await app.close();
+  });
+
+  it('answers 404 for a connection this app does not offer', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({ method: 'PUT', url: '/api/admin/integrations/unknown', headers: admin, payload: {} });
+    expect(response.statusCode).toBe(404);
+    await app.close();
+  });
+
+  it('serves public values only from client-config, and nothing when unset', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234', signingSecret: 'signing-secret-value' },
+    });
+    const response = await app.inject({ method: 'GET', url: '/api/client-config' });
+    expect(json(response)).toEqual({
+      openversion: null,
+      openannounce: { url: base, publicKey: 'pk_feed_key_1234' },
+    });
+    expect(response.body).not.toContain('signing-secret-value');
+    await app.close();
+  });
+
+  it('resolves the saved connection with its secret opened, and the environment first', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234', signingSecret: 'signing-secret-value' },
+    });
+    const connection = resolveConnection(table, () => Promise.resolve(vault), offers[1]);
+    await expect(connection).resolves.toEqual({
+      url: base,
+      publicKey: 'pk_feed_key_1234',
+      signingSecret: 'signing-secret-value',
+    });
+    await app.close();
+  });
+});
