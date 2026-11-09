@@ -5,7 +5,11 @@ export interface ClientConnection {
 }
 
 /** What `GET /api/client-config` answers: each system on offer, null when not connected. */
-export type ClientConfig = Record<string, ClientConnection | null | undefined>;
+export interface ClientConfig {
+  openversion?: ClientConnection | null;
+  openannounce?: ClientConnection | null;
+  [kind: string]: ClientConnection | null | undefined;
+}
 
 /**
  * How the app starts each system. The app does the `import()`, so the toolkit doesn't depend on

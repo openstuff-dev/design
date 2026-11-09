@@ -111,6 +111,8 @@ const STATUS: Record<ServerConnection['status'], IntegrationStatus> = {
  * A card that connects this server to OpenVersion or OpenAnnounce, on the routes of
  * `@openstuff-dev/server`. Paste a connection string, or enter the details; the server tests it
  * straight away and the card says what's wrong and how to fix it. Removing asks first.
+ * Content inside the card shows under the details once it is connected, such as
+ * `<os-announce-groups>` on the OpenAnnounce card.
  *
  * ```html
  * @for (connection of connections(); track connection.kind) {
@@ -191,6 +193,15 @@ const STATUS: Record<ServerConnection['status'], IntegrationStatus> = {
             <dd>{{ secretStored() ? 'Saved' : 'Not saved' }}</dd>
           }
         </dl>
+        @if (secret()?.kind === 'signing-secret' && !secretStored()) {
+          <p class="os-server-connection-note">
+            Without a signing secret, people only see messages aimed at everyone.
+          </p>
+        }
+      }
+
+      @if (shown().status !== 'not-connected' && !editing()) {
+        <ng-content />
       }
 
       @if (editing()) {
