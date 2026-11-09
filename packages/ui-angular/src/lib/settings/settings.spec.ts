@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Button } from '../button/button';
 import { Control } from '../field/field';
 import { accessibleDescription, accessibleName, query, render } from '../testing';
-import { FormActions, SettingCard, SettingCardFooter, SettingRow } from './settings';
+import { FormActions, SettingCard, SettingCardBody, SettingCardFooter, SettingRow } from './settings';
 
 @Component({
   imports: [Button, Control, FormActions, SettingCard, SettingCardFooter, SettingRow],
@@ -55,5 +55,30 @@ describe('SettingCard, SettingRow and FormActions', () => {
     expect(query(root, 'os-setting-row label', HTMLLabelElement).control).toBe(
       query(root, 'input', HTMLInputElement),
     );
+  });
+});
+
+@Component({
+  imports: [SettingCard, SettingCardBody, SettingCardFooter],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <section os-setting-card title="Tokens">
+      <div os-setting-card-body>
+        <ul>
+          <li>uc_abc…</li>
+        </ul>
+      </div>
+      <footer os-setting-card-footer></footer>
+    </section>
+  `,
+})
+class BodyHost {}
+
+describe('SettingCardBody', () => {
+  it('marks free content in a card as its body', async () => {
+    const { root } = await render(BodyHost);
+    const body = query(root, '[os-setting-card-body]', HTMLElement);
+    expect(body.classList.contains('os-setting-card-body')).toBe(true);
+    expect(body.textContent).toContain('uc_abc');
   });
 });

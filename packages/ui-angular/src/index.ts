@@ -2,6 +2,7 @@
 export { Badge, Chip, StatusDot, type Tone } from './lib/badge/badge';
 export { Button, IconButton, type ButtonSize, type ButtonVariant } from './lib/button/button';
 export { Callout, EmptyState, Kbd, Skeleton } from './lib/feedback/feedback';
+export { onReturn, slowLoading, type SlowLoading } from './lib/feedback/loading';
 export {
   Check,
   Checkbox,
@@ -53,6 +54,7 @@ export {
   FormActions,
   FormActionsNote,
   SettingCard,
+  SettingCardBody,
   SettingCardFooter,
   SettingItem,
   SettingRow,

@@ -19,6 +19,7 @@ import {
   type ServerConnection,
   type ServerConnectionsClient,
   SettingCard,
+  SettingCardBody,
   SettingCardFooter,
   SettingItem,
   SettingRow,
@@ -41,6 +42,9 @@ const SETTINGS = `
       <os-setting-row label="Agent mode" description="Shows what agents read on every page." inline>
         <input type="checkbox" os-switch checked />
       </os-setting-row>
+      <div os-setting-card-body>
+        <p class="body-note">Anything that isn't a row goes in a body: a list, a few fields side by side, a callout.</p>
+      </div>
       <footer os-setting-card-footer>
         <div os-form-actions>
           <p os-form-actions-note>Changes apply to all your devices.</p>
@@ -63,8 +67,8 @@ const SETTINGS = `
 @Component({
   selector: 'docs-settings-example',
   imports: [
-    Button, Control, FormActions, FormActionsNote, SettingCard, SettingCardFooter, SettingRow,
-    Switch,
+    Button, Control, FormActions, FormActionsNote, SettingCard, SettingCardBody,
+    SettingCardFooter, SettingRow, Switch,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: SETTINGS,
@@ -72,6 +76,12 @@ const SETTINGS = `
     .cards {
       display: grid;
       gap: var(--os-space-6);
+    }
+
+    .body-note {
+      margin: 0;
+      color: var(--os-fg-light);
+      font-size: var(--os-text-sm);
     }
   `,
 })
@@ -329,6 +339,17 @@ class CodeExample {
           <code>inline</code> keeps a short control (a switch or a button) beside the text; in a
           narrow card the control moves under it. Drag the corner to see it. A
           <code>tone="danger"</code> card holds what can't be undone, at the end of the page.
+        </p>
+        <p>
+          Rows, items, the header and the footer pad themselves. Put any other content (a list, a
+          row of fields, a callout, an empty state) in <code>[os-setting-card-body]</code>, so it
+          lines up with the rows instead of touching the card's edge.
+        </p>
+        <p>
+          While a tab loads, <code>slowLoading()</code> from
+          <code>@openstuff-dev/ui-angular</code> shows <code>os-skeleton</code> only when the
+          request takes longer than 300 ms, so a fast load doesn't flash.
+          <code>onReturn(fn)</code> reloads when the window gets focus or the network comes back.
         </p>
       </div>
       <docs-example [code]="settings"><docs-settings-example /></docs-example>
