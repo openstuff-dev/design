@@ -1,3 +1,13 @@
+## 0.6.0 (2026-11-09)
+
+### 🚀 Features
+
+- Added `@openstuff-dev/server/testing`: stand-ins for OpenVersion and OpenAnnounce that answer this package's checks and publish as the real ones do, so an app tests its own connection wiring without copying a fake server. ([b595f59](https://github.com/openstuff-dev/design/commit/b595f59))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.5.0 (2026-11-09)
 
 ### 🚀 Features
