@@ -1,3 +1,13 @@
+## 0.1.9 (2026-11-09)
+
+### 🩹 Fixes
+
+- Connection strings can now hold an OpenAnnounce publish key, and `@openstuff-dev/server/connection-string` reads and makes them in the browser too. `SecretDialog` takes an optional `connection` and shows that string under the secret, with its own copy button. ([5835b89](https://github.com/openstuff-dev/design/commit/5835b89))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.8 (2026-11-09)
 
 ### 🩹 Fixes

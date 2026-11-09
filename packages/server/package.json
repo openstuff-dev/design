@@ -1,6 +1,6 @@
 {
   "name": "@openstuff-dev/server",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Server building blocks shared by OpenStuff apps: a guarded fetch, encrypted storage for integration keys and the server-wide integration routes",
   "type": "module",
   "exports": {
