@@ -59,6 +59,7 @@ export {
 } from './lib/settings/settings';
 export { Settings, SettingsGroup, SettingsNav } from './lib/settings/settings-layout';
 export { IntegrationCard, type IntegrationStatus } from './lib/settings/integration-card';
+export { AnnounceGroups } from './lib/settings/announce-groups';
 export {
   ServerConnectionCard,
   type ServerConnection,

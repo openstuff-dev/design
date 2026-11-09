@@ -345,6 +345,39 @@
     font-size: var(--os-text-sm);
   }
 
+  .os-announce-groups {
+    display: grid;
+    gap: var(--os-space-2);
+  }
+
+  .os-announce-groups-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2) var(--os-space-3);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .os-announce-groups-title {
+    margin: 0;
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-medium);
+  }
+
+  .os-announce-groups-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-1) var(--os-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--os-text-sm);
+  }
+
+  .os-announce-groups-list code {
+    overflow-wrap: anywhere;
+  }
+
   .os-server-connection-form {
     display: grid;
     gap: var(--os-space-4);

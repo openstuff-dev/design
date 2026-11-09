@@ -69,6 +69,26 @@ registerIntegrationRoutes(app, {
 With a deploy token, OpenVersion's check also reads the live release, so a token that can't publish
 is caught when it's saved.
 
+### Aiming OpenAnnounce messages
+
+Pass `announceUser` and the routes add `GET /api/openannounce-token`. It signs who is signed in
+with the saved OpenAnnounce secret, so the browser can't claim another group. `sub` is an opaque
+member id, never an email or a name. `announceGroups(tenant, role)` gives `t-acme`, `role-courier`
+and `t-acme-role-courier`, so a message can reach one tenant, one role, or one role in one tenant.
+Without a secret it answers 204, and people see only what's for everyone. Signed out: 401.
+
+```ts
+registerIntegrationRoutes(app, {
+  // …as above, with the openAnnounce offer
+  announceUser: (request) => {
+    const member = currentMember(request); // null when signed out
+    return member && { sub: member.id, groups: announceGroups(member.tenant, member.role) };
+  },
+});
+```
+
+The web app fetches it again when someone switches tenant.
+
 ## Publish this server's version on start
 
 `publishVersionOnStart` publishes the image's version to OpenVersion once the server listens, with

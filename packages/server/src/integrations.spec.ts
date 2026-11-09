@@ -1,8 +1,10 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { verifyUser } from '@openstuff-dev/announce/server';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
+  announceGroups,
   ConnectionError,
   type ConnectionDetails,
   type IntegrationOffer,
@@ -229,6 +231,12 @@ describe('integration routes', () => {
       appName: 'OpenTest',
       offers,
       isServerAdmin: (request) => request.headers[adminHeader] === 'yes',
+      announceUser: (request) => {
+        const member = request.headers['x-member'];
+        return typeof member === 'string'
+          ? { sub: member, groups: announceGroups('acme', 'courier') }
+          : null;
+      },
     });
     await app.ready();
   };
@@ -659,6 +667,43 @@ describe('integration routes', () => {
       openannounce: { url: base, publicKey: 'pk_feed_key_1234' },
     });
     expect(response.body).not.toContain('signing-secret-value');
+    await app.close();
+  });
+
+  it('signs who is signed in for OpenAnnounce with the saved secret, and their groups', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234', signingSecret: 'signing-secret-value' },
+    });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/openannounce-token',
+      headers: { 'x-member': 'm_42' },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['cache-control']).toBe('no-store');
+    const verified = await verifyUser('signing-secret-value', response.body);
+    if (!verified.ok) throw new Error(verified.error);
+    expect(verified.claims.sub).toBe('m_42');
+    expect(verified.claims.groups).toEqual(['t-acme', 'role-courier', 't-acme-role-courier']);
+    await app.close();
+  });
+
+  it('gives no OpenAnnounce token without a secret, and refuses someone signed out', async () => {
+    environment = null;
+    await build();
+    const none = await app.inject({
+      method: 'GET',
+      url: '/api/openannounce-token',
+      headers: { 'x-member': 'm_42' },
+    });
+    expect(none.statusCode).toBe(204);
+    const signedOut = await app.inject({ method: 'GET', url: '/api/openannounce-token' });
+    expect(signedOut.statusCode).toBe(401);
     await app.close();
   });
 

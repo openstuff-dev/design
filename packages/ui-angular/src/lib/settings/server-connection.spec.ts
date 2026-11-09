@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ConfirmDialog } from '../dialog/confirm';
 import { query, render } from '../testing';
+import { AnnounceGroups } from './announce-groups';
 import {
   type ServerConnection,
   ServerConnectionCard,
@@ -204,5 +205,64 @@ describe('ServerConnectionCard', () => {
       publicKey: 'oa_pub',
       signingSecret: 'oa_sign',
     });
+  });
+
+  it('UC-6/S3 says people only see messages for everyone without a signing secret', async () => {
+    const announce: ServerConnection = {
+      ...connected,
+      kind: 'openannounce',
+      name: 'OpenAnnounce',
+      hasDeployToken: false,
+      hasSigningSecret: false,
+    };
+    const { fixture, host, root } = await setup(announce);
+    expect(root.textContent).toContain('only see messages aimed at everyone');
+    host.connection.set({ ...announce, hasSigningSecret: true });
+    await fixture.whenStable();
+    expect(root.textContent).not.toContain('only see messages aimed at everyone');
+  });
+
+  it('never says that on a card that takes no signing secret', async () => {
+    const { root } = await setup({ ...connected, hasDeployToken: false });
+    expect(root.textContent).not.toContain('only see messages aimed at everyone');
+  });
+});
+
+@Component({
+  imports: [ServerConnectionCard, AnnounceGroups],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <os-server-connection-card [connection]="connection()" [client]="client">
+      <os-announce-groups tenant="network" [groups]="groups" />
+    </os-server-connection-card>
+  `,
+})
+class GroupsHost {
+  readonly connection = signal<ServerConnection>(empty);
+  readonly client = new FakeClient();
+  readonly groups = ['t-acme', 'role-courier', 't-acme-role-courier'];
+}
+
+describe('AnnounceGroups', () => {
+  it('UC-7/S6 lists the groups to create, with a copy button, once connected', async () => {
+    const { fixture, host, root } = await render(GroupsHost);
+    host.connection.set({ ...empty, kind: 'openannounce', name: 'OpenAnnounce' });
+    await fixture.whenStable();
+    expect(root.textContent).not.toContain('Groups to create');
+
+    host.connection.set({
+      ...connected,
+      kind: 'openannounce',
+      name: 'OpenAnnounce',
+      hasSigningSecret: true,
+    });
+    await fixture.whenStable();
+    const codes = [...root.querySelectorAll('.os-announce-groups-list code')];
+    expect(codes.map((code) => code.textContent)).toEqual(host.groups);
+    expect(root.textContent).toContain('that network');
+    expect(query(root, '.os-announce-groups', HTMLElement).getAttribute('aria-labelledby')).toBe(
+      query(root, '.os-announce-groups-title', HTMLElement).id,
+    );
+    expect(root.querySelector('os-copy-button')).not.toBeNull();
   });
 });

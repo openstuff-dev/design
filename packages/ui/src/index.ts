@@ -17,3 +17,12 @@ export {
 export { applyInterestInvokers } from './lib/interest.js';
 export { loadPolyfills, positionAnchors, type Polyfill } from './lib/polyfills.js';
 export { detectSupport, type Support } from './lib/support.js';
+export {
+  allAnnounceGroups,
+  announceGroups,
+  startServerIntegrations,
+  type ClientConfig,
+  type ClientConnection,
+  type ServerIntegrationLoaders,
+  type ServerIntegrationsOptions,
+} from './lib/server-integrations.js';
