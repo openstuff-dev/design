@@ -12,6 +12,7 @@ import {
   registerIntegrationRoutes,
   resolveConnection,
 } from './integrations.js';
+import { makeConnectionString, parseConnectionString } from './connection-string.js';
 import { vaultFor } from './vault.js';
 
 // Private mode lets the checks reach a local test server. Real apps keep the default, public.
@@ -211,6 +212,7 @@ describe('integration routes', () => {
   let table: ReturnType<typeof fakeTable>;
   let environment: ConnectionDetails | null;
   let offers: IntegrationOffer[];
+  let origin = 'https://announce.example.com';
 
   const build = async () => {
     table = fakeTable();
@@ -223,7 +225,7 @@ describe('integration routes', () => {
       db: table,
       vault: () => Promise.resolve(vault),
       policy: privateFetch,
-      origin: 'https://announce.example.com',
+      origin,
       appName: 'OpenTest',
       offers,
       isServerAdmin: (request) => request.headers[adminHeader] === 'yes',
@@ -266,6 +268,100 @@ describe('integration routes', () => {
     expect(json(response)).toEqual(
       expect.objectContaining({ kind: 'openversion', status: 'connected', source: 'database', message: 'Connected to OpenVersion.' }),
     );
+    await app.close();
+  });
+
+  it('UC-5/S1 saves a pasted connection string, with its deploy token', async () => {
+    environment = null;
+    await build();
+    const connectionString = makeConnectionString('openversion', {
+      url: base,
+      publicKey: 'pk_good_key_1234',
+      deployToken: 'ov_deploy_good_1234',
+    });
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { connectionString },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(json(response)).toEqual(
+      expect.objectContaining({ status: 'connected', hasDeployToken: true, secret: 'deploy-token', copy: null }),
+    );
+    expect(response.body).not.toContain('ov_deploy_good_1234');
+    await app.close();
+  });
+
+  it('UC-5/S2 refuses a connection string from another product, naming both', async () => {
+    environment = null;
+    await build();
+    const connectionString = makeConnectionString('openannounce', { url: base, publicKey: 'pk_feed_key_1234' });
+    for (const method of ['PUT', 'POST'] as const) {
+      const response = await app.inject({
+        method,
+        url: `/api/admin/integrations/openversion${method === 'POST' ? '/test' : ''}`,
+        headers: admin,
+        payload: { connectionString },
+      });
+      expect(response.statusCode).toBe(400);
+      expect(json(response)).toEqual({
+        error: 'That’s a connection string from OpenAnnounce. Paste one from OpenVersion.',
+      });
+    }
+    expect(table.rows.size).toBe(0);
+    await app.close();
+  });
+
+  it('UC-5/S2 refuses text that isn’t a connection string', async () => {
+    environment = null;
+    await build();
+    for (const connectionString of ['hello', 'openversion+not-json', 42]) {
+      const response = await app.inject({
+        method: 'PUT',
+        url: '/api/admin/integrations/openversion',
+        headers: admin,
+        payload: { connectionString },
+      });
+      expect(response.statusCode).toBe(400);
+    }
+    await app.close();
+  });
+
+  it('UC-5/S2 gives this server’s address to copy when the origin isn’t allowed', async () => {
+    environment = null;
+    origin = 'https://blocked.example.com';
+    try {
+      await build();
+      const response = await app.inject({
+        method: 'PUT',
+        url: '/api/admin/integrations/openversion',
+        headers: admin,
+        payload: { url: base, publicKey: 'pk_good_key_1234' },
+      });
+      expect(json(response)).toEqual(
+        expect.objectContaining({ status: 'problem', copy: 'https://blocked.example.com' }),
+      );
+      const tested = await app.inject({
+        method: 'POST',
+        url: '/api/admin/integrations/openversion/test',
+        headers: admin,
+      });
+      expect(json(tested)).toEqual(expect.objectContaining({ ok: false, copy: 'https://blocked.example.com' }));
+      await app.close();
+    } finally {
+      origin = 'https://announce.example.com';
+    }
+  });
+
+  it('says which secret each connection takes', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({ method: 'GET', url: '/api/admin/integrations', headers: admin });
+    expect(json(response)).toEqual([
+      expect.objectContaining({ kind: 'openversion', secret: 'deploy-token' }),
+      expect.objectContaining({ kind: 'openannounce', secret: 'signing-secret' }),
+    ]);
     await app.close();
   });
 
@@ -490,7 +586,7 @@ describe('integration routes', () => {
       headers: admin,
       payload: { url: base, publicKey: 'pk_good_key_1234' },
     });
-    expect(json(response)).toEqual({ ok: true, message: 'Connected to OpenVersion.' });
+    expect(json(response)).toEqual({ ok: true, message: 'Connected to OpenVersion.', copy: null });
     expect(table.rows.has('openversion')).toBe(false);
     await app.close();
   });
@@ -582,5 +678,35 @@ describe('integration routes', () => {
       signingSecret: 'signing-secret-value',
     });
     await app.close();
+  });
+});
+
+describe('connection strings', () => {
+  it('round-trips the details, with only the secret given', () => {
+    const text = makeConnectionString('openannounce', {
+      url: 'https://announce.example.com',
+      publicKey: 'oa_pub_123456',
+      signingSecret: 'oa_sign_123456',
+    });
+    expect(text.startsWith('openannounce+')).toBe(true);
+    expect(parseConnectionString(` ${text} `, 'openannounce')).toEqual({
+      url: 'https://announce.example.com',
+      publicKey: 'oa_pub_123456',
+      signingSecret: 'oa_sign_123456',
+    });
+  });
+
+  it('leaves the secret out when there is none, for a string that shows messages for everyone', () => {
+    const text = makeConnectionString('openannounce', { url: 'https://a.example.com', publicKey: 'oa_pub_123456' });
+    expect(parseConnectionString(text, 'openannounce')).toEqual({
+      url: 'https://a.example.com',
+      publicKey: 'oa_pub_123456',
+    });
+  });
+
+  it('refuses an unknown prefix without naming it', () => {
+    expect(() => parseConnectionString('acme+e30', 'openversion')).toThrow(
+      'That isn’t a connection string from OpenVersion. Copy it again, or enter the details instead.',
+    );
   });
 });

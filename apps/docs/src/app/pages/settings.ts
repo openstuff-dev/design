@@ -8,15 +8,16 @@ import {
   CopyButton,
   DataTable,
   EmptyState,
-  Field,
   FileInput,
   FormActions,
   FormActionsNote,
-  IntegrationCard,
   NavLink,
   PageHeader,
   SecretDialog,
   SectionHeader,
+  ServerConnectionCard,
+  type ServerConnection,
+  type ServerConnectionsClient,
   SettingCard,
   SettingCardFooter,
   SettingItem,
@@ -145,21 +146,9 @@ const FULL_PAGE = `
       }
       @case ('integrations') {
         <header os-section-header title="Integrations" description="Connect the other OpenStuff apps."></header>
-        <os-integration-card name="OpenVersion" status="connected"
-            description="Open tabs learn about a new version and offer to reload.">
-          <button os-button os-actions type="button">Remove</button>
-        </os-integration-card>
-        <os-integration-card name="OpenAnnounce"
-            description="Messages from your team show up in the app.">
-          <os-field label="Connection string" hint="Copy it from OpenAnnounce's Systems page.">
-            <input os-input />
-          </os-field>
-          <div os-form-actions><button os-button type="button" variant="primary">Connect</button></div>
-        </os-integration-card>
-        <os-integration-card name="OpenPurpose" status="server"
-            description="Set with environment variables, so it can't be changed here." />
-        <os-integration-card name="OpenUsecase" status="problem"
-            description="That address didn't answer. Check it and try again." />
+        @for (connection of connections; track connection.kind) {
+          <os-server-connection-card [connection]="connection" [client]="client" />
+        }
       }
       @case ('transfer') {
         <header os-section-header title="Export and import" description="One file out, one file in."></header>
@@ -178,9 +167,9 @@ type ExampleTab = 'account' | 'appearance' | 'members' | 'keys' | 'integrations'
 @Component({
   selector: 'docs-settings-full-example',
   imports: [
-    Button, Control, DataTable, EmptyState, Field, FileInput, FormActions, IntegrationCard, NavLink,
-    SectionHeader, SettingCard, SettingCardFooter, SettingItem, SettingRow, Settings, SettingsGroup,
-    SettingsNav, ThemePicker,
+    Button, Control, DataTable, EmptyState, FileInput, FormActions, NavLink, SectionHeader,
+    ServerConnectionCard, SettingCard, SettingCardFooter, SettingItem, SettingRow, Settings,
+    SettingsGroup, SettingsNav, ThemePicker,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: FULL_PAGE,
@@ -196,6 +185,48 @@ class SettingsFullExample {
   private readonly toaster = inject(Toaster);
 
   protected readonly tab = signal<ExampleTab>('account');
+
+  protected readonly connections: ServerConnection[] = [
+    {
+      kind: 'openversion', name: 'OpenVersion', url: null, publicKey: null, hasSigningSecret: false,
+      hasDeployToken: false, status: 'not-connected', source: null, message: null, testedAt: null,
+      secret: 'deploy-token', copy: null,
+    },
+    {
+      kind: 'openannounce', name: 'OpenAnnounce', url: 'https://announce.example.com',
+      publicKey: 'oa_pub_4f1c9a', hasSigningSecret: true, hasDeployToken: false,
+      status: 'set-by-server', source: 'environment', message: null, testedAt: null,
+      secret: 'signing-secret', copy: null,
+    },
+  ];
+
+  /** Stands in for the server: "blocked" in the string fails, one from OpenAnnounce is refused. */
+  protected readonly client: ServerConnectionsClient = {
+    save: (kind, body) => {
+      const text = body.connectionString ?? '';
+      if (kind === 'openversion' && text.startsWith('openannounce+')) {
+        return Promise.reject(new Error('That’s a connection string from OpenAnnounce. Paste one from OpenVersion.'));
+      }
+      const blocked = text.includes('blocked') || (body.url ?? '').includes('blocked');
+      const card = this.connections.find((item) => item.kind === kind) ?? this.connections[0];
+      return Promise.resolve({
+        ...card,
+        url: body.url ?? 'https://version.example.com',
+        publicKey: body.publicKey ?? 'ov_pub_8e2d71',
+        hasDeployToken: Boolean(body.deployToken) || text !== '',
+        status: blocked ? 'problem' : 'connected',
+        source: 'database',
+        message: blocked
+          ? 'Add https://design.openstuff.dev to allowed origins in OpenVersion, on the environment’s page, then test again.'
+          : 'Connected to OpenVersion. The deploy token works, so this server can publish its version.',
+        copy: blocked ? 'https://design.openstuff.dev' : null,
+        testedAt: new Date().toISOString(),
+      });
+    },
+    test: () => Promise.resolve({ ok: true, message: 'Connected.', copy: null }),
+    remove: () => Promise.resolve(),
+  };
+
   protected readonly you: readonly { id: ExampleTab; label: string }[] = [
     { id: 'account', label: 'Account' },
     { id: 'appearance', label: 'Appearance' },
@@ -321,6 +352,9 @@ class CodeExample {
           <code>os-setting-item</code> in a card, or an <code>os-data-table</code> that projects an
           <code>os-empty-state</code>. <code>os-integration-card</code> shows a service and its
           status: Not connected, Connected, Problem or Set by the server.
+          <code>os-server-connection-card</code> builds on it for the server's own connections:
+          paste a connection string (try one with "blocked" in it), or enter the details instead.
+          Each app gives it a small <code>ServerConnectionsClient</code> around its own API service.
         </p>
         <p>
           <code>SecretDialog</code> shows a key or password that can't be shown again. Only "I've

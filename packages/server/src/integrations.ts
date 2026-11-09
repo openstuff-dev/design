@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { type FetchPolicy, FetchRefused, safeFetch, type SafeResponse } from './safe-fetch.js';
 import type { Vault } from './vault.js';
+import { ConnectionStringError, parseConnectionString } from './connection-string.js';
 
 /**
  * The table every app keeps server-wide connections in. It sits outside tenant row-level security:
@@ -116,6 +117,10 @@ export interface ServerIntegration {
   source: 'database' | 'environment' | null;
   message: string | null;
   testedAt: string | null;
+  /** Which secret this connection takes, so the form can ask for it. */
+  secret: 'deploy-token' | 'signing-secret' | null;
+  /** A value the message asks the admin to copy, such as this server's address. */
+  copy: string | null;
 }
 
 interface Row {
@@ -333,7 +338,15 @@ export function registerIntegrationRoutes(
   };
 
   const card = (offer: IntegrationOffer, row: Row | undefined): ServerIntegration => {
-    const base = { kind: offer.kind.kind, name: offer.kind.name };
+    const base = {
+      kind: offer.kind.kind,
+      name: offer.kind.name,
+      secret: offer.deployToken
+        ? ('deploy-token' as const)
+        : offer.signingSecret
+          ? ('signing-secret' as const)
+          : null,
+    };
     if (offer.environment) {
       return {
         ...base,
@@ -345,6 +358,7 @@ export function registerIntegrationRoutes(
         source: 'environment',
         message: null,
         testedAt: null,
+        copy: null,
       };
     }
     if (!row) {
@@ -358,6 +372,7 @@ export function registerIntegrationRoutes(
         source: null,
         message: null,
         testedAt: null,
+        copy: null,
       };
     }
     return {
@@ -370,15 +385,37 @@ export function registerIntegrationRoutes(
       source: 'database',
       message: row.last_test_message,
       testedAt: row.last_tested_at?.toISOString() ?? null,
+      copy: copyFor(row.last_test_ok === false ? row.last_test_message : null),
     };
   };
+
+  /** The fix for an origin the other system doesn't allow is to copy this server's address. */
+  const copyFor = (message: string | null): string | null =>
+    message?.includes(origin) ? origin : null;
 
   /** Runs a check and says what it found. A failed check is an answer, not an error. */
   const runCheck = async (offer: IntegrationOffer, details: ConnectionDetails) => {
     try {
-      return { ok: true, message: await offer.kind.check(details, context) };
+      return { ok: true, message: await offer.kind.check(details, context), copy: null };
     } catch (err) {
-      if (err instanceof ConnectionError) return { ok: false, message: err.message };
+      if (err instanceof ConnectionError) {
+        return { ok: false, message: err.message, copy: copyFor(err.message) };
+      }
+      throw err;
+    }
+  };
+
+  /** The details sent, from a pasted connection string when there is one. */
+  const sentDetails = (kind: string, request: FastifyRequest): Record<string, unknown> => {
+    const body = bodyOf(request);
+    if (body.connectionString === undefined) return body;
+    if (typeof body.connectionString !== 'string') {
+      throw new IntegrationError(400, 'Paste the whole connection string.');
+    }
+    try {
+      return { ...parseConnectionString(body.connectionString, kind) };
+    } catch (err) {
+      if (err instanceof ConnectionStringError) throw new IntegrationError(400, err.message);
       throw err;
     }
   };
@@ -419,7 +456,7 @@ export function registerIntegrationRoutes(
           `The server’s configuration sets this. Change ${offer.envPrefix}_URL to change it here.`,
         );
       }
-      const body = bodyOf(request);
+      const body = sentDetails(kind, request);
       const details: ConnectionDetails = {
         url: httpUrl(body.url),
         publicKey: keyText(body.publicKey, 'public key', 200),
@@ -478,7 +515,7 @@ export function registerIntegrationRoutes(
       requireAdmin(request);
       const { kind } = request.params as { kind: string };
       const offer = offerFor(kind);
-      const body = bodyOf(request);
+      const body = sentDetails(kind, request);
       const sent = body.url !== undefined || body.publicKey !== undefined;
       const saved = await loadRow(db, kind);
       const url = body.url !== undefined ? httpUrl(body.url) : offer.environment?.url ?? saved?.url;

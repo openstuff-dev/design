@@ -59,6 +59,13 @@ export {
 } from './lib/settings/settings';
 export { Settings, SettingsGroup, SettingsNav } from './lib/settings/settings-layout';
 export { IntegrationCard, type IntegrationStatus } from './lib/settings/integration-card';
+export {
+  ServerConnectionCard,
+  type ServerConnection,
+  type ServerConnectionInput,
+  type ServerConnectionsClient,
+  type ServerConnectionTest,
+} from './lib/settings/server-connection';
 export { NavLink } from './lib/shell/nav-link';
 export { CodeBlock, type CodeVariant } from './lib/copy/code-block';
 export { CopyButton } from './lib/copy/copy-button';
