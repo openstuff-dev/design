@@ -1,3 +1,9 @@
+## 0.3.4 (2026-11-09)
+
+### 🧱 Updated Dependencies
+
+- Updated ui to 0.1.8
+
 ## 0.3.3 (2026-11-09)
 
 ### 🧱 Updated Dependencies
