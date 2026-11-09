@@ -58,6 +58,23 @@ export class SettingCard {
     .getAttribute('aria-labelledby');
 }
 
+/**
+ * Free content in a SettingCard (a list, a row of fields, a callout, an empty state), padded like
+ * a row. Rows and items pad themselves; everything else goes in a body.
+ *
+ * ```html
+ * <section os-setting-card title="Tokens">
+ *   <div os-setting-card-body><ul>…</ul></div>
+ *   <footer os-setting-card-footer>…</footer>
+ * </section>
+ * ```
+ */
+@Directive({
+  selector: '[os-setting-card-body]',
+  host: { class: 'os-setting-card-body' },
+})
+export class SettingCardBody {}
+
 @Directive({
   selector: '[os-setting-card-footer]',
   host: { class: 'os-setting-card-footer' },
