@@ -52,6 +52,11 @@ beforeAll(async () => {
       response.end('{"version":"1.0.0"}');
       return;
     }
+    if (url.pathname === '/api/v1/releases/live') {
+      response.statusCode = request.headers.authorization === 'Bearer ov_deploy_good_1234' ? 200 : 401;
+      response.end(response.statusCode === 200 ? 'null' : '{"error":"unknown token"}');
+      return;
+    }
     if (url.pathname === '/api/v1/feed') {
       if (headerKey !== 'pk_feed_key_1234') {
         response.statusCode = 401;
@@ -114,6 +119,22 @@ describe('openVersion check', () => {
   });
 });
 
+describe('openVersion check with a deploy token', () => {
+  it('checks the deploy token after the public key', async () => {
+    await expect(
+      openVersion.check({ url: base, publicKey: 'pk_good_key_1234', deployToken: 'ov_deploy_good_1234' }, context),
+    ).resolves.toBe('Connected to OpenVersion. The deploy token works, so this server can publish its version.');
+  });
+
+  it('says so when OpenVersion doesn’t recognise the deploy token', async () => {
+    const error = await failureOf(
+      openVersion.check({ url: base, publicKey: 'pk_good_key_1234', deployToken: 'ov_deploy_bad_1234' }, context),
+    );
+    expect(error.message).toContain('doesn’t recognise this deploy token');
+    expect(error.retry).toBe(false);
+  });
+});
+
 describe('openAnnounce check', () => {
   it('says connected for a known public key', async () => {
     await expect(openAnnounce.check({ url: base, publicKey: 'pk_feed_key_1234' }, context)).resolves.toBe(
@@ -129,7 +150,7 @@ describe('openAnnounce check', () => {
 });
 
 /** An in-memory stand-in for server_integrations, answering the statements the routes send. */
-type Insert = [string, string, string, string | null, boolean, string];
+type Insert = [string, string, string, string | null, boolean, string, string | null];
 
 /** Parses a response body as JSON, typed as unknown so each check narrows it. */
 const json = (response: { body: string }): unknown => JSON.parse(response.body);
@@ -142,14 +163,17 @@ function fakeTable(): Queryable & { rows: Map<string, Record<string, unknown>> }
       return { rows: row ? [row] : [] };
     }
     if (text.startsWith('INSERT')) {
-      const [kind, url, publicKey, sealed, ok, message] = values as Insert;
+      const [kind, url, publicKey, sealed, ok, message, sealedToken] = values as Insert;
       const previous = rows.get(kind);
       const secret = sealed ?? previous?.signing_secret_encrypted ?? null;
+      const token = sealedToken ?? previous?.deploy_token_encrypted ?? null;
       rows.set(kind, {
         url,
         public_key: publicKey,
         signing_secret_encrypted: secret,
         has_secret: secret !== null,
+        deploy_token_encrypted: token,
+        has_deploy_token: token !== null,
         last_test_ok: ok,
         last_test_message: message,
         last_tested_at: new Date(),
@@ -192,7 +216,7 @@ describe('integration routes', () => {
     table = fakeTable();
     app = Fastify();
     offers = [
-      { kind: openVersion, signingSecret: false, environment, envPrefix: 'OPENTEST_OPENVERSION' },
+      { kind: openVersion, signingSecret: false, deployToken: true, environment, envPrefix: 'OPENTEST_OPENVERSION' },
       { kind: openAnnounce, signingSecret: true, environment: null, envPrefix: 'OPENTEST_OPENANNOUNCE' },
     ];
     registerIntegrationRoutes(app, {
@@ -293,6 +317,67 @@ describe('integration routes', () => {
     });
     const stored = table.rows.get('openannounce')?.signing_secret_encrypted as string;
     expect(vault.open(stored)).toBe('signing-secret-value');
+    await app.close();
+  });
+
+  it('never returns a deploy token, keeps it when a later save leaves it out, and tests with it', async () => {
+    environment = null;
+    await build();
+    const first = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234', deployToken: 'ov_deploy_good_1234' },
+    });
+    expect(json(first)).toEqual(expect.objectContaining({ hasDeployToken: true, hasSigningSecret: false, status: 'connected' }));
+    expect(first.body).not.toContain('ov_deploy_good_1234');
+    const stored = table.rows.get('openversion')?.deploy_token_encrypted as string;
+    expect(stored).not.toContain('ov_deploy_good_1234');
+    expect(vault.open(stored)).toBe('ov_deploy_good_1234');
+    expect(table.rows.get('openversion')?.signing_secret_encrypted).toBeNull();
+
+    const again = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234' },
+    });
+    const againCard = json(again) as { hasDeployToken: boolean; message: string };
+    expect(againCard.hasDeployToken).toBe(true);
+    expect(againCard.message).toContain('deploy token works');
+    const test = await app.inject({ method: 'POST', url: '/api/admin/integrations/openversion/test', headers: admin });
+    const tested = json(test) as { ok: boolean; message: string };
+    expect(tested.ok).toBe(true);
+    expect(tested.message).toContain('deploy token works');
+    await app.close();
+  });
+
+  it('tests sent values with the deploy token sent, and reports a bad one', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/admin/integrations/openversion/test',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234', deployToken: 'ov_deploy_bad_1234' },
+    });
+    const answer = json(response) as { ok: boolean; message: string };
+    expect(answer.ok).toBe(false);
+    expect(answer.message).toContain('deploy token');
+    await app.close();
+  });
+
+  it('refuses a deploy token for a connection that takes none', async () => {
+    environment = null;
+    await build();
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openannounce',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_feed_key_1234', deployToken: 'ov_deploy_good_1234' },
+    });
+    expect(response.statusCode).toBe(400);
+    expect(json(response)).toEqual({ error: 'OpenAnnounce doesn’t take a deploy token.' });
     await app.close();
   });
 

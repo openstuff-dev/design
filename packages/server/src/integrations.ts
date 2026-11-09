@@ -12,22 +12,33 @@ CREATE TABLE server_integrations (
   url                       text NOT NULL,
   public_key                text NOT NULL,
   signing_secret_encrypted  text,
+  deploy_token_encrypted    text,
   last_test_ok              boolean,
   last_test_message         text,
   last_tested_at            timestamptz,
   updated_at                timestamptz NOT NULL DEFAULT now()
 );`;
 
+/**
+ * Adds the deploy token column to a table made with 0.2.0's `serverIntegrationsSql`. Safe to run on
+ * a table that has it already.
+ */
+export const serverIntegrationsDeployTokenSql =
+  'ALTER TABLE server_integrations ADD COLUMN IF NOT EXISTS deploy_token_encrypted text;';
+
 /** The part of a database pool the routes need. A `pg` Pool satisfies it. */
 export interface Queryable {
   query(text: string, values: unknown[]): Promise<{ rows: unknown[] }>;
 }
 
-/** What a connection is made of. The signing secret is optional and never returned by a route. */
+/** What a connection is made of. The secrets are optional and never returned by a route. */
 export interface ConnectionDetails {
   url: string;
   publicKey: string;
+  /** OpenAnnounce: signs each person's token, so messages can be aimed at a group. */
   signingSecret?: string;
+  /** OpenVersion: lets this server publish its own version on start. */
+  deployToken?: string;
 }
 
 /** A failed check, with a message to show as is. `retry` says whether trying again may help. */
@@ -71,6 +82,8 @@ export interface IntegrationOffer {
   kind: IntegrationKind;
   /** Whether the connection keeps a signing secret, encrypted at rest. */
   signingSecret: boolean;
+  /** Whether the connection keeps a deploy token, encrypted at rest. OpenVersion only. */
+  deployToken?: boolean;
   /** The configuration's values, when the environment sets them. They always win. */
   environment: ConnectionDetails | null;
   /** The variable prefix, such as `OPENUSECASE_OPENVERSION`, named in the messages. */
@@ -98,6 +111,7 @@ export interface ServerIntegration {
   url: string | null;
   publicKey: string | null;
   hasSigningSecret: boolean;
+  hasDeployToken: boolean;
   status: 'not-connected' | 'connected' | 'problem' | 'set-by-server';
   source: 'database' | 'environment' | null;
   message: string | null;
@@ -108,6 +122,7 @@ interface Row {
   url: string;
   public_key: string;
   has_secret: boolean;
+  has_deploy_token: boolean;
   last_test_ok: boolean | null;
   last_test_message: string | null;
   last_tested_at: Date | null;
@@ -140,18 +155,38 @@ async function probe(
   }
 }
 
+/** Checks a deploy token by reading the live release: only a token that may publish can. */
+async function checkDeployToken(
+  url: string,
+  deployToken: string,
+  context: CheckContext,
+): Promise<string> {
+  const response = await probe('OpenVersion', `${url.replace(/\/$/, '')}/api/v1/releases/live`, context, {
+    authorization: `Bearer ${deployToken}`,
+  });
+  if (response.status === 200) return 'The deploy token works, so this server can publish its version.';
+  if (response.status === 401 || response.status === 403) {
+    throw new ConnectionError('OpenVersion doesn’t recognise this deploy token. Make a new one on the environment’s page.', false);
+  }
+  throw new ConnectionError(`OpenVersion said: ${serverSays(response)}`, response.status >= 500);
+}
+
 /** OpenVersion: checks a public key against its version API. Its 401 and 403 say what to change. */
 export const openVersion: IntegrationKind = {
   kind: 'openversion',
   name: 'OpenVersion',
-  async check({ url, publicKey }, context) {
+  async check(details, context) {
+    const { url, publicKey } = details;
     const response = await probe(
       'OpenVersion',
       `${url.replace(/\/$/, '')}/api/v1/version?key=${encodeURIComponent(publicKey)}`,
       context,
       { origin: context.origin },
     );
-    if (response.status === 200 || response.status === 304) return 'Connected to OpenVersion.';
+    if (response.status === 200 || response.status === 304) {
+      if (!details.deployToken) return 'Connected to OpenVersion.';
+      return `Connected to OpenVersion. ${await checkDeployToken(details.url, details.deployToken, context)}`;
+    }
     if (response.status === 401) {
       throw new ConnectionError(`OpenVersion doesn’t recognise this public key: ${serverSays(response)}`, false);
     }
@@ -219,6 +254,9 @@ const keyText = (value: unknown, label: string, max: number): string => {
 const optionalKey = (value: unknown, label: string, max: number): string | undefined =>
   value === undefined || value === null || value === '' ? undefined : keyText(value, label, max);
 
+const openSaved = (vault: Vault | null, sealed: string | null | undefined): string | undefined =>
+  vault && sealed ? vault.open(sealed) : undefined;
+
 const bodyOf = (request: FastifyRequest): Record<string, unknown> =>
   request.body && typeof request.body === 'object' ? (request.body as Record<string, unknown>) : {};
 
@@ -238,17 +276,26 @@ export async function resolveConnection(
   if (row.signing_secret_encrypted) {
     details.signingSecret = (await vault()).open(row.signing_secret_encrypted);
   }
+  if (row.deploy_token_encrypted) {
+    details.deployToken = (await vault()).open(row.deploy_token_encrypted);
+  }
   return details;
 }
+
+type SavedRow = Row & {
+  signing_secret_encrypted: string | null;
+  deploy_token_encrypted: string | null;
+};
 
 async function loadRow(db: Queryable, kind: string) {
   const { rows } = await db.query(
     `SELECT url, public_key, signing_secret_encrypted, signing_secret_encrypted IS NOT NULL AS has_secret,
+            deploy_token_encrypted, deploy_token_encrypted IS NOT NULL AS has_deploy_token,
             last_test_ok, last_test_message, last_tested_at
        FROM server_integrations WHERE kind = $1`,
     [kind],
   );
-  return rows[0] as (Row & { signing_secret_encrypted: string | null }) | undefined;
+  return rows[0] as SavedRow | undefined;
 }
 
 /**
@@ -283,6 +330,7 @@ export function registerIntegrationRoutes(
         url: offer.environment.url,
         publicKey: offer.environment.publicKey,
         hasSigningSecret: offer.environment.signingSecret !== undefined,
+        hasDeployToken: offer.environment.deployToken !== undefined,
         status: 'set-by-server',
         source: 'environment',
         message: null,
@@ -295,6 +343,7 @@ export function registerIntegrationRoutes(
         url: null,
         publicKey: null,
         hasSigningSecret: false,
+        hasDeployToken: false,
         status: 'not-connected',
         source: null,
         message: null,
@@ -306,6 +355,7 @@ export function registerIntegrationRoutes(
       url: row.url,
       publicKey: row.public_key,
       hasSigningSecret: row.has_secret,
+      hasDeployToken: row.has_deploy_token,
       status: row.last_test_ok === false ? 'problem' : 'connected',
       source: 'database',
       message: row.last_test_message,
@@ -368,16 +418,39 @@ export function registerIntegrationRoutes(
       if (secret && !offer.signingSecret) {
         throw new IntegrationError(400, `${offer.kind.name} doesn’t take a signing secret.`);
       }
-      const result = await runCheck(offer, { ...details, signingSecret: secret });
-      const sealed = secret ? (await options.vault()).seal(secret) : null;
+      const token = optionalKey(body.deployToken, 'deploy token', 500);
+      if (token && !offer.deployToken) {
+        throw new IntegrationError(400, `${offer.kind.name} doesn’t take a deploy token.`);
+      }
+      // A save without a secret keeps the stored one, so test with that one too.
+      const saved = await loadRow(db, kind);
+      const needsVault =
+        secret || token || saved?.signing_secret_encrypted || saved?.deploy_token_encrypted;
+      const vault = needsVault ? await options.vault() : null;
+      const result = await runCheck(offer, {
+        ...details,
+        signingSecret: secret ?? openSaved(vault, saved?.signing_secret_encrypted),
+        deployToken: token ?? openSaved(vault, saved?.deploy_token_encrypted),
+      });
+      const sealedSecret = secret && vault ? vault.seal(secret) : null;
+      const sealedToken = token && vault ? vault.seal(token) : null;
       await db.query(
-        `INSERT INTO server_integrations (kind, url, public_key, signing_secret_encrypted, last_test_ok, last_test_message, last_tested_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, now(), now())
+        `INSERT INTO server_integrations (kind, url, public_key, signing_secret_encrypted, last_test_ok, last_test_message, deploy_token_encrypted, last_tested_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, now(), now())
          ON CONFLICT (kind) DO UPDATE SET url = EXCLUDED.url, public_key = EXCLUDED.public_key,
            signing_secret_encrypted = coalesce($4, server_integrations.signing_secret_encrypted),
+           deploy_token_encrypted = coalesce($7, server_integrations.deploy_token_encrypted),
            last_test_ok = EXCLUDED.last_test_ok, last_test_message = EXCLUDED.last_test_message,
            last_tested_at = now(), updated_at = now()`,
-        [kind, details.url, details.publicKey, sealed, result.ok, result.message],
+        [
+          kind,
+          details.url,
+          details.publicKey,
+          sealedSecret,
+          result.ok,
+          result.message,
+          sealedToken,
+        ],
       );
       return card(offer, await loadRow(db, kind));
     }),
@@ -404,12 +477,19 @@ export function registerIntegrationRoutes(
       if (!url || !publicKeyValue) {
         throw new IntegrationError(400, `Enter the ${offer.kind.name} address and public key first.`);
       }
-      const details = await resolveSecret(offer, saved, sent);
-      const result = await runCheck(offer, {
-        url,
-        publicKey: publicKeyValue,
-        signingSecret: details,
-      });
+      // Sent values are tested with the secrets sent alongside them, never with saved ones.
+      const secrets = sent
+        ? {
+            signingSecret: optionalKey(body.signingSecret, 'signing secret', 500),
+            deployToken: optionalKey(body.deployToken, 'deploy token', 500),
+          }
+        : offer.environment
+          ? {
+              signingSecret: offer.environment.signingSecret,
+              deployToken: offer.environment.deployToken,
+            }
+          : await savedSecrets(saved);
+      const result = await runCheck(offer, { url, publicKey: publicKeyValue, ...secrets });
       const testsSaved = !offer.environment && saved !== undefined && !sent;
       if (testsSaved) {
         await db.query(
@@ -422,14 +502,17 @@ export function registerIntegrationRoutes(
     }),
   );
 
-  /** Opens the saved signing secret for a test of the saved connection; never for sent values. */
-  async function resolveSecret(
-    offer: IntegrationOffer,
-    saved: (Row & { signing_secret_encrypted: string | null }) | undefined,
-    sent: boolean,
-  ): Promise<string | undefined> {
-    if (sent || !saved?.signing_secret_encrypted || offer.environment) return undefined;
-    return (await options.vault()).open(saved.signing_secret_encrypted);
+  /** Opens the saved secrets, for a test of the saved connection. */
+  async function savedSecrets(
+    saved: SavedRow | undefined,
+  ): Promise<{ signingSecret?: string; deployToken?: string }> {
+    if (!saved) return {};
+    if (!saved.signing_secret_encrypted && !saved.deploy_token_encrypted) return {};
+    const vault = await options.vault();
+    return {
+      signingSecret: openSaved(vault, saved.signing_secret_encrypted),
+      deployToken: openSaved(vault, saved.deploy_token_encrypted),
+    };
   }
 
   app.delete(
