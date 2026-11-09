@@ -14,6 +14,7 @@ export {
   openVersion,
   registerIntegrationRoutes,
   resolveConnection,
+  serverIntegrationsDeployTokenSql,
   serverIntegrationsSql,
   type CheckContext,
   type ConnectionDetails,
@@ -23,3 +24,10 @@ export {
   type Queryable,
   type ServerIntegration,
 } from './integrations.js';
+export {
+  publishOwnVersion,
+  publishVersionOnStart,
+  type PublishOnStartOptions,
+  type PublishOptions,
+  type PublishOutcome,
+} from './publish.js';

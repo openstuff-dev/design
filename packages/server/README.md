@@ -42,7 +42,9 @@ or OpenAnnounce, and `GET /api/client-config` for the web app's public values:
 
 - `GET /api/admin/integrations` lists each connection, with its status.
 - `PUT /api/admin/integrations/:kind` saves a connection, then tests it. The save happens even when
-  the test fails, so a fix can follow. A signing secret is encrypted and never returned.
+  the test fails, so a fix can follow. Its secrets (`signingSecret` for OpenAnnounce, `deployToken`
+  for OpenVersion) are encrypted, never returned, and kept when a later save leaves them out. The
+  card says whether one is stored (`hasSigningSecret`, `hasDeployToken`).
 - `POST /api/admin/integrations/:kind/test` tests the values sent, or the saved connection.
 - `DELETE /api/admin/integrations/:kind` disconnects. The routes refuse all of these when the
   environment sets the connection (409), and the card then reads "Set by the server's configuration".
@@ -58,15 +60,43 @@ registerIntegrationRoutes(app, {
   origin: publicOrigin,                     // this server's address, sent to the other system
   appName: 'OpenUsecase',
   offers: [
-    { kind: openVersion, signingSecret: false, environment: envOpenVersion, envPrefix: 'OPENUSECASE_OPENVERSION' },
+    { kind: openVersion, signingSecret: false, deployToken: true, environment: envOpenVersion, envPrefix: 'OPENUSECASE_OPENVERSION' },
   ],
   isServerAdmin: (request) => requireAccount(request).isServerAdmin,
 });
 ```
 
+With a deploy token, OpenVersion's check also reads the live release, so a token that can't publish
+is caught when it's saved.
+
+## Publish this server's version on start
+
+`publishVersionOnStart` publishes the image's version to OpenVersion once the server listens, with
+the connection's deploy token (the environment's first, then the saved one). Self-hosters then need
+no CI step: pull a new image, restart, and open tabs learn about it. It never blocks or fails
+startup. A version of `unknown` (a local build) is skipped. The key `<app>-<version>` makes replicas
+starting together publish once, and OpenVersion refuses a version that isn't newer than the live
+one, so an older image never rolls anything back.
+
+```ts
+publishVersionOnStart(app, {
+  db: pool,
+  vault: () => vault,
+  offer: openVersionOffer,                  // the same offer given to registerIntegrationRoutes
+  policy,
+  appName: 'OpenRelay',
+  version: config.appVersion,               // from the image's VERSION build arg
+});
+```
+
+## Upgrading from 0.2.0
+
+0.3.0 reads a `deploy_token_encrypted` column. Run `serverIntegrationsDeployTokenSql` in a new
+migration before you upgrade; a new table made with `serverIntegrationsSql` has it already.
+
 `resolveConnection` returns a connection the app uses (the environment's values first, then the
 saved one with its secret opened). The table is server-wide: keep it outside tenant row-level
-security, and export nothing from it. Routes don't use `Idempotency-Key` yet.
+security, and export nothing from it. The routes leave `Idempotency-Key` to the app's own middleware.
 
 ## Scope
 
