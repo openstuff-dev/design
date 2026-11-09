@@ -1,3 +1,13 @@
+## 0.3.0 (2026-11-09)
+
+### 🚀 Features
+
+- Added a deploy token to the OpenVersion connection, stored encrypted in its own column and checked when it's saved, and `publishVersionOnStart`, so every app publishes its own version to OpenVersion the same way. Apps upgrading from 0.2.0 run `serverIntegrationsDeployTokenSql` first. ([eaa7929](https://github.com/openstuff-dev/design/commit/eaa7929))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.2.0 (2026-11-08)
 
 ### 🚀 Features
