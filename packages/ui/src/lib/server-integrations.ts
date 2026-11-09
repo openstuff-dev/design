@@ -106,3 +106,20 @@ function usable(value: unknown): ClientConnection | null {
     ? { url, publicKey }
     : null;
 }
+
+/**
+ * The OpenAnnounce groups for one person in one tenant: the tenant, the role, and both together.
+ * The same as `announceGroups` in `@openstuff-dev/server`, which signs them.
+ */
+export function announceGroups(tenant: string, role: string): string[] {
+  return [`t-${tenant}`, `role-${role}`, `t-${tenant}-role-${role}`];
+}
+
+/** Every group to create in OpenAnnounce: each tenant, each role, then each role in each tenant. */
+export function allAnnounceGroups(tenants: readonly string[], roles: readonly string[]): string[] {
+  return [
+    ...tenants.map((tenant) => `t-${tenant}`),
+    ...roles.map((role) => `role-${role}`),
+    ...tenants.flatMap((tenant) => roles.map((role) => `t-${tenant}-role-${role}`)),
+  ];
+}

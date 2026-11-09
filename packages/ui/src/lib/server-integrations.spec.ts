@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { startServerIntegrations, type ClientConfig } from './server-integrations.js';
+import {
+  allAnnounceGroups,
+  announceGroups,
+  startServerIntegrations,
+  type ClientConfig,
+} from './server-integrations.js';
 
 const versionAt = { url: 'https://version.example.com', publicKey: 'pk_version' };
 const announceAt = { url: 'https://announce.example.com', publicKey: 'pk_announce' };
@@ -84,5 +89,24 @@ describe('startServerIntegrations', () => {
     const fetch = answering({});
     await startServerIntegrations({ version: '1.4.0', fetch, load: {} });
     expect(fetch).toHaveBeenCalledWith('/api/client-config', expect.anything());
+  });
+});
+
+describe('announce groups', () => {
+  it('names the tenant, the role and both, as the server signs them', () => {
+    expect(announceGroups('acme', 'courier')).toEqual(['t-acme', 'role-courier', 't-acme-role-courier']);
+  });
+
+  it('lists every group to create for the tenants and roles', () => {
+    expect(allAnnounceGroups(['acme', 'beta'], ['admin', 'courier'])).toEqual([
+      't-acme',
+      't-beta',
+      'role-admin',
+      'role-courier',
+      't-acme-role-admin',
+      't-acme-role-courier',
+      't-beta-role-admin',
+      't-beta-role-courier',
+    ]);
   });
 });
