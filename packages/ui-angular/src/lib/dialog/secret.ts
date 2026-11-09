@@ -24,6 +24,16 @@ export interface SecretOptions {
   what: string;
   /** What it's for and where to put it. */
   instructions: string;
+  /**
+   * A connection string holding the secret, for another OpenStuff app's Settings › Integrations,
+   * shown under the secret. It holds the secret too, so it's shown once as well.
+   */
+  connection?: {
+    /** The string, such as `openversion+…`. */
+    value: string;
+    /** Where to paste it: "Paste it in Settings › Integrations of the app that connects." */
+    instructions: string;
+  };
 }
 
 @Component({
@@ -32,6 +42,13 @@ export interface SecretOptions {
     Button, CodeBlock, Dialog, DialogBody, DialogClose, DialogFooter, DialogHeader, DialogTitle,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    .os-secret-heading {
+      margin: var(--os-space-2) 0 0;
+      font-size: var(--os-text-base);
+      font-weight: var(--os-font-weight-semibold);
+    }
+  `,
   template: `
     <dialog
       os-dialog
@@ -47,7 +64,16 @@ export interface SecretOptions {
       <div os-dialog-body>
         <p [id]="instructionsId">{{ options().instructions }}</p>
         <os-code-block wrap [code]="options().secret" [what]="options().what" />
-        <p class="os-hint">This is the only time you’ll see this {{ options().what }}.</p>
+        @if (options().connection; as connection) {
+          <h3 class="os-secret-heading">Connection string</h3>
+          <p>{{ connection.instructions }}</p>
+          <os-code-block wrap [code]="connection.value" what="connection string" />
+          <p class="os-hint">
+            This is the only time you’ll see this {{ options().what }} and connection string.
+          </p>
+        } @else {
+          <p class="os-hint">This is the only time you’ll see this {{ options().what }}.</p>
+        }
       </div>
       <footer os-dialog-footer>
         <button os-button os-dialog-close variant="primary" type="button">I’ve copied it</button>

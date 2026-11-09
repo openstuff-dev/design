@@ -28,8 +28,10 @@ export {
 } from './integrations.js';
 export {
   ConnectionStringError,
+  isConnectionString,
   makeConnectionString,
   parseConnectionString,
+  type ConnectionStringDetails,
 } from './connection-string.js';
 export {
   publishOwnVersion,

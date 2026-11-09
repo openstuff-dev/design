@@ -1,7 +1,7 @@
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { accessibleDescription, accessibleName, query } from '../testing';
-import { SecretDialog } from './secret';
+import { SecretDialog, type SecretOptions } from './secret';
 
 const OPTIONS = {
   title: 'Your new API key',
@@ -10,11 +10,11 @@ const OPTIONS = {
   instructions: 'Put it in your shop system.',
 };
 
-async function open() {
+async function open(options: SecretOptions = OPTIONS) {
   const trigger = document.createElement('button');
   document.body.append(trigger);
   trigger.focus();
-  const closed = TestBed.inject(SecretDialog).show(OPTIONS);
+  const closed = TestBed.inject(SecretDialog).show(options);
   await TestBed.inject(ApplicationRef).whenStable();
   const dialog = query(document.body, 'os-secret-dialog dialog', HTMLDialogElement);
   return { trigger, closed, dialog };
@@ -61,6 +61,24 @@ describe('SecretDialog', () => {
     await closed;
     expect(dialog.open).toBe(false);
     expect(document.activeElement).toBe(trigger);
+  });
+
+  it('offers a connection string under the secret, with its own copy button', async () => {
+    const { dialog } = await open({
+      ...OPTIONS,
+      title: 'Your new deploy token',
+      secret: 'ovt_123',
+      what: 'deploy token',
+      connection: { value: 'openversion+abc', instructions: 'Paste it in the other app.' },
+    });
+    const blocks = [...dialog.querySelectorAll('pre')].map((pre) => pre.textContent);
+    expect(blocks).toEqual(['ovt_123', 'openversion+abc']);
+    expect(dialog.textContent).toContain('Paste it in the other app.');
+    const copies = [...dialog.querySelectorAll('os-copy-button button')].map((b) => accessibleName(b));
+    expect(copies).toEqual(['Copy the deploy token', 'Copy the connection string']);
+    expect(dialog.textContent).toContain(
+      'This is the only time you’ll see this deploy token and connection string.',
+    );
   });
 
   it('leaves nothing of the secret on the page afterwards', async () => {

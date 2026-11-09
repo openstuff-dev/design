@@ -11,6 +11,12 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./connection-string": {
+      "@openstuff-dev/source": "./src/connection-string.ts",
+      "types": "./dist/connection-string.d.ts",
+      "import": "./dist/connection-string.js",
+      "default": "./dist/connection-string.js"
+    },
     "./testing": {
       "@openstuff-dev/source": "./src/testing.ts",
       "types": "./dist/testing.d.ts",
