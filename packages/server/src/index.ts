@@ -8,6 +8,7 @@ export {
 } from './safe-fetch.js';
 export { loadVault, vaultFor, type SettingsStore, type Vault, type VaultOptions } from './vault.js';
 export {
+  announceGroups,
   ConnectionError,
   IntegrationError,
   openAnnounce,
@@ -16,6 +17,7 @@ export {
   resolveConnection,
   serverIntegrationsDeployTokenSql,
   serverIntegrationsSql,
+  type AnnounceUser,
   type CheckContext,
   type ConnectionDetails,
   type IntegrationKind,

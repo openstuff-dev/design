@@ -1,3 +1,4 @@
+import { signUser } from '@openstuff-dev/announce/server';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { type FetchPolicy, FetchRefused, safeFetch, type SafeResponse } from './safe-fetch.js';
 import type { Vault } from './vault.js';
@@ -103,6 +104,23 @@ export interface IntegrationRoutesOptions {
   offers: IntegrationOffer[];
   /** Answers whether the signed-in person is a server admin. Anyone else gets 403. */
   isServerAdmin(request: FastifyRequest): boolean;
+  /**
+   * Who is signed in, for OpenAnnounce: an opaque member id (never an email or a name) and the
+   * groups their messages may be aimed at, such as `t-acme`, `role-courier`, `t-acme-role-courier`.
+   * Null when nobody is. Setting it adds `GET /api/openannounce-token`.
+   */
+  announceUser?(request: FastifyRequest): AnnounceUser | null | Promise<AnnounceUser | null>;
+}
+
+/** Who OpenAnnounce sees: see `IntegrationRoutesOptions.announceUser`. */
+export interface AnnounceUser {
+  sub: string;
+  groups: string[];
+}
+
+/** The groups for one person in one tenant: the tenant, the role, and both together. */
+export function announceGroups(tenant: string, role: string): string[] {
+  return [`t-${tenant}`, `role-${role}`, `t-${tenant}-role-${role}`];
 }
 
 /** One connection as the Integrations tab shows it. Secrets are never included. */
@@ -595,6 +613,30 @@ export function registerIntegrationRoutes(
       return config;
     }),
   );
+
+  /**
+   * Signs who is signed in with the OpenAnnounce secret, so the browser can't claim other groups.
+   * 204 when OpenAnnounce isn't connected or has no secret: people then see what's for everyone.
+   */
+  const announceUser = options.announceUser?.bind(options);
+  const announceOffer = offers.find((offer) => offer.kind.kind === 'openannounce');
+  if (announceUser && announceOffer) {
+    app.get(
+      '/api/openannounce-token',
+      handle(async (request, reply) => {
+        void reply.header('cache-control', 'no-store');
+        const user = await announceUser(request);
+        if (!user) throw new IntegrationError(401, 'Sign in first.');
+        const connection = await resolveConnection(db, options.vault, announceOffer);
+        if (!connection?.signingSecret) return reply.code(204).send();
+        const token = await signUser(connection.signingSecret, {
+          sub: user.sub,
+          groups: user.groups,
+        });
+        return reply.type('text/plain').send(token);
+      }),
+    );
+  }
 
   async function loadPublic(kind: string): Promise<ConnectionDetails | null> {
     const row = await loadRow(db, kind);

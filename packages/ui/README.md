@@ -97,6 +97,33 @@ lists every illustration piece. `startMarketingPage()` adds the glow that follow
 tap to play, copy buttons and closing the mobile menu; it imports nothing, so a static site can
 serve the built `marketing.js` as it is.
 
+## Server connections in the web app
+
+When a server admin connects OpenVersion or OpenAnnounce on Settings › Integrations
+(`@openstuff-dev/server`), `startServerIntegrations` starts them in the browser. It reads
+`/api/client-config` and calls the loader the app passes for each connected system. The app does
+the `import()`, so this package depends on neither, and a bundle only grows for what is
+connected. It never throws or blocks: call it once after the app starts, without waiting. A build
+whose version is `unknown` (a local build) leaves OpenVersion off.
+
+```ts
+import { startServerIntegrations } from '@openstuff-dev/ui';
+
+void startServerIntegrations({
+  version: APP_VERSION,
+  load: {
+    openversion: async (connection) => {
+      const [{ configure }] = await Promise.all([
+        import('@openstuff-dev/version'),
+        import('@openstuff-dev/version/update'),
+      ]);
+      configure(connection);
+      document.body.prepend(document.createElement('ov-update'));
+    },
+  },
+});
+```
+
 ## Browser support
 
 - Features that are Baseline **widely available** work fully.

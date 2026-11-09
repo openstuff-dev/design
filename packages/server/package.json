@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "@openstuff-dev/announce": "^0.1.0",
     "tslib": "^2.3.0"
   },
   "publishConfig": {
