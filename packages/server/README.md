@@ -109,6 +109,23 @@ publishVersionOnStart(app, {
 });
 ```
 
+## Test an app's connections
+
+`@openstuff-dev/server/testing` starts stand-ins for OpenVersion and OpenAnnounce on a local port.
+They answer this package's checks and publish as the real ones do: an unknown key or deploy token
+answers 401, an origin not in `allowedOrigins` 403. An app's tests then prove its own wiring (its
+routes, its config, its export) in a few lines, without copying a fake server. Give the test config
+`fetch: 'private'` so the guarded fetch reaches `127.0.0.1`.
+
+```ts
+import { standInOpenVersion } from '@openstuff-dev/server/testing';
+
+const ov = await standInOpenVersion({ publicKey: 'pk_app_1234', deployToken: 'ov_deploy_1234' });
+// PUT /api/admin/integrations/openversion with makeConnectionString('openversion', { url: ov.url, … })
+// ov.requests lists what the app sent; publishStatus: 409 answers a publish as "not newer".
+await ov.close();
+```
+
 ## Upgrading from 0.2.0
 
 0.3.0 reads a `deploy_token_encrypted` column. Run `serverIntegrationsDeployTokenSql` in a new
