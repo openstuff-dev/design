@@ -25,6 +25,11 @@ export {
   type ServerIntegration,
 } from './integrations.js';
 export {
+  ConnectionStringError,
+  makeConnectionString,
+  parseConnectionString,
+} from './connection-string.js';
+export {
   publishOwnVersion,
   publishVersionOnStart,
   type PublishOnStartOptions,

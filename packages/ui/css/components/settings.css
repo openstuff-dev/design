@@ -321,6 +321,35 @@
     }
   }
 
+  /* ServerConnectionCard: the saved details and the connect form inside an integration card. */
+  .os-server-connection-details {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--os-space-1) var(--os-space-4);
+    margin: 0;
+    font-size: var(--os-text-sm);
+
+    & dt {
+      color: var(--os-fg-light);
+    }
+
+    & dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .os-server-connection-note {
+    margin: 0;
+    color: var(--os-fg-light);
+    font-size: var(--os-text-sm);
+  }
+
+  .os-server-connection-form {
+    display: grid;
+    gap: var(--os-space-4);
+  }
+
   .os-setting-card-footer {
     padding: var(--os-space-3) var(--os-space-5);
     border-block-start: 1px var(--os-border-style) var(--os-border-default);
