@@ -1,3 +1,13 @@
+## 0.3.1 (2026-11-09)
+
+### 🩹 Fixes
+
+- Saved connection secrets are reused only for the address they were saved for, so changing a connection's address never sends them to the new one. A saved secret the current key can't open now answers 400 and asks to be entered again, instead of failing with a server error. ([e8e32d2](https://github.com/openstuff-dev/design/commit/e8e32d2))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.3.0 (2026-11-09)
 
 ### 🚀 Features
