@@ -109,6 +109,33 @@ publishVersionOnStart(app, {
 });
 ```
 
+## Connection strings
+
+A connection string packs one connection into one value to paste: `openversion+<base64url of JSON>`
+or `openannounce+…`. It holds the address, the public key and any secret given (`deployToken`,
+`signingSecret`, `publishKey`), so treat it as a secret and show it once, in `SecretDialog`.
+
+```ts
+import { makeConnectionString } from '@openstuff-dev/server';
+
+const text = makeConnectionString('openversion', {
+  url: config.publicUrl,
+  publicKey: env.publicKey,
+  deployToken,
+});
+```
+
+`@openstuff-dev/server/connection-string` has the same functions with no Node built-ins, for a web
+app that fills its fields from a pasted string:
+
+```ts
+import { isConnectionString, parseConnectionString } from '@openstuff-dev/server/connection-string';
+
+if (isConnectionString(pasted, 'openannounce')) {
+  const { url, publishKey } = parseConnectionString(pasted, 'openannounce');
+}
+```
+
 ## Test an app's connections
 
 `@openstuff-dev/server/testing` starts stand-ins for OpenVersion and OpenAnnounce on a local port.
