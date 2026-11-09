@@ -352,6 +352,54 @@ describe('integration routes', () => {
     await app.close();
   });
 
+  it('never sends a saved deploy token to a changed address', async () => {
+    environment = null;
+    await build();
+    await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base, publicKey: 'pk_good_key_1234', deployToken: 'ov_deploy_good_1234' },
+    });
+    const moved = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/integrations/openversion',
+      headers: admin,
+      payload: { url: base.replace('127.0.0.1', 'localhost'), publicKey: 'pk_good_key_1234' },
+    });
+    const card = json(moved) as { message: string; hasDeployToken: boolean };
+    expect(card.message).toBe('Connected to OpenVersion.');
+    // The token stays saved, for a later save that sends a new one or moves back.
+    expect(card.hasDeployToken).toBe(true);
+    await app.close();
+  });
+
+  it('asks for a saved secret again when the current key can’t open it', async () => {
+    environment = null;
+    await build();
+    table.rows.set('openversion', {
+      url: base,
+      public_key: 'pk_good_key_1234',
+      signing_secret_encrypted: null,
+      has_secret: false,
+      deploy_token_encrypted: vaultFor('another-key').seal('ov_deploy_good_1234'),
+      has_deploy_token: true,
+      last_test_ok: true,
+      last_test_message: null,
+      last_tested_at: new Date(),
+    });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/admin/integrations/openversion/test',
+      headers: admin,
+    });
+    expect(response.statusCode).toBe(400);
+    expect(json(response)).toEqual({
+      error: 'A saved secret can’t be read with the current secret key. Enter it again.',
+    });
+    await app.close();
+  });
+
   it('tests sent values with the deploy token sent, and reports a bad one', async () => {
     environment = null;
     await build();

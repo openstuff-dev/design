@@ -254,8 +254,18 @@ const keyText = (value: unknown, label: string, max: number): string => {
 const optionalKey = (value: unknown, label: string, max: number): string | undefined =>
   value === undefined || value === null || value === '' ? undefined : keyText(value, label, max);
 
-const openSaved = (vault: Vault | null, sealed: string | null | undefined): string | undefined =>
-  vault && sealed ? vault.open(sealed) : undefined;
+/** Opens a saved secret. One the current key can't open is the admin's to replace, not a crash. */
+const openSaved = (vault: Vault | null, sealed: string | null | undefined): string | undefined => {
+  if (!vault || !sealed) return undefined;
+  try {
+    return vault.open(sealed);
+  } catch {
+    throw new IntegrationError(
+      400,
+      'A saved secret can’t be read with the current secret key. Enter it again.',
+    );
+  }
+};
 
 const bodyOf = (request: FastifyRequest): Record<string, unknown> =>
   request.body && typeof request.body === 'object' ? (request.body as Record<string, unknown>) : {};
@@ -422,8 +432,10 @@ export function registerIntegrationRoutes(
       if (token && !offer.deployToken) {
         throw new IntegrationError(400, `${offer.kind.name} doesn’t take a deploy token.`);
       }
-      // A save without a secret keeps the stored one, so test with that one too.
-      const saved = await loadRow(db, kind);
+      // A save without a secret keeps the stored one, so test with that one too, but only against
+      // the address it was saved for: a changed address never receives the saved secrets.
+      const found = await loadRow(db, kind);
+      const saved = found?.url === details.url ? found : undefined;
       const needsVault =
         secret || token || saved?.signing_secret_encrypted || saved?.deploy_token_encrypted;
       const vault = needsVault ? await options.vault() : null;
