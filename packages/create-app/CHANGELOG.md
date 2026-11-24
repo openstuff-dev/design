@@ -1,3 +1,9 @@
+## 0.1.10 (2026-11-24)
+
+### 🧱 Updated Dependencies
+
+- Updated nx to 0.3.6
+
 ## 0.1.9 (2026-11-09)
 
 ### 🧱 Updated Dependencies
