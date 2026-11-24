@@ -23,6 +23,11 @@ Every workspace also gets the `ux-details` skill (`.claude/skills/ux-details/SKI
 details, from skeleton loaders to idempotency keys, that an agent checks a new app against and
 builds where they fit. `sync` adds it to older workspaces.
 
+`.mcp.json` connects agents to the `openpurpose` MCP server. It reads the agent token from the
+`OPENPURPOSE_TOKEN` environment variable, so the token stays out of git: export it in your shell,
+or add it as an environment variable in the cloud environment. `sync` adds the server to an
+existing `.mcp.json` and keeps the servers already in it.
+
 The toolkit packages are versioned independently, so the generators ask the registry
 (`npm view`) for each one's newest version, and use this plugin's version when it can't be reached.
 
