@@ -61,8 +61,8 @@ export function readStaticFiles(dir: string): Map<string, string> {
 /**
  * Writes the shared workspace files. With `overwrite` (a new workspace) every file is written.
  * Without it (`sync`), files are only added: an existing AGENTS.md gets its OpenPurpose part
- * replaced, .gitignore gets the lines it lacks, and any other file that differs is left alone and
- * returned, so the person can compare it by hand.
+ * replaced, .gitignore gets the lines it lacks, .mcp.json gets the servers it lacks, and any
+ * other file that differs is left alone and returned, so the person can compare it by hand.
  */
 export function writeWorkspaceFiles(tree: Tree, overwrite: boolean): string[] {
   const differ: string[] = [];
@@ -91,6 +91,14 @@ export function writeWorkspaceFiles(tree: Tree, overwrite: boolean): string[] {
       updateJson<Record<string, unknown>>(tree, path, (settings) => ({
         ...(JSON.parse(content) as Record<string, unknown>),
         ...settings,
+      }));
+    } else if (path === '.mcp.json') {
+      updateJson<{ mcpServers?: Record<string, unknown> }>(tree, path, (config) => ({
+        ...config,
+        mcpServers: {
+          ...(JSON.parse(content) as { mcpServers: Record<string, unknown> }).mcpServers,
+          ...config.mcpServers,
+        },
       }));
     } else {
       differ.push(path);

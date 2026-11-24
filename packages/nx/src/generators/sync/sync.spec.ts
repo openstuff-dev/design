@@ -60,6 +60,18 @@ describe('sync generator', () => {
     expect(agents).toContain('get_context');
   });
 
+  it('adds the OpenPurpose server to .mcp.json and keeps the servers a project has', async () => {
+    writeJson(tree, '.mcp.json', { mcpServers: { other: { type: 'stdio', command: 'other' } } });
+
+    await syncGenerator(tree);
+
+    interface Server { url?: string; headers?: Record<string, string> }
+    const servers = readJson<{ mcpServers: Record<string, Server> }>(tree, '.mcp.json').mcpServers;
+    expect(servers.other).toEqual({ type: 'stdio', command: 'other' });
+    expect(servers.openpurpose.url).toBe('https://purpose.openstuff.app/mcp');
+    expect(servers.openpurpose.headers?.Authorization).toBe('Bearer ${OPENPURPOSE_TOKEN}');
+  });
+
   it('moves toolkit packages to published versions and leaves unknown ones', async () => {
     writeJson(tree, 'apps/web/package.json', {
       name: 'web',
