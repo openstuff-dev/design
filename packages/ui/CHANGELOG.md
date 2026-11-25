@@ -1,3 +1,13 @@
+## 0.1.10 (2026-11-25)
+
+### 🩹 Fixes
+
+- Aligned `@openstuff-dev/ui` and `@openstuff-dev/ui-angular` with OpenPurpose's shared UI patterns: added Agent Mode (`data-agent-mode` terminal costume, `AgentMode`, `AgentSwitch`, `AgentShell`, `AgentBar`), the sticky page sub-menu (`TabNav`, `TabLink`, `.os-tab-count`), shared sidebar and topbar chrome (`ShellSwitcher`, `ShellSwitcherButton`, `IdentityBadge`, `Avatar`, `ShellNavLabel`, `ShellFooter`, `ShellUser`, `SearchTrigger`), bordered lists and filter toolbars (`List`, `Toolbar`, `SearchField`), danger-zone panels (`Panel[tone="danger"]`), bordered/sortable/interactive `DataTable`, and counts/icons on `SegmentedControl`. ([ff04023](https://github.com/openstuff-dev/design/commit/ff04023))
+
+### ❤️ Thank You
+
+- Turmz @Turmz
+
 ## 0.1.9 (2026-11-09)
 
 ### 🩹 Fixes
