@@ -1,0 +1,95 @@
+/*
+ * Agent mode tokens: a phosphor terminal palette, monospace font, square corners and dashed rules.
+ * Lives in os.components so it beats :root and :root[data-theme='light'] in os.tokens, while
+ * letting app-level unlayered rules override when needed.
+ */
+@layer os.components {
+  :root {
+    --os-agent-default: var(--os-identity-7);
+    --os-agent-soft: var(--os-identity-7-soft);
+    --os-agent-border: color-mix(in srgb, var(--os-agent-default) 45%, var(--os-border-default));
+    --os-shell-topbar-bg: color-mix(in srgb, var(--os-bg-default) 85%, transparent);
+  }
+
+  :root[data-agent-mode] {
+    color-scheme: dark;
+
+    --os-bg-default: #070a08;
+    --os-bg-alternative: #060907;
+    --os-bg-surface-100: #0b100d;
+    --os-bg-surface-200: #0e1410;
+    --os-bg-surface-300: #111813;
+    --os-bg-overlay: #0b100d;
+    --os-bg-control: #0b100d;
+    --os-bg-hover: #142019;
+    --os-bg-selection: #0d2429;
+    --os-fg-default: #d3f5df;
+    --os-fg-light: #a6d3b8;
+    --os-fg-lighter: #74977f;
+    --os-fg-muted: #4f6b58;
+    --os-border-default: #2a3b31;
+    --os-border-strong: #3f5a4a;
+    --os-border-control: #3f5a4a;
+    --os-border-style: dashed;
+    --os-brand-default: #5ccfe3;
+    --os-brand-hover: #86e3f2;
+    --os-brand-ink: #03161a;
+    --os-brand-soft: #0d2429;
+    --os-brand-border: #3f5a4a;
+    --os-brand-text: #86e3f2;
+    --os-focus-ring: #5ccfe3;
+    --os-danger-default: #ff6f80;
+    --os-danger-hover: #ff8a98;
+    --os-danger-ink: #03161a;
+    --os-danger-soft: #2b1016;
+    --os-danger-border: #ff6f80;
+    --os-danger-text: #ff6f80;
+    --os-warning-default: #f2b55e;
+    --os-warning-hover: #f6c782;
+    --os-warning-ink: #03161a;
+    --os-warning-soft: #261c0c;
+    --os-warning-border: #f2b55e;
+    --os-warning-text: #f2b55e;
+    --os-success-default: #6fe8a1;
+    --os-success-hover: #90efb8;
+    --os-success-ink: #03161a;
+    --os-success-soft: #0d2618;
+    --os-success-border: #6fe8a1;
+    --os-success-text: #6fe8a1;
+    --os-info-default: #5ccfe3;
+    --os-info-hover: #86e3f2;
+    --os-info-ink: #03161a;
+    --os-info-soft: #0d2429;
+    --os-info-border: #5ccfe3;
+    --os-info-text: #86e3f2;
+    --os-agent-default: #5ccfe3;
+    --os-agent-soft: #0d2429;
+    --os-agent-border: color-mix(in srgb, #5ccfe3 45%, #2a3b31);
+    --os-identity-0: #5ccfe3;
+    --os-identity-1: #e391f7;
+    --os-identity-2: #6fe8a1;
+    --os-identity-3: #f2b55e;
+    --os-identity-4: #ff7d8d;
+    --os-identity-5: #7fa8ff;
+    --os-identity-6: #b9a0ff;
+    --os-identity-7: #c8e36c;
+    --os-backdrop: rgb(0 0 0 / 55%);
+    --os-shadow-xs: none;
+    --os-shadow-sm: none;
+    --os-shadow-md: none;
+    --os-shadow-pop: none;
+    --os-radius-sm: 0;
+    --os-radius-md: 0;
+    --os-radius-lg: 0;
+    --os-radius-xl: 0;
+    --os-radius-full: 0;
+    --os-font-sans: var(--os-font-mono);
+    --os-agent-glow: 0 0 12px color-mix(in srgb, #5ccfe3 35%, transparent);
+    --os-agent-scanline:
+      repeating-linear-gradient(
+        to bottom,
+        rgb(255 255 255 / 2.2%) 0 1px,
+        transparent 1px 3px
+      );
+  }
+}

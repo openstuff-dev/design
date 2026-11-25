@@ -68,3 +68,40 @@ export const iconMonitor: IconNode = [
   ['line', { x1: '8', x2: '16', y1: '21', y2: '21' }],
   ['line', { x1: '12', x2: '12', y1: '17', y2: '21' }],
 ];
+
+export const iconBot: IconNode = [
+  ['path', { d: 'M12 8V4H8' }],
+  ['rect', { width: '16', height: '12', x: '4', y: '8', rx: '2' }],
+  ['path', { d: 'M2 14h2' }],
+  ['path', { d: 'M20 14h2' }],
+  ['path', { d: 'M15 13v2' }],
+  ['path', { d: 'M9 13v2' }],
+];
+
+export const iconChevronsUpDown: IconNode = [
+  ['path', { d: 'm7 15 5 5 5-5' }],
+  ['path', { d: 'm7 9 5-5 5 5' }],
+];
+
+export const iconMenu: IconNode = [
+  ['path', { d: 'M4 5h16' }],
+  ['path', { d: 'M4 12h16' }],
+  ['path', { d: 'M4 19h16' }],
+];
+
+export const iconArrowUp: IconNode = [
+  ['path', { d: 'm5 12 7-7 7 7' }],
+  ['path', { d: 'M12 19V5' }],
+];
+
+export const iconArrowDown: IconNode = [
+  ['path', { d: 'M12 5v14' }],
+  ['path', { d: 'm19 12-7 7-7-7' }],
+];
+
+export const iconArrowUpDown: IconNode = [
+  ['path', { d: 'm21 16-4 4-4-4' }],
+  ['path', { d: 'M17 20V4' }],
+  ['path', { d: 'm3 8 4-4 4 4' }],
+  ['path', { d: 'M7 4v16' }],
+];

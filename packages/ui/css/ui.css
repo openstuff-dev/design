@@ -22,6 +22,8 @@
 @import './components/shell.css';
 @import './components/settings.css';
 @import './components/theme-picker.css';
+@import './components/agent-mode.tokens.css';
+@import './components/agent-mode.css';
 @import './components/code-block.css';
 @import './components/data.css';
 @import './utilities.css';

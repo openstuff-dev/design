@@ -20,6 +20,12 @@
     overflow-x: auto;
     container-type: inline-size;
 
+    &[data-bordered] {
+      border: 1px var(--os-border-style) var(--os-border-default);
+      border-radius: var(--os-radius-lg);
+      background: var(--os-bg-surface-100);
+    }
+
     & > table {
       inline-size: 100%;
       font-size: var(--os-text-base);
@@ -44,8 +50,16 @@
       border-block-end: 0;
     }
 
-    & :where(tbody tr):has(a, button):hover {
+    & :where(tbody tr):is(:has(a, button), [tabindex]):hover {
       background: var(--os-bg-hover);
+    }
+
+    & :where(tbody tr[tabindex]) {
+      cursor: pointer;
+    }
+
+    & :where(tbody tr[aria-current='true']) {
+      background: var(--os-brand-soft);
     }
 
     & :where([data-align='end']) {
@@ -54,6 +68,22 @@
 
     & :where([aria-sort]) {
       cursor: pointer;
+    }
+  }
+
+  .os-th-sort {
+    display: inline-flex;
+    gap: var(--os-space-1);
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--os-fg-default);
     }
   }
 

@@ -6,6 +6,8 @@ import {
   input,
   numberAttribute,
 } from '@angular/core';
+import { iconSearch } from '@openstuff-dev/ui';
+import { Icon } from '../icon/icon';
 import { uniqueId } from '../id';
 
 /**
@@ -129,6 +131,7 @@ export class Breadcrumbs {
     class: 'os-panel',
     '[attr.title]': 'null',
     '[attr.aria-labelledby]': 'title() ? titleId : null',
+    '[attr.data-tone]': 'tone() === "danger" ? "danger" : null',
   },
   template: `
     @if (title()) {
@@ -152,6 +155,8 @@ export class Panel {
   readonly level = input(2, { transform: numberAttribute });
   /** No padding inside, for a table or list that runs edge to edge. */
   readonly flush = input(false, { transform: booleanAttribute });
+  /** Set `danger` for a destructive danger-zone panel. */
+  readonly tone = input<'default' | 'danger'>('default');
   protected readonly titleId = uniqueId('panel-title');
 }
 
@@ -162,3 +167,45 @@ export class Card {}
 /** Lays out cards in as many columns as fit. */
 @Directive({ selector: '[os-card-grid]', host: { class: 'os-card-grid' } })
 export class CardGrid {}
+
+/**
+ * A bordered surface list of rows separated by 1px rules (documents, projects, scopes, repos).
+ *
+ * ```html
+ * <ul os-list>
+ *   @for (item of items(); track item.id) {
+ *     <li><a [routerLink]="item.id">{{ item.name }}</a></li>
+ *   }
+ * </ul>
+ * ```
+ */
+@Directive({ selector: 'ul[os-list], ol[os-list]', host: { class: 'os-list' } })
+export class List {}
+
+/** A horizontal wrapping toolbar for filters, segmented controls and search inputs. */
+@Directive({ selector: '[os-toolbar]', host: { class: 'os-toolbar' } })
+export class Toolbar {}
+
+/**
+ * A search input wrapper with a leading search icon. Put an `<input os-input type="search" />`
+ * inside.
+ *
+ * ```html
+ * <label os-search-field>
+ *   <input os-input type="search" placeholder="Filter…" aria-label="Filter" />
+ * </label>
+ * ```
+ */
+@Component({
+  selector: 'label[os-search-field]',
+  imports: [Icon],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'os-search-field' },
+  template: `
+    <svg os-icon size="sm" [icon]="iconSearch"></svg>
+    <ng-content />
+  `,
+})
+export class SearchField {
+  protected readonly iconSearch = iconSearch;
+}

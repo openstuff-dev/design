@@ -175,6 +175,14 @@
     container-type: inline-size;
   }
 
+  .os-panel[data-tone='danger'] {
+    border-color: var(--os-danger-border);
+
+    & > .os-panel-header :where(h2, h3) {
+      color: var(--os-danger-text);
+    }
+  }
+
   .os-panel-header {
     display: flex;
     flex-wrap: wrap;
@@ -256,6 +264,28 @@
     scrollbar-width: none;
   }
 
+  /* Sticky sub-menu bar directly under the app shell's topbar. */
+  .os-tab-list[data-sticky] {
+    position: sticky;
+    inset-block-start: var(--os-shell-bar-height, 0);
+    z-index: 5;
+    background: var(--os-bg-default);
+  }
+
+  .os-tab-count {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 1.25rem;
+    block-size: 1.15rem;
+    padding-inline: 0.35rem;
+    border-radius: var(--os-radius-full);
+    background: var(--os-bg-surface-300);
+    color: var(--os-fg-lighter);
+    font-size: 0.6875rem;
+    font-weight: var(--os-font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
   .os-tab {
     display: inline-flex;
     flex-shrink: 0;
@@ -288,6 +318,11 @@
       box-shadow: inset 0 -2px var(--os-fg-default);
     }
 
+    &:is([aria-selected='true'], [aria-current='page']) > .os-tab-count {
+      background: var(--os-brand-soft);
+      color: var(--os-brand-text);
+    }
+
     &:is(:disabled, [aria-disabled='true']) {
       color: var(--os-fg-muted);
       cursor: not-allowed;
@@ -296,5 +331,66 @@
 
   .os-tab-panel:is([hidden], [inert]) {
     display: none;
+  }
+
+  .os-tab-panel[data-boxed] {
+    padding: var(--os-space-5) var(--os-space-6);
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-lg);
+    background: var(--os-bg-surface-100);
+  }
+
+  /* A bordered list of rows separated by 1px rules (documents, projects, scopes, repos). */
+  .os-list {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-lg);
+    background: var(--os-bg-surface-100);
+    list-style: none;
+
+    & > li + li {
+      border-block-start: 1px var(--os-border-style) var(--os-border-default);
+    }
+
+    & > li > :is(a, button) {
+      color: var(--os-fg-default);
+      text-decoration: none;
+      transition: background-color var(--os-duration-fast) var(--os-ease-standard);
+    }
+
+    & > li > :is(a, button):hover {
+      background: var(--os-bg-hover);
+    }
+  }
+
+  /* Filter / search toolbar above a list or table. */
+  .os-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-3);
+    align-items: center;
+  }
+
+  /* Search input with a leading icon. */
+  .os-search-field {
+    position: relative;
+    display: flex;
+    flex: 1 1 16rem;
+    align-items: center;
+    max-inline-size: 22rem;
+    margin: 0;
+
+    & > .os-icon {
+      position: absolute;
+      inset-inline-start: 0.625rem;
+      color: var(--os-fg-muted);
+      pointer-events: none;
+    }
+
+    & > .os-input {
+      padding-inline-start: 2rem;
+    }
   }
 }

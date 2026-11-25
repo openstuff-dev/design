@@ -10,7 +10,7 @@ import { SegmentedControl, type SegmentOption } from './segmented-control';
 class Host {
   readonly view = signal('list');
   readonly options: SegmentOption[] = [
-    { value: 'list', label: 'List' },
+    { value: 'list', label: 'List', count: 4 },
     { value: 'grid', label: 'Grid' },
     { value: 'map', label: 'Map', disabled: true },
   ];
@@ -23,7 +23,8 @@ describe('SegmentedControl', () => {
     expect(group.getAttribute('role')).toBe('radiogroup');
     expect(accessibleName(group)).toBe('View');
     const radios = [...root.querySelectorAll('input')];
-    expect(radios.map((radio) => accessibleName(radio))).toEqual(['List', 'Grid', 'Map']);
+    expect(radios.map((radio) => accessibleName(radio))).toEqual(['List 4', 'Grid', 'Map']);
+    expect(query(root, '.os-segmented-count', HTMLElement).textContent.trim()).toBe('4');
     expect(radios.map((radio) => radio.checked)).toEqual([true, false, false]);
     expect(radios[2].disabled).toBe(true);
   });

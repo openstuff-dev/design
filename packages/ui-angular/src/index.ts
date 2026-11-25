@@ -39,17 +39,28 @@ export { SecretDialog, type SecretOptions } from './lib/dialog/secret';
 export { Toaster, type ToastOptions } from './lib/toast/toast';
 
 // Wave 3: layout and data
-export { Cell, DataTable, StatGrid, StatTile, type Column } from './lib/data/data-table';
+export { AgentBar, AgentMode, AgentShell, AgentSwitch } from './lib/agent-mode/agent-mode';
+export {
+  Cell,
+  DataTable,
+  StatGrid,
+  StatTile,
+  type Column,
+  type SortState,
+} from './lib/data/data-table';
 export {
   Breadcrumbs,
   Card,
   CardGrid,
+  List,
   Page,
   PageHeader,
   Panel,
+  SearchField,
   SectionHeader,
+  Toolbar,
 } from './lib/page/page';
-export { Tab, Tabs } from './lib/page/tabs';
+export { Tab, TabLink, TabNav, Tabs } from './lib/page/tabs';
 export {
   FormActions,
   FormActionsNote,
@@ -70,6 +81,17 @@ export {
   type ServerConnectionTest,
 } from './lib/settings/server-connection';
 export { NavLink } from './lib/shell/nav-link';
+export {
+  Avatar,
+  IdentityBadge,
+  initials,
+  SearchTrigger,
+  ShellFooter,
+  ShellNavLabel,
+  ShellSwitcher,
+  ShellSwitcherButton,
+  ShellUser,
+} from './lib/shell/shell';
 export { CodeBlock, type CodeVariant } from './lib/copy/code-block';
 export { CopyButton } from './lib/copy/copy-button';
 export {

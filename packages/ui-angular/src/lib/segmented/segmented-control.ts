@@ -1,9 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
+import type { IconNode } from '@openstuff-dev/ui';
+import { Icon } from '../icon/icon';
 import { uniqueId } from '../id';
 
 export interface SegmentOption<T extends string = string> {
   value: T;
   label: string;
+  icon?: IconNode;
+  count?: number | null;
   disabled?: boolean;
 }
 
@@ -17,6 +21,7 @@ export interface SegmentOption<T extends string = string> {
  */
 @Component({
   selector: 'os-segmented-control',
+  imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'os-segmented',
@@ -35,7 +40,13 @@ export interface SegmentOption<T extends string = string> {
           [disabled]="option.disabled ?? false"
           (change)="value.set(option.value)"
         />
+        @if (option.icon; as icon) {
+          <svg os-icon size="sm" [icon]="icon"></svg>
+        }
         {{ option.label }}
+        @if (option.count !== undefined && option.count !== null) {
+          <span class="os-segmented-count">{{ option.count }}</span>
+        }
       </label>
     }
   `,

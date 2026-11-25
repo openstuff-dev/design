@@ -2,11 +2,17 @@ export { anchor } from './lib/anchor.js';
 export { applyDialogClosedBy } from './lib/dialog-closedby.js';
 export { createIcon, renderIcon, type IconNode, type IconOptions } from './lib/icon.js';
 export {
+  iconArrowDown,
+  iconArrowUp,
+  iconArrowUpDown,
+  iconBot,
   iconCheck,
+  iconChevronsUpDown,
   iconCircleAlert,
   iconCircleCheck,
   iconCopy,
   iconInfo,
+  iconMenu,
   iconMonitor,
   iconMoon,
   iconSearch,

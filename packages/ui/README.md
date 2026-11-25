@@ -59,16 +59,17 @@ warning, success, info).
 | `icon.css` | `.os-icon` (build one with `createIcon(node)` from a Lucide icon) |
 | `badge.css` | `.os-badge`, `.os-chip` (with `.os-chip-remove`), `.os-status-dot` |
 | `field.css` | `.os-field`, `.os-label`, `.os-hint`, `.os-error`, `.os-input`, `.os-textarea`, `.os-select`, `.os-check`, `.os-checkbox`, `.os-radio`, `.os-switch`, `.os-fieldset` |
-| `segmented.css` | `.os-segmented`: native radios in a row |
+| `segmented.css` | `.os-segmented` (with `.os-segmented-count`): native radios in a row |
 | `feedback.css` | `.os-callout`, `.os-empty-state`, `.os-kbd`, `.os-skeleton` |
 | `dialog.css` | `.os-dialog` and `.os-drawer` on `<dialog>`, with `.os-dialog-header`, `-body`, `-footer` |
 | `popover.css` | `.os-popover`, `.os-menu` (`.os-menu-item`, `-label`, `-separator`), `.os-tooltip`, placed with `data-placement` |
 | `command-palette.css` | `.os-command-palette`: a dialog with a combobox and a listbox |
 | `toast.css` | `.os-toast-region` (a manual popover) and `.os-toast` |
-| `page.css` | `.os-page`, `.os-page-header`, `.os-breadcrumbs`, `.os-panel`, `.os-card`, `.os-card-grid`, `.os-tabs` |
-| `shell.css` | `.os-shell`, `.os-shell-sidebar`, `.os-shell-brand`, `.os-shell-content`, `.os-shell-topbar`, `.os-shell-menu` |
+| `page.css` | `.os-page`, `.os-page-header`, `.os-breadcrumbs`, `.os-panel` (`data-tone="danger"`), `.os-card`, `.os-card-grid`, `.os-tabs`, `.os-tab-list` (`data-sticky`), `.os-tab-count`, `.os-list`, `.os-toolbar`, `.os-search-field` |
+| `shell.css` | `.os-shell`, `.os-shell-sidebar`, `.os-shell-brand`, `.os-shell-switcher`, `.os-identity-badge`, `.os-shell-nav-label`, `.os-shell-footer`, `.os-shell-user`, `.os-avatar`, `.os-shell-content`, `.os-shell-topbar`, `.os-shell-topbar-title`, `.os-search-trigger`, `.os-shell-menu` |
+| `agent-mode.css` | `.os-agent-switch`, `.os-agent-shell`, `.os-agent-bar`, and the `:root[data-agent-mode]` terminal costume |
 | `settings.css` | `.os-setting-card`, `.os-setting-row`, `.os-form-actions` |
-| `data.css` | `.os-data-table` (stacked rows below 36rem), `.os-stat-tile`, `.os-stat-grid` |
+| `data.css` | `.os-data-table` (`data-bordered`, `.os-th-sort`, interactive/selected rows, stacked below 36rem), `.os-stat-tile`, `.os-stat-grid` |
 
 Plain HTML gets the look and the native behaviour (dialogs, popovers, radios). Keyboard handling
 that HTML doesn't have (arrow keys in menus and tabs, the command palette) comes from the Angular
