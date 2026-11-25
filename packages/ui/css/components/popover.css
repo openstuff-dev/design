@@ -111,6 +111,11 @@
     }
   }
 
+  .os-menu-item[aria-checked='true'] > .os-icon:last-child {
+    margin-inline-start: auto;
+    color: var(--os-brand-default);
+  }
+
   .os-menu-label {
     padding: var(--os-space-2) var(--os-space-2) var(--os-space-1);
     color: var(--os-fg-lighter);

@@ -143,18 +143,214 @@
   .os-shell-topbar {
     position: sticky;
     inset-block-start: 0;
-    z-index: 2;
+    z-index: 20;
     display: flex;
     gap: var(--os-space-3);
     align-items: center;
     block-size: var(--os-shell-bar-height);
     padding-inline: var(--os-space-6);
     border-block-end: 1px var(--os-border-style) var(--os-border-default);
-    background: var(--os-bg-default);
+    background: var(--os-shell-topbar-bg, var(--os-bg-default));
+    backdrop-filter: saturate(1.4) blur(10px);
+  }
+
+  .os-shell-topbar-title {
+    display: none;
+    overflow: hidden;
+    font-weight: var(--os-font-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .os-shell-menu {
     display: none;
+  }
+
+  /* Workspace / organization / team switcher in the sidebar. */
+  .os-shell-switcher {
+    position: relative;
+    margin-block-end: var(--os-space-3);
+  }
+
+  .os-shell-switcher-button {
+    display: flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    inline-size: 100%;
+    padding: 0.45rem var(--os-space-2);
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-md);
+    background: var(--os-bg-surface-100);
+    color: var(--os-fg-default);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: border-color var(--os-duration-fast) var(--os-ease-standard);
+
+    &:hover {
+      border-color: var(--os-border-strong);
+    }
+
+    & > .os-icon:last-child {
+      margin-inline-start: auto;
+      color: var(--os-fg-lighter);
+    }
+  }
+
+  .os-shell-switcher-text {
+    display: grid;
+    min-inline-size: 0;
+    line-height: var(--os-leading-tight);
+
+    & > strong {
+      overflow: hidden;
+      font-size: var(--os-text-sm);
+      font-weight: var(--os-font-weight-semibold);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    & > small {
+      overflow: hidden;
+      color: var(--os-fg-lighter);
+      font-size: var(--os-text-xs);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .os-shell-switcher-menu {
+    min-inline-size: anchor-size(inline);
+  }
+
+  /* Square rounded-corner identity badge for an organization, workspace or team. */
+  .os-identity-badge {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: 7px;
+    background: var(--os-brand-default);
+    color: var(--os-bg-default);
+    font-size: 0.6875rem;
+    font-weight: var(--os-font-weight-semibold);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .os-identity-badge[data-size='sm'] {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    border-radius: 5px;
+    font-size: 0.5625rem;
+  }
+
+  .os-identity-badge[data-size='lg'] {
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    font-size: var(--os-text-sm);
+  }
+
+  .os-identity-badge[data-neutral] {
+    background: var(--os-fg-default);
+    color: var(--os-bg-surface-100);
+  }
+
+  /* Section heading inside the sidebar, e.g. a workspace group name. */
+  .os-shell-nav-label {
+    padding: var(--os-space-3) var(--os-space-2) var(--os-space-1);
+    color: var(--os-fg-muted);
+    font-size: var(--os-text-xs);
+    font-weight: var(--os-font-weight-medium);
+  }
+
+  /* Pinned bottom area of the sidebar: secondary links and the signed-in user row. */
+  .os-shell-footer {
+    display: grid;
+    gap: 1px;
+    margin-block-start: auto;
+    padding-block: var(--os-space-3) var(--os-space-2);
+  }
+
+  .os-shell-user {
+    display: flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    margin-block-start: var(--os-space-2);
+    padding: var(--os-space-2);
+    border-block-start: 1px var(--os-border-style) var(--os-border-default);
+
+    & > .os-button[data-icon-only] {
+      margin-inline-start: auto;
+    }
+  }
+
+  .os-shell-user-text {
+    display: grid;
+    min-inline-size: 0;
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-medium);
+    line-height: var(--os-leading-tight);
+
+    & > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    & > small {
+      overflow: hidden;
+      color: var(--os-fg-lighter);
+      font-size: var(--os-text-xs);
+      font-weight: var(--os-font-weight-regular);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .os-avatar {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: var(--os-radius-full);
+    background: var(--os-bg-hover);
+    color: var(--os-fg-light);
+    font-size: 0.6875rem;
+    font-weight: var(--os-font-weight-semibold);
+    line-height: 1;
+  }
+
+  /* Topbar search / command palette trigger; collapses to an icon button on narrow screens. */
+  .os-search-trigger {
+    display: flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    inline-size: min(22rem, 100%);
+    block-size: 2rem;
+    margin-inline-start: auto;
+    padding-inline: var(--os-space-2);
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-sm);
+    background: var(--os-bg-surface-100);
+    color: var(--os-fg-muted);
+    font: inherit;
+    font-size: var(--os-text-sm);
+    cursor: pointer;
+    transition:
+      border-color var(--os-duration-fast) var(--os-ease-standard),
+      color var(--os-duration-fast) var(--os-ease-standard);
+
+    &:hover {
+      border-color: var(--os-border-strong);
+      color: var(--os-fg-lighter);
+    }
+
+    & > .os-kbd {
+      margin-inline-start: auto;
+    }
   }
 
   @container os-shell (inline-size < 52rem) {
@@ -166,7 +362,7 @@
       position: fixed;
       inset-block: 0;
       inset-inline-end: 100%;
-      z-index: 3;
+      z-index: 50;
       inline-size: min(var(--os-shell-sidebar-width), 85%);
       transition: translate var(--os-duration-normal) var(--os-ease-standard);
     }
@@ -186,6 +382,21 @@
 
     .os-shell-topbar {
       padding-inline: var(--os-space-4);
+    }
+
+    .os-shell-topbar-title {
+      display: block;
+    }
+
+    .os-search-trigger {
+      justify-content: center;
+      inline-size: 2rem;
+      padding: 0;
+
+      & > span,
+      & > .os-kbd {
+        display: none;
+      }
     }
   }
 

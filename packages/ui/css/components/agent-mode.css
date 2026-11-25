@@ -1,0 +1,339 @@
+/*
+ * Agent mode: the topbar switch (.os-agent-switch), minimal agent shell (.os-agent-shell /
+ * .os-agent-bar), and the terminal costume activated by data-agent-mode on <html>.
+ *
+ *   <button class="os-agent-switch" type="button" role="switch" aria-checked="false">
+ *     <svg class="os-icon">…</svg>
+ *     <span class="os-agent-switch-label">Agent mode</span>
+ *     <span class="os-agent-switch-track" aria-hidden="true">
+ *       <span class="os-agent-switch-thumb"></span>
+ *     </span>
+ *   </button>
+ */
+@layer os.components {
+  .os-agent-switch {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 0.45rem;
+    align-items: center;
+    block-size: 2rem;
+    padding-inline: 0.6rem 0.55rem;
+    border: 1px var(--os-border-style) var(--os-border-default);
+    border-radius: var(--os-radius-sm);
+    background: var(--os-bg-surface-100);
+    color: var(--os-fg-lighter);
+    font-family: var(--os-font-sans);
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-medium);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--os-duration-fast) var(--os-ease-standard),
+      border-color var(--os-duration-fast) var(--os-ease-standard),
+      color var(--os-duration-fast) var(--os-ease-standard);
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: progress;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--os-border-strong);
+      color: var(--os-fg-default);
+    }
+
+    &[aria-checked='true'] {
+      border-color: var(--os-agent-border);
+      background: var(--os-agent-soft);
+      color: var(--os-agent-default);
+    }
+  }
+
+  .os-agent-switch-track {
+    position: relative;
+    inline-size: 1.75rem;
+    block-size: 1rem;
+    border-radius: var(--os-radius-full);
+    background: var(--os-border-strong);
+    transition: background-color var(--os-duration-fast) var(--os-ease-standard);
+  }
+
+  .os-agent-switch-thumb {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-start: 2px;
+    inline-size: calc(1rem - 4px);
+    block-size: calc(1rem - 4px);
+    border-radius: var(--os-radius-full);
+    background: var(--os-brand-ink);
+    box-shadow: var(--os-shadow-sm);
+    transition: translate var(--os-duration-fast) var(--os-ease-standard);
+  }
+
+  .os-agent-switch[aria-checked='true'] .os-agent-switch-track {
+    background: var(--os-agent-default);
+  }
+
+  .os-agent-switch[aria-checked='true'] .os-agent-switch-thumb {
+    translate: 0.75rem 0;
+  }
+
+  .os-agent-switch[aria-checked='true'] .os-agent-switch-thumb:dir(rtl) {
+    translate: -0.75rem 0;
+  }
+
+  /* Minimal shell shown while agent mode is active: brand, context and exit button. */
+  .os-agent-shell {
+    min-block-size: 100dvh;
+    background: var(--os-bg-default);
+  }
+
+  .os-agent-bar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--os-space-2) var(--os-space-4);
+    align-items: center;
+    min-block-size: var(--os-shell-bar-height, 3.25rem);
+    padding: var(--os-space-2) clamp(1rem, 3vw, 2.25rem);
+    border-block-end: 1px var(--os-border-style) var(--os-agent-border);
+    background: var(--os-bg-default);
+  }
+
+  .os-agent-bar-brand {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--os-space-2);
+    align-items: center;
+    margin-inline-end: auto;
+    color: var(--os-fg-default);
+    font-size: var(--os-text-md);
+    font-weight: var(--os-font-weight-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .os-agent-bar-context {
+    display: inline-flex;
+    gap: var(--os-space-2);
+    align-items: center;
+    color: var(--os-fg-lighter);
+    font-size: var(--os-text-sm);
+  }
+
+  /* ─── Terminal costume when data-agent-mode is set on <html> ─── */
+  :root[data-agent-mode] body {
+    font-size: var(--os-text-sm);
+    font-feature-settings: normal;
+    letter-spacing: 0;
+  }
+
+  :root[data-agent-mode] ::selection {
+    background: var(--os-agent-default);
+    color: var(--os-brand-ink);
+  }
+
+  :root[data-agent-mode] :focus-visible {
+    outline: 1px dashed var(--os-agent-default);
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  /* Faint scanline over everything. Purely decorative, never catches clicks. */
+  :root[data-agent-mode] body::after {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--os-agent-scanline);
+    content: '';
+    pointer-events: none;
+  }
+
+  /* Headings read like prompts. */
+  :root[data-agent-mode] .os-page-title {
+    text-shadow: var(--os-agent-glow);
+
+    &::before {
+      color: var(--os-agent-default);
+      content: '> ';
+    }
+
+    &::after {
+      margin-inline-start: 0.1em;
+      color: var(--os-agent-default);
+      content: '_';
+      animation: os-agent-blink 1.1s steps(1) infinite;
+    }
+  }
+
+  :root[data-agent-mode] :is(.os-section-header-text, .os-panel-header) h2::before {
+    color: var(--os-fg-muted);
+    content: '## ';
+  }
+
+  :root[data-agent-mode] :is(
+    .os-menu-label,
+    .os-shell-nav-label,
+    .os-settings-group-label,
+    .os-data-table th
+  ) {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Brand suffix and tab count parens (before higher-specificity button pseudo-elements). */
+  :root[data-agent-mode] :is(.os-shell-brand, .os-agent-bar-brand)::after {
+    color: var(--os-agent-default);
+    font-size: var(--os-text-sm);
+    font-weight: var(--os-font-weight-regular);
+    content: '~agent';
+  }
+
+  :root[data-agent-mode] .os-tab-count {
+    display: inline;
+    min-inline-size: 0;
+    block-size: auto;
+    padding: 0;
+    background: transparent;
+
+    &::before {
+      content: '(';
+    }
+
+    &::after {
+      content: ')';
+    }
+  }
+
+  /* Buttons are [ bracketed ]; hover inverts. Keep spinner on aria-busy untouched. */
+  :root[data-agent-mode] .os-button {
+    background: transparent;
+    font-weight: var(--os-font-weight-medium);
+
+    &:hover:not(:disabled, [aria-disabled='true'], [data-icon-only], [data-variant='link']) {
+      border-color: var(--os-fg-default);
+      background: var(--os-fg-default);
+      color: var(--os-bg-default);
+    }
+
+    &[data-variant='primary'] {
+      border-color: var(--os-agent-default);
+      background: var(--os-agent-default);
+      color: var(--os-brand-ink);
+    }
+
+    &[data-icon-only]:hover:not(:disabled, [aria-disabled='true']) {
+      background: var(--os-bg-hover);
+    }
+  }
+
+  :root[data-agent-mode] .os-button:not(
+    [data-icon-only],
+    [data-variant='link'],
+    [aria-busy='true']
+  ) {
+    gap: var(--os-space-1);
+
+    &::before {
+      color: var(--os-fg-muted);
+      content: '[';
+    }
+
+    &::after {
+      position: static;
+      inline-size: auto;
+      block-size: auto;
+      margin: 0;
+      border: 0;
+      color: var(--os-fg-muted);
+      content: ']';
+      opacity: 1;
+      visibility: visible;
+      animation: none;
+    }
+
+    &:hover:not(:disabled, [aria-disabled='true'])::before,
+    &:hover:not(:disabled, [aria-disabled='true'])::after,
+    &[data-variant='primary']::before,
+    &[data-variant='primary']::after {
+      color: inherit;
+    }
+  }
+
+  /* Links: dashed underline on hover. */
+  :root[data-agent-mode] a:hover {
+    text-decoration-style: dashed;
+  }
+
+  /* Tabs and segmented controls invert when active. */
+  :root[data-agent-mode] .os-tab:is([aria-selected='true'], [aria-current='page']) {
+    background: var(--os-fg-default);
+    color: var(--os-bg-default);
+    box-shadow: inset 0 -2px var(--os-fg-default);
+
+    & .os-icon,
+    & .os-tab-count {
+      background: transparent;
+      color: var(--os-bg-default);
+    }
+  }
+
+  :root[data-agent-mode] .os-segmented {
+    background: transparent;
+
+    & > label:has(:checked) {
+      background: var(--os-fg-default);
+      color: var(--os-bg-default);
+      box-shadow: none;
+
+      & .os-segmented-count {
+        color: var(--os-bg-default);
+      }
+    }
+  }
+
+  /* Status dot, badges, tables, toasts, code. */
+  :root[data-agent-mode] .os-status-dot::before {
+    inline-size: auto;
+    block-size: auto;
+    background: none;
+    color: var(--os-tone-default);
+    font-size: 0.6rem;
+    content: '●';
+  }
+
+  :root[data-agent-mode] .os-data-table tbody tr[aria-current='true'] {
+    background: var(--os-bg-hover);
+    box-shadow: inset 2px 0 0 var(--os-agent-default);
+  }
+
+  :root[data-agent-mode] .os-toast {
+    border-color: var(--os-agent-default);
+  }
+
+  :root[data-agent-mode] .os-identity-badge:not([data-neutral]) {
+    color: var(--os-brand-ink);
+    font-weight: var(--os-font-weight-semibold);
+  }
+
+  @keyframes os-agent-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .os-agent-switch,
+    .os-agent-switch-track,
+    .os-agent-switch-thumb {
+      transition: none;
+    }
+
+    :root[data-agent-mode] .os-page-title::after {
+      animation: none;
+    }
+  }
+}

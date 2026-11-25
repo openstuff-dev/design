@@ -73,6 +73,10 @@ class ShellExample {
           Sidebar links are <code>a[os-nav-link]</code>, with an optional <code>icon</code> and
           <code>count</code>. They look the same as the Settings menu's links. Add the router's
           <code>routerLinkActive ariaCurrentWhenActive="page"</code> to mark the current page.
+          Shared shell chrome — <code>os-shell-switcher</code>, <code>os-identity-badge</code>,
+          <code>os-shell-nav-label</code>, <code>os-shell-footer</code>, <code>os-shell-user</code>,
+          and <code>button[os-search-trigger]</code> — keeps every OpenStuff sidebar and topbar
+          identical.
         </p>
       </div>
       <docs-example [code]="shell" [flush]="true"><docs-shell-example /></docs-example>

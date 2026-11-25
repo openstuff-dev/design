@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { iconInfo } from '@openstuff-dev/ui';
 import { Button } from '../button/button';
 import { accessibleName, press, query, render } from '../testing';
-import { Breadcrumbs, Card, Page, PageHeader, Panel } from './page';
-import { Tab, Tabs } from './tabs';
+import { Breadcrumbs, Card, List, Page, PageHeader, Panel, SearchField, Toolbar } from './page';
+import { Tab, TabLink, TabNav, Tabs } from './tabs';
 
 @Component({
   imports: [Breadcrumbs, Button, Card, Page, PageHeader, Panel, Tab, Tabs],
@@ -167,5 +168,46 @@ describe('Tabs inside a tab', () => {
     ]);
     expect(labels('#inner .os-tab')).toEqual(['npm', 'pnpm']);
     expect(root.querySelector('#inner')?.textContent).toContain('npm install');
+  });
+});
+
+describe('TabNav, TabLink, List, Toolbar, SearchField and danger Panel', () => {
+  @Component({
+    imports: [List, Panel, SearchField, TabLink, TabNav, Toolbar],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+      <nav os-tab-nav label="Project sections">
+        <a os-tab-link href="#docs" aria-current="page" [icon]="iconInfo" [count]="4">Documents</a>
+        <a os-tab-link href="#scopes">Scopes</a>
+      </nav>
+      <div os-toolbar>
+        <label os-search-field>
+          <input class="os-input" type="search" aria-label="Filter" />
+        </label>
+      </div>
+      <ul os-list>
+        <li><a href="#one">One</a></li>
+        <li><a href="#two">Two</a></li>
+      </ul>
+      <section os-panel title="Danger zone" tone="danger"><p>Careful.</p></section>
+    `,
+  })
+  class AlignedHost {
+    protected readonly iconInfo = iconInfo;
+  }
+
+  it('renders sticky TabNav with icons and counts, List, Toolbar, SearchField and danger Panel', async () => {
+    const { root } = await render(AlignedHost);
+    const nav = query(root, 'nav[os-tab-nav]', HTMLElement);
+    expect(accessibleName(nav)).toBe('Project sections');
+    expect(nav.hasAttribute('data-sticky')).toBe(true);
+    const firstTab = query(nav, 'a[os-tab-link]', HTMLAnchorElement);
+    expect(firstTab.querySelector('svg.os-icon')).not.toBeNull();
+    expect(query(firstTab, '.os-tab-count', HTMLElement).textContent.trim()).toBe('4');
+
+    expect(query(root, '[os-toolbar]', HTMLElement).classList.contains('os-toolbar')).toBe(true);
+    expect(query(root, 'label[os-search-field] svg.os-icon', SVGSVGElement)).toBeTruthy();
+    expect(query(root, 'ul[os-list]', HTMLElement).classList.contains('os-list')).toBe(true);
+    expect(query(root, 'section[os-panel]', HTMLElement).dataset['tone']).toBe('danger');
   });
 });

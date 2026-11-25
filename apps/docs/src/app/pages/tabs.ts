@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { PageHeader, Tab, Tabs } from '@openstuff-dev/ui-angular';
+import { PageHeader, Tab, TabLink, TabNav, Tabs } from '@openstuff-dev/ui-angular';
 import { CodeBlock } from '../example/code-block';
 import { Example } from '../example/example';
 
@@ -8,7 +8,7 @@ const TABS = `
     <ng-template os-tab="overview" label="Overview">
       <p>Design is the toolkit every OpenStuff project builds on.</p>
     </ng-template>
-    <ng-template os-tab="rules" label="Rules">
+    <ng-template os-tab="rules" label="Rules" [count]="12">
       <p>12 rules apply here, 3 of them locked.</p>
     </ng-template>
     <ng-template os-tab="history" label="History">
@@ -19,6 +19,37 @@ const TABS = `
     </ng-template>
   </os-tabs>
   <p class="selected">Selected: {{ tab() }}</p>
+`;
+
+const SUB_NAV = `
+  <nav os-tab-nav label="Project sections" [sticky]="false">
+    <button
+      os-tab-link
+      type="button"
+      [count]="4"
+      [attr.aria-current]="section() === 'documents' ? 'page' : null"
+      (click)="section.set('documents')"
+    >
+      Documents
+    </button>
+    <button
+      os-tab-link
+      type="button"
+      [count]="2"
+      [attr.aria-current]="section() === 'scopes' ? 'page' : null"
+      (click)="section.set('scopes')"
+    >
+      Scopes
+    </button>
+    <button
+      os-tab-link
+      type="button"
+      [attr.aria-current]="section() === 'settings' ? 'page' : null"
+      (click)="section.set('settings')"
+    >
+      Settings
+    </button>
+  </nav>
 `;
 
 @Component({
@@ -39,8 +70,18 @@ class TabsExample {
 }
 
 @Component({
+  selector: 'docs-sub-nav-example',
+  imports: [TabLink, TabNav],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: SUB_NAV,
+})
+class SubNavExample {
+  protected readonly section = signal('documents');
+}
+
+@Component({
   selector: 'docs-tabs-page',
-  imports: [CodeBlock, Example, PageHeader, TabsExample],
+  imports: [CodeBlock, Example, PageHeader, SubNavExample, TabsExample],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header
@@ -54,16 +95,18 @@ class TabsExample {
       <div class="prose">
         <p>
           Arrow keys move between tabs and show them; Home and End jump to the ends. Only the chosen
-          tab's content is rendered. For links between pages that look like tabs, put
-          <code>.os-tab</code> on <code>&lt;a&gt;</code> elements and mark the current one with
-          <code>aria-current="page"</code>.
+          tab's content is rendered. For a sticky page sub-menu of router links with icons and
+          counts, use <code>nav[os-tab-nav]</code> and <code>a[os-tab-link]</code> with
+          <code>aria-current="page"</code> on the active link.
         </p>
       </div>
       <docs-example [code]="tabs"><docs-tabs-example /></docs-example>
+      <docs-example [code]="subNav"><docs-sub-nav-example /></docs-example>
     </div>
   `,
 })
 export class TabsPage {
   protected readonly tabs = TABS;
-  protected readonly usage = `import { Tab, Tabs } from '@openstuff-dev/ui-angular';`;
+  protected readonly subNav = SUB_NAV;
+  protected readonly usage = `import { Tab, TabLink, TabNav, Tabs } from '@openstuff-dev/ui-angular';`;
 }

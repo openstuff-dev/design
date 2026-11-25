@@ -72,4 +72,14 @@
     padding-inline: var(--os-space-2);
     font-size: var(--os-text-xs);
   }
+
+  .os-segmented-count {
+    color: var(--os-fg-muted);
+    font-size: var(--os-text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .os-segmented > label:has(:checked) > .os-segmented-count {
+    color: var(--os-brand-text);
+  }
 }

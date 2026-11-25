@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { EmptyState } from '../feedback/feedback';
-import { accessibleName, query, render } from '../testing';
-import { Cell, DataTable, StatTile, type Column } from './data-table';
+import { accessibleName, press, query, render } from '../testing';
+import { Cell, DataTable, StatTile, type Column, type SortState } from './data-table';
 
 interface Project {
   id: string;
@@ -95,5 +95,68 @@ describe('DataTable with an empty state', () => {
     await fixture.whenStable();
     expect(root.querySelector('os-empty-state')).toBeNull();
     expect(root.querySelector('tbody')?.textContent).toContain('Shop');
+  });
+});
+
+describe('DataTable bordered, sortable and interactive rows', () => {
+  @Component({
+    imports: [DataTable],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+      <os-data-table
+        caption="Inbox"
+        bordered
+        interactive
+        rowKey="id"
+        [columns]="columns"
+        [rows]="rows"
+        [selectedKey]="selected()"
+        [sort]="sort()"
+        (sortChange)="sort.set($event)"
+        (rowClick)="selected.set($event.id)"
+      />
+    `,
+  })
+  class InteractiveHost {
+    readonly columns: readonly Column<Project>[] = [
+      { key: 'name', label: 'Project', sortable: true },
+      { key: 'rules', label: 'Rules', align: 'end', sortable: true },
+    ];
+
+    readonly rows: readonly Project[] = [
+      { id: 'design', name: 'Design', owner: 'Kim', rules: 12 },
+      { id: 'op', name: 'OpenPurpose', owner: 'Alex', rules: 36 },
+    ];
+
+    readonly sort = signal<SortState<'id' | 'name' | 'owner' | 'rules'> | null>(null);
+    readonly selected = signal<string | null>(null);
+  }
+
+  it('supports bordered framing, sorting and keyboard/click row selection', async () => {
+    const { fixture, host, root } = await render(InteractiveHost);
+    const tableHost = query(root, 'os-data-table', HTMLElement);
+    expect(tableHost.hasAttribute('data-bordered')).toBe(true);
+
+    const sortBtn = query(root, 'th .os-th-sort', HTMLButtonElement);
+    sortBtn.click();
+    await fixture.whenStable();
+    expect(host.sort()).toEqual({ key: 'name', direction: 'asc' });
+    expect(sortBtn.closest('th')?.getAttribute('aria-sort')).toBe('ascending');
+
+    sortBtn.click();
+    await fixture.whenStable();
+    expect(host.sort()).toEqual({ key: 'name', direction: 'desc' });
+    expect(sortBtn.closest('th')?.getAttribute('aria-sort')).toBe('descending');
+
+    const rows = [...root.querySelectorAll<HTMLElement>('tbody tr')];
+    expect(rows[0].getAttribute('tabindex')).toBe('0');
+    rows[1].click();
+    await fixture.whenStable();
+    expect(host.selected()).toBe('op');
+    expect(rows[1].getAttribute('aria-current')).toBe('true');
+
+    press(rows[0], 'Enter');
+    await fixture.whenStable();
+    expect(host.selected()).toBe('design');
   });
 });
